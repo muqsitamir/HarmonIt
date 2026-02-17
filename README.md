@@ -2,7 +2,7 @@
 
 Unified system to harmonize MR images across sites, scanners, and protocols while preserving anatomy and pathology.
 
-## What this project is
+## Overview
 Multi-site MRI datasets often suffer from **domain shift** (scanner/vendor/protocol/site differences). HarmonIt aims to learn an **image-level harmonization** mapping that reduces these non-biological variations while keeping clinically meaningful information intact.
 
 ## Objectives
@@ -31,4 +31,18 @@ We will evaluate harmonization using a mix of:
 - **Image similarity metrics:** (SSIM/PSNR) when paired or synthetic ground truth exists
 - **Qualitative checks:** side-by-side visual grids + failure case analysis
 
-## Repository Structure (suggested)
+## Milestones (high-level)
+1) **Baseline setup:** data pipeline + no-harmonization reference
+2) **Classic baseline:** CycleGAN / U-Net restoration baseline (depending on pairing)
+3) **Modern baseline:** diffusion-based harmonization
+4) **Anatomy-preserving constraints:** segmentation/registration consistency
+5) **Paper-ready results:** ablations + evaluation protocol + figures/tables
+
+## Reproducibility
+- Fixed seeds, saved configs for every run
+- Versioned splits
+- Logged metrics + qualitative samples
+- Environment captured via `requirements.txt` or `environment.yml`
+
+## Status
+Early stage — setting up dataset, baselines, and evaluation protocol.
