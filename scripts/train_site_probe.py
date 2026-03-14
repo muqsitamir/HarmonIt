@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 import mlflow
 import mlflow.pytorch
+import time
 
 import numpy as np
 import torch
@@ -62,11 +63,11 @@ def main():
     batch_size = 32
     epochs = 3
     lr = 3e-4
-    steps_per_epoch = 400  # controls how many batches we draw (sampling w/ replacement)
-    val_batches = 100
+    steps_per_epoch = 50 # controls how many batches we draw (sampling w/ replacement)
+    val_batches = 30
 
-    # MLflow local tracking (falls back to ./mlruns if env var not set)
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns"))
+    # MLflow local tracking (falls back to ./mlflow.db if env var not set)
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
     mlflow.set_experiment("site_probe")
 
     with mlflow.start_run(run_name=run_id):
@@ -81,8 +82,10 @@ def main():
             "slice_mode_train": "random",
             "slice_mode_val": "fixed",
             "valid_nonzero_frac": 0.02,
+            "volume_cache_size": 12,
         })
         mlflow.set_tag("run_dir", str(out_dir))
+        print("MLflow tracking URI:", mlflow.get_tracking_uri())
 
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
         train_ds = AbideSlicesDataset(
@@ -93,6 +96,7 @@ def main():
             slice_mode="random",
             valid_nonzero_frac=0.02,
             seed=42,
+            volume_cache_size=12,
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -102,6 +106,7 @@ def main():
             slice_mode="fixed",  # deterministic validation
             valid_nonzero_frac=0.02,
             seed=123,
+            volume_cache_size=12,
         )
 
         # Number of classes
@@ -152,6 +157,8 @@ def main():
         best_val_bal = -1.0
 
         for epoch in range(1, epochs + 1):
+            epoch_start = time.time()
+            print(f"\n=== Epoch {epoch}/{epochs} ===")
             model.train()
             running_loss = 0.0
 
@@ -168,8 +175,9 @@ def main():
 
                 running_loss += float(loss.item())
 
-                if step % 100 == 0:
-                    print(f"Epoch {epoch} | step {step}/{steps_per_epoch} | loss {running_loss/step:.4f}")
+                if step == 1 or step % 10 == 0:
+                    elapsed = time.time() - epoch_start
+                    print(f"Epoch {epoch} | step {step}/{steps_per_epoch} | loss {running_loss/step:.4f} | elapsed {elapsed:.1f}s")
 
                 if step >= steps_per_epoch:
                     break
@@ -194,7 +202,8 @@ def main():
             y_pred = np.concatenate(y_pred)
             cm, acc, bal = confusion_and_balanced_acc(y_true, y_pred, num_classes)
 
-            print(f"[VAL] Epoch {epoch} | acc={acc:.4f} | bal_acc={bal:.4f}")
+            epoch_elapsed = time.time() - epoch_start
+            print(f"[VAL] Epoch {epoch} | acc={acc:.4f} | bal_acc={bal:.4f} | epoch_time={epoch_elapsed:.1f}s")
             mlflow.log_metric("val_acc", acc, step=epoch)
             mlflow.log_metric("val_bal_acc", bal, step=epoch)
 

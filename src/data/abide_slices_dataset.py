@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -78,6 +79,7 @@ class AbideSlicesDataset(Dataset):
         slice_mode: str = "random",
         valid_nonzero_frac: float = 0.10,
         seed: int = 42,
+        volume_cache_size: int = 12,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -115,25 +117,33 @@ class AbideSlicesDataset(Dataset):
         # cache valid slice indices per subject to avoid recomputation
         self._valid_slices: Dict[str, List[int]] = {}
 
-        # tiny LRU-ish cache for the most recent volume (helps QC and sequential access)
-        self._last_subject: Optional[str] = None
-        self._last_vol: Optional[np.ndarray] = None  # normalized canonical float32 volume
+        # LRU cache for normalized volumes to avoid repeated NIfTI load + normalization on CPU
+        self._vol_cache: "OrderedDict[str, np.ndarray]" = OrderedDict()
+        self.volume_cache_size = volume_cache_size
 
     def __len__(self) -> int:
         return len(self.samples)
 
     def _load_volume(self, sample: AbideSample) -> np.ndarray:
-        if self._last_subject == sample.subject_id and self._last_vol is not None:
-            return self._last_vol
+        sid = sample.subject_id
 
+        # Cache hit: refresh LRU order
+        if sid in self._vol_cache:
+            vol_n = self._vol_cache.pop(sid)
+            self._vol_cache[sid] = vol_n
+            return vol_n
+
+        # Cache miss: load and normalize
         img = nib.load(sample.t1_path)
         img = nib.as_closest_canonical(img)
         vol = img.get_fdata(dtype=np.float32)
-
         vol_n = robust_normalize(vol)
 
-        self._last_subject = sample.subject_id
-        self._last_vol = vol_n
+        # Insert and evict LRU
+        self._vol_cache[sid] = vol_n
+        if len(self._vol_cache) > self.volume_cache_size:
+            self._vol_cache.popitem(last=False)
+
         return vol_n
 
     def _compute_valid_slices(self, sample: AbideSample, vol_n: np.ndarray) -> List[int]:
