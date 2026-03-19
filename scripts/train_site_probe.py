@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from datetime import datetime
 import os
+import hashlib
+import subprocess
 from dotenv import load_dotenv
 import mlflow
 import mlflow.pytorch
@@ -12,9 +14,34 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler
 
-from data.abide_slices_dataset import AbideSlicesDataset
+from src.data.abide_slices_dataset import AbideSlicesDataset
 
 load_dotenv()
+
+
+# Helper functions for fingerprinting and reproducibility
+def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while True:
+            b = f.read(chunk_size)
+            if not b:
+                break
+            h.update(b)
+    return h.hexdigest()
+
+
+def git_info() -> dict:
+    """Best-effort git fingerprinting. Returns commit SHA and dirty flag."""
+    info = {"git_commit": "unknown", "git_dirty": "unknown"}
+    try:
+        sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
+        info["git_commit"] = sha
+        code = subprocess.call(["git", "diff", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        info["git_dirty"] = (code != 0)
+    except Exception:
+        pass
+    return info
 
 def confusion_and_balanced_acc(y_true: np.ndarray, y_pred: np.ndarray, num_classes: int):
     cm = np.zeros((num_classes, num_classes), dtype=np.int64)
@@ -66,6 +93,24 @@ def main():
     steps_per_epoch = 50 # controls how many batches we draw (sampling w/ replacement)
     val_batches = 30
 
+    preproc_cfg = {
+        "preproc_version": "v0.1",
+        "canonical_orientation": True,
+        "intensity_clip_pcts": "1,99",
+        "zscore_mask": "nonzero",
+        "slice_plane": "axial",
+        "slice_range_frac": "0.15,0.85",
+        "slice_fg_thr": 0.05,
+        "valid_fg_frac": 0.02,
+        "out_hw": "256x256",
+        "volume_cache_size": 12,
+    }
+
+    # Data + code fingerprints for reproducibility
+    manifest_hash = sha256_file(Path(manifest_path))
+    splits_hash = sha256_file(Path(splits_path))
+    ginfo = git_info()
+
     # MLflow local tracking (falls back to ./mlflow.db if env var not set)
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
     mlflow.set_experiment("site_probe")
@@ -81,10 +126,16 @@ def main():
             "out_hw": "256x256",
             "slice_mode_train": "random",
             "slice_mode_val": "fixed",
-            "valid_nonzero_frac": 0.02,
-            "volume_cache_size": 12,
+            "valid_nonzero_frac": float(preproc_cfg["valid_fg_frac"]),
+            "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
         })
         mlflow.set_tag("run_dir", str(out_dir))
+        # Log preprocessing config and fingerprints
+        mlflow.log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
+        mlflow.set_tag("abide_manifest_sha256", manifest_hash)
+        mlflow.set_tag("splits_sha256", splits_hash)
+        mlflow.set_tag("git_commit", ginfo.get("git_commit", "unknown"))
+        mlflow.set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
         print("MLflow tracking URI:", mlflow.get_tracking_uri())
 
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
@@ -94,9 +145,9 @@ def main():
             split="train",
             out_hw=(256, 256),
             slice_mode="random",
-            valid_nonzero_frac=0.02,
+            valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
             seed=42,
-            volume_cache_size=12,
+            volume_cache_size=int(preproc_cfg["volume_cache_size"]),
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -104,9 +155,9 @@ def main():
             split="val",
             out_hw=(256, 256),
             slice_mode="fixed",  # deterministic validation
-            valid_nonzero_frac=0.02,
+            valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
             seed=123,
-            volume_cache_size=12,
+            volume_cache_size=int(preproc_cfg["volume_cache_size"]),
         )
 
         # Number of classes
@@ -128,6 +179,35 @@ def main():
             )
         # log config file as artifact (after writing)
         mlflow.log_artifact(str(out_dir / "config.json"))
+
+        metadata = {
+            "run_id": run_id,
+            "timestamp": datetime.now().isoformat(),
+            "hyperparams": {
+                "batch_size": batch_size,
+                "epochs": epochs,
+                "lr": lr,
+                "steps_per_epoch": steps_per_epoch,
+                "val_batches": val_batches,
+            },
+            "preprocessing": preproc_cfg,
+            "paths": {
+                "manifest_path": manifest_path,
+                "splits_path": splits_path,
+            },
+            "hashes": {
+                "abide_manifest_sha256": manifest_hash,
+                "splits_sha256": splits_hash,
+            },
+            "git": ginfo,
+        }
+        meta_path = out_dir / "run_metadata.json"
+        meta_path.write_text(json.dumps(metadata, indent=2))
+        mlflow.log_artifact(str(meta_path))
+
+        preproc_path = out_dir / "preprocessing.json"
+        preproc_path.write_text(json.dumps(preproc_cfg, indent=2))
+        mlflow.log_artifact(str(preproc_path))
 
         # Sampler with replacement lets us train longer than dataset length
         train_loader = DataLoader(

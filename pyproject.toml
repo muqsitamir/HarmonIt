@@ -5,10 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "harmonit"
 version = "0.1.0"
-dependencies = []
+description = "MRI harmonization experiments"
+readme = "README.md"
+requires-python = ">=3.11"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["src*"]
