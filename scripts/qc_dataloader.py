@@ -3,7 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
-from src.data.abide_slices_dataset import AbideSlicesDataset
+from harmonit.data.abide_slices_dataset import AbideSlicesDataset
 
 
 def main():

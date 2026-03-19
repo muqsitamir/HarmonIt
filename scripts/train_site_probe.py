@@ -14,7 +14,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler
 
-from src.data.abide_slices_dataset import AbideSlicesDataset
+from harmonit.data.abide_slices_dataset import AbideSlicesDataset
 
 load_dotenv()
 
