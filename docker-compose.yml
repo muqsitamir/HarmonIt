@@ -1,0 +1,41 @@
+services:
+  harmonit-cpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
+    image: harmonit-cpu:latest
+    working_dir: /workspace/HarmonIt
+    volumes:
+      - ./:/workspace/HarmonIt
+      - ./data:/workspace/HarmonIt/data
+      - ./results:/workspace/HarmonIt/results
+      - ./mlruns:/workspace/HarmonIt/mlruns
+    environment:
+      PYTHONPATH: /workspace/HarmonIt
+      MLFLOW_TRACKING_URI: sqlite:///mlflow.db
+    stdin_open: true
+    tty: true
+
+  harmonit-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    image: harmonit-gpu:latest
+    working_dir: /workspace/HarmonIt
+    volumes:
+      - ./:/workspace/HarmonIt
+      - ./data:/workspace/HarmonIt/data
+      - ./results:/workspace/HarmonIt/results
+      - ./mlruns:/workspace/HarmonIt/mlruns
+    environment:
+      PYTHONPATH: /workspace/HarmonIt
+      MLFLOW_TRACKING_URI: sqlite:///mlflow.db
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    stdin_open: true
+    tty: true
