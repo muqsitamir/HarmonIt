@@ -1,0 +1,32 @@
+FROM pytorch/pytorch:2.5.1-cuda12.1-cudnn9-runtime
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /workspace/HarmonIt
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt pyproject.toml README.md ./
+COPY src ./src
+COPY scripts ./scripts
+COPY data ./data
+
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt && \
+    pip install -e .
+
+COPY . .
+
+ENV MLFLOW_TRACKING_URI=sqlite:///mlflow.db
+
+CMD ["bash"]

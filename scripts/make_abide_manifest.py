@@ -24,9 +24,10 @@ def parse_scan_label(path: Path) -> str:
     return ""
 
 def main():
-    # Default paths assume this script is run from the repo root.
-    root = Path("data/ABIDE").resolve()
-    out_csv = Path("data/abide_manifest.csv").resolve()
+    # Resolve paths relative to this file so the script is portable across hosts/containers.
+    repo_root = Path(__file__).resolve().parent.parent
+    root = repo_root / "data" / "ABIDE"
+    out_csv = repo_root / "data" / "abide_manifest.csv"
 
     # ABIDE T1 volumes are typically `mprage.nii.gz`, but a small subset (e.g., some UCLA subjects)
     # may be stored as `hires.nii.gz`. Include both.
@@ -45,11 +46,12 @@ def main():
         subject_id = parse_subject_id(f)
         site = parse_site(subject_id)
         scan_label = parse_scan_label(f)
+        rel_f = f.relative_to(repo_root)
         rows.append({
             "subject_id": subject_id,
             "site": site,
             "scan_label": scan_label,
-            "t1_path": str(f),
+            "t1_path": rel_f.as_posix(),
             "size_bytes": f.stat().st_size
         })
 
