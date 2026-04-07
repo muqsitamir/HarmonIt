@@ -19,7 +19,6 @@ from harmonit.data.abide_slices_dataset import AbideSlicesDataset
 load_dotenv()
 
 
-# Helper functions for fingerprinting and reproducibility
 def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -243,7 +242,7 @@ def main():
             running_loss = 0.0
 
             for step, batch in enumerate(train_loader, start=1):
-                x, y, _, _ = batch
+                x, y, subject_ids, _ = batch
                 x = x.to(device)              # [B,1,256,256]
                 y = y.to(device).long()
 
@@ -263,23 +262,52 @@ def main():
                     break
 
             # ---- Validation ----
+            from collections import defaultdict
+
             model.eval()
-            y_true, y_pred = [], []
+
+            # store predictions grouped by subject
+            subject_preds = defaultdict(list)
+            subject_targets = {}
+
             with torch.no_grad():
                 for i, batch in enumerate(val_loader, start=1):
-                    x, y, _, _ = batch
+                    x, y, subject_ids, _ = batch
+
                     x = x.to(device)
                     logits = model(x)
-                    pred = torch.argmax(logits, dim=1).cpu().numpy()
+                    preds = torch.argmax(logits, dim=1).cpu().numpy()
 
-                    y_true.append(y.numpy())
-                    y_pred.append(pred)
+                    y = y.numpy()
+
+                    # group predictions by subject
+                    for pred, target, sid in zip(preds, y, subject_ids):
+                        subject_preds[sid].append(pred)
+                        subject_targets[sid] = target
 
                     if i >= val_batches:
                         break
 
-            y_true = np.concatenate(y_true)
-            y_pred = np.concatenate(y_pred)
+            # ---- Aggregate per subject ----
+            final_preds = []
+            final_targets = []
+
+            for sid in subject_preds:
+                preds = subject_preds[sid]
+
+                # majority vote
+                counts = np.bincount(preds, minlength=num_classes)
+                final_pred = np.argmax(counts)
+
+                final_preds.append(final_pred)
+                final_targets.append(subject_targets[sid])
+
+            y_true = np.array(final_targets)
+            y_pred = np.array(final_preds)
+
+            print("Validation subjects:", len(subject_preds))
+            print("Total slices used:", sum(len(v) for v in subject_preds.values()))
+
             cm, acc, bal = confusion_and_balanced_acc(y_true, y_pred, num_classes)
 
             epoch_elapsed = time.time() - epoch_start
