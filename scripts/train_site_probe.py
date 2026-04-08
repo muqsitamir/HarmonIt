@@ -87,8 +87,8 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Hyperparams (CPU-friendly defaults)
-    batch_size = 32
-    epochs = 3
+    batch_size = 64
+    epochs = 10
     lr = 3e-4
     steps_per_epoch = 50 # controls how many batches we draw (sampling w/ replacement)
     val_batches = 30
