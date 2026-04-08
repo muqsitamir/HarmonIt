@@ -106,13 +106,27 @@ def main():
         "volume_cache_size": 12,
     }
 
-    # Data + code fingerprints for reproducibility
-    manifest_hash = sha256_file(Path(manifest_path))
-    splits_hash = sha256_file(Path(splits_path))
-    ginfo = git_info()
+    # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
+    # while storing artifacts alongside the project (which should live on persistent storage,
+    # e.g. rhome on the lab VM). Allow env vars to override both locations.
+    project_root = Path(__file__).resolve().parents[1]
+    local_mlflow_dir = Path.home() / "mlflow_local"
+    artifact_dir = project_root / "mlruns"
 
-    # MLflow local tracking (falls back to ./mlflow.db if env var not set)
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
+    local_mlflow_dir.mkdir(parents=True, exist_ok=True)
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+
+    default_tracking_uri = f"sqlite:///{local_mlflow_dir / 'mlflow.db'}"
+    default_artifact_root = artifact_dir.resolve().as_uri()
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", default_tracking_uri)
+    artifact_root = os.getenv("MLFLOW_ARTIFACT_ROOT", default_artifact_root)
+
+    mlflow.set_tracking_uri(tracking_uri)
+
+    client = mlflow.tracking.MlflowClient()
+    exp = client.get_experiment_by_name("site_probe")
+    if exp is None:
+        client.create_experiment("site_probe", artifact_location=artifact_root)
     mlflow.set_experiment("site_probe")
 
     with mlflow.start_run(run_name=run_id):
@@ -130,8 +144,13 @@ def main():
             "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
         })
         mlflow.set_tag("run_dir", str(out_dir))
+        mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
+        mlflow.set_tag("mlflow_artifact_root", artifact_root)
         # Log preprocessing config and fingerprints
         mlflow.log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
+        manifest_hash = sha256_file(Path(manifest_path))
+        splits_hash = sha256_file(Path(splits_path))
+        ginfo = git_info()
         mlflow.set_tag("abide_manifest_sha256", manifest_hash)
         mlflow.set_tag("splits_sha256", splits_hash)
         mlflow.set_tag("git_commit", ginfo.get("git_commit", "unknown"))
@@ -194,6 +213,9 @@ def main():
             "paths": {
                 "manifest_path": manifest_path,
                 "splits_path": splits_path,
+                "project_root": str(project_root),
+                "mlflow_tracking_uri": tracking_uri,
+                "mlflow_artifact_root": artifact_root,
             },
             "hashes": {
                 "abide_manifest_sha256": manifest_hash,
