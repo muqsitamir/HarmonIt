@@ -105,6 +105,8 @@ def main():
         "valid_fg_frac": 0.02,
         "out_hw": "256x256",
         "volume_cache_size": 12,
+        "mask_mode": os.getenv("MASK_MODE", "none"),  # none | bg_only | brain_only
+        "label_shuffle": os.getenv("LABEL_SHUFFLE", "0") == "1",
     }
 
     # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
@@ -174,6 +176,7 @@ def main():
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
             seed=42,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
+            mask_mode=preproc_cfg["mask_mode"],
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -184,8 +187,15 @@ def main():
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
             seed=123,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
+            mask_mode=preproc_cfg["mask_mode"],
         )
 
+
+        if preproc_cfg["label_shuffle"]:
+            rng = np.random.RandomState(12345)
+            perm = rng.permutation(num_classes)
+            train_ds.set_label_permutation(perm.tolist())
+            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
 
         with open(out_dir / "config.json", "w") as f:
             json.dump(
@@ -337,7 +347,10 @@ def main():
             if bal > best_val_bal:
                 best_val_bal = bal
                 torch.save(model.state_dict(), out_dir / "model_best.pt")
-            mlflow.log_artifact(str(out_dir / "model_best.pt"))
+
+        best_path = out_dir / "model_best.pt"
+        if best_path.exists():
+            mlflow.log_artifact(str(best_path))
 
         print("Done. Best val balanced accuracy:", best_val_bal)
         print("Run dir:", out_dir)
