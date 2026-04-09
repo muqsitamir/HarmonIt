@@ -220,37 +220,57 @@ class AbideSlicesDataset(Dataset):
         self._valid_slices[sample.subject_id] = valid
         return valid
 
-    def _pick_slice_index(self, valid: List[int], D: int) -> int:
-        """Pick a slice index using fixed depth percentiles for robustness."""
+    def _pick_slice_index(self, vol_n: np.ndarray, valid: List[int]) -> int:
+        """Pick a slice index using fixed depth percentiles but prefer the slice(s)
+        with the largest foreground area (cheap mid-brain proxy).
+
+        This reduces slice-level/coverage shortcuts for the site probe.
+        """
+        D = int(vol_n.shape[2])
         if len(valid) == 0:
             return D // 2
 
         targets = [int(p * (D - 1)) for p in self.slice_percentiles]
-        # map each target to nearest valid slice
-        candidates = []
+        base = []
         for t in targets:
             k = min(valid, key=lambda vv: abs(vv - t))
-            candidates.append(k)
+            base.append(int(k))
 
-        # unique candidates preserving order
-        uniq = []
-        seen = set()
-        for k in candidates:
-            if k not in seen:
-                uniq.append(k)
-                seen.add(k)
+        valid_sorted = sorted(valid)
+        idx_map = {k: i for i, k in enumerate(valid_sorted)}
+        cand = []
+        for k in base:
+            i = idx_map.get(k, None)
+            if i is None:
+                continue
+            for j in range(max(0, i - 3), min(len(valid_sorted), i + 4)):
+                cand.append(int(valid_sorted[j]))
+
+        cand = list(dict.fromkeys(cand))
+        if len(cand) == 0:
+            cand = valid_sorted
+
+        thr = float(self.fg_bbox_thr)
+        scores = []
+        for k in cand:
+            sl = vol_n[:, :, k]
+            scores.append(float(np.mean(np.abs(sl) > thr)))
+
+        order = np.argsort(-np.asarray(scores))
+        cand_sorted = [cand[i] for i in order]
 
         if self.slice_mode == "fixed":
-            return uniq[len(uniq) // 2]
-        # random among the percentile candidates
-        return int(self.rng.choice(uniq))
+            return int(cand_sorted[0])
+
+        topk = min(3, len(cand_sorted))
+        return int(self.rng.choice(cand_sorted[:topk]))
 
     def __getitem__(self, idx: int):
         sample = self.samples[idx]
         vol_n = self._load_volume(sample)
         valid = self._compute_valid_slices(sample, vol_n)
 
-        k = self._pick_slice_index(valid, vol_n.shape[2])
+        k = self._pick_slice_index(vol_n, valid)
 
         sl = vol_n[:, :, k]
 
