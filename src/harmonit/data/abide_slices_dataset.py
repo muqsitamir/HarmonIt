@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import nibabel as nib
 import torch
+import torch.nn.functional as F
 from torch.utils.data import Dataset
 
 
@@ -47,6 +48,36 @@ def center_crop_or_pad(img2d: np.ndarray, out_hw: Tuple[int, int] = (256, 256)) 
     return out
 
 
+def crop_to_foreground_bbox(img2d: np.ndarray, thr: float = 0.05, margin: int = 10) -> np.ndarray:
+    """Crop a 2D slice to the bounding box of foreground pixels (cheap brain proxy).
+
+    Foreground is defined as |img| > thr (after z-score). If no foreground is found,
+    returns the original image.
+    """
+    m = np.abs(img2d) > thr
+    if not m.any():
+        return img2d
+
+    ys, xs = np.where(m)
+    y0, y1 = int(ys.min()), int(ys.max())
+    x0, x1 = int(xs.min()), int(xs.max())
+
+    y0 = max(0, y0 - margin)
+    x0 = max(0, x0 - margin)
+    y1 = min(img2d.shape[0] - 1, y1 + margin)
+    x1 = min(img2d.shape[1] - 1, x1 + margin)
+
+    return img2d[y0 : y1 + 1, x0 : x1 + 1]
+
+
+def resize_to_hw(img2d: np.ndarray, out_hw: Tuple[int, int]) -> np.ndarray:
+    """Resize a 2D numpy array to (H,W) using torch bilinear interpolation."""
+    oh, ow = out_hw
+    t = torch.from_numpy(img2d.astype(np.float32)).unsqueeze(0).unsqueeze(0)  # [1,1,H,W]
+    t = F.interpolate(t, size=(oh, ow), mode="bilinear", align_corners=False)
+    return t[0, 0].cpu().numpy().astype(np.float32)
+
+
 @dataclass
 class AbideSample:
     subject_id: str
@@ -78,6 +109,9 @@ class AbideSlicesDataset(Dataset):
         out_hw: Tuple[int, int] = (256, 256),
         slice_mode: str = "random",
         valid_nonzero_frac: float = 0.10,
+        slice_percentiles: Tuple[float, ...] = (0.40, 0.50, 0.60),
+        fg_bbox_thr: float = 0.05,
+        fg_bbox_margin: int = 20,
         seed: int = 42,
         volume_cache_size: int = 12,
         mask_mode: str = "none",  # none | bg_only | brain_only
@@ -89,6 +123,9 @@ class AbideSlicesDataset(Dataset):
         self.out_hw = out_hw
         self.slice_mode = slice_mode
         self.valid_nonzero_frac = valid_nonzero_frac
+        self.slice_percentiles = slice_percentiles
+        self.fg_bbox_thr = fg_bbox_thr
+        self.fg_bbox_margin = fg_bbox_margin
         self.rng = np.random.RandomState(seed)
 
         df = pd.read_csv(self.manifest_path)
@@ -183,20 +220,43 @@ class AbideSlicesDataset(Dataset):
         self._valid_slices[sample.subject_id] = valid
         return valid
 
+    def _pick_slice_index(self, valid: List[int], D: int) -> int:
+        """Pick a slice index using fixed depth percentiles for robustness."""
+        if len(valid) == 0:
+            return D // 2
+
+        targets = [int(p * (D - 1)) for p in self.slice_percentiles]
+        # map each target to nearest valid slice
+        candidates = []
+        for t in targets:
+            k = min(valid, key=lambda vv: abs(vv - t))
+            candidates.append(k)
+
+        # unique candidates preserving order
+        uniq = []
+        seen = set()
+        for k in candidates:
+            if k not in seen:
+                uniq.append(k)
+                seen.add(k)
+
+        if self.slice_mode == "fixed":
+            return uniq[len(uniq) // 2]
+        # random among the percentile candidates
+        return int(self.rng.choice(uniq))
+
     def __getitem__(self, idx: int):
         sample = self.samples[idx]
         vol_n = self._load_volume(sample)
         valid = self._compute_valid_slices(sample, vol_n)
 
-        if self.slice_mode == "random":
-            k = int(self.rng.choice(valid))
-        elif self.slice_mode == "fixed":
-            k = int(valid[len(valid) // 2])
-        else:
-            raise ValueError(f"Unknown slice_mode={self.slice_mode}")
+        k = self._pick_slice_index(valid, vol_n.shape[2])
 
         sl = vol_n[:, :, k]
-        sl = center_crop_or_pad(sl, self.out_hw)
+
+        # Geometry standardization: crop to foreground bbox (cheap brain proxy) then resize
+        sl = crop_to_foreground_bbox(sl, thr=self.fg_bbox_thr, margin=self.fg_bbox_margin)
+        sl = resize_to_hw(sl, self.out_hw)
 
         # Optional masking ablations to detect "cheating" cues
         if self.mask_mode == "bg_only":
