@@ -83,7 +83,8 @@ def main():
 
     # Output run dir
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = Path("runs/site_probe") / run_id
+    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.1")
+    out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Hyperparams (CPU-friendly defaults)
@@ -129,7 +130,7 @@ def main():
         client.create_experiment("site_probe", artifact_location=artifact_root)
     mlflow.set_experiment("site_probe")
 
-    with mlflow.start_run(run_name=run_id):
+    with mlflow.start_run(run_name=f"{ablation_name}__{run_id}"):
         # log key params
         mlflow.log_params({
             "batch_size": batch_size,
@@ -151,6 +152,7 @@ def main():
         manifest_hash = sha256_file(Path(manifest_path))
         splits_hash = sha256_file(Path(splits_path))
         ginfo = git_info()
+        mlflow.set_tag("ablation_name", ablation_name)
         mlflow.set_tag("abide_manifest_sha256", manifest_hash)
         mlflow.set_tag("splits_sha256", splits_hash)
         mlflow.set_tag("git_commit", ginfo.get("git_commit", "unknown"))
@@ -284,6 +286,9 @@ def main():
                 if step >= steps_per_epoch:
                     break
 
+            avg_train_loss = running_loss / max(1, steps_per_epoch)
+            mlflow.log_metric("train_loss", avg_train_loss, step=epoch)
+
             # ---- Validation ----
             model.eval()
             y_true, y_pred = [], []
@@ -309,11 +314,15 @@ def main():
             mlflow.log_metric("val_acc", acc, step=epoch)
             mlflow.log_metric("val_bal_acc", bal, step=epoch)
 
-            # Save artifacts
-            torch.save(model.state_dict(), out_dir / f"model_epoch{epoch}.pt")
-            np.save(out_dir / f"cm_epoch{epoch}.npy", cm)
-            save_confusion_matrix_png(cm, out_dir / f"cm_epoch{epoch}.png")
-            mlflow.log_artifact(str(out_dir / f"cm_epoch{epoch}.png"))
+            # Save confusion matrix artifacts (local) and log PNG to MLflow
+            cm_npy_path = out_dir / f"cm_epoch{epoch}.npy"
+            cm_png_path = out_dir / f"cm_epoch{epoch}.png"
+
+            np.save(cm_npy_path, cm)
+            save_confusion_matrix_png(cm, cm_png_path)
+
+            # Log only the confusion matrix PNG per epoch
+            mlflow.log_artifact(str(cm_png_path))
 
             # Track best
             if bal > best_val_bal:
