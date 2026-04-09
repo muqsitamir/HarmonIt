@@ -4,7 +4,7 @@ import json
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -80,6 +80,8 @@ class AbideSlicesDataset(Dataset):
         valid_nonzero_frac: float = 0.10,
         seed: int = 42,
         volume_cache_size: int = 12,
+        mask_mode: str = "none",  # none | bg_only | brain_only
+        label_permutation: Optional[list] = None,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -121,8 +123,15 @@ class AbideSlicesDataset(Dataset):
         self._vol_cache: "OrderedDict[str, np.ndarray]" = OrderedDict()
         self.volume_cache_size = volume_cache_size
 
+        self.mask_mode = mask_mode
+        self._label_perm = label_permutation
+
     def __len__(self) -> int:
         return len(self.samples)
+
+    def set_label_permutation(self, perm: list) -> None:
+        """Apply a permutation to site_id labels (used for label-shuffle sanity checks)."""
+        self._label_perm = perm
 
     def _load_volume(self, sample: AbideSample) -> np.ndarray:
         sid = sample.subject_id
@@ -189,6 +198,23 @@ class AbideSlicesDataset(Dataset):
         sl = vol_n[:, :, k]
         sl = center_crop_or_pad(sl, self.out_hw)
 
+        # Optional masking ablations to detect "cheating" cues
+        if self.mask_mode == "bg_only":
+            # Keep only low-intensity/background pixels
+            thr = 0.05
+            sl = np.where(np.abs(sl) <= thr, sl, 0.0).astype(np.float32)
+        elif self.mask_mode == "brain_only":
+            # Keep only foreground-like pixels (cheap brain proxy)
+            thr = 0.05
+            sl = np.where(np.abs(sl) > thr, sl, 0.0).astype(np.float32)
+        elif self.mask_mode != "none":
+            raise ValueError(f"Unknown mask_mode={self.mask_mode}")
+
         # return as [1, H, W]
         img_t = torch.from_numpy(sl).float().unsqueeze(0)
-        return img_t, sample.site_id, sample.subject_id, k
+
+        site_id = sample.site_id
+        if self._label_perm is not None:
+            site_id = int(self._label_perm[int(site_id)])
+
+        return img_t, site_id, sample.subject_id, k

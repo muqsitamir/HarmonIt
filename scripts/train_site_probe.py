@@ -159,6 +159,11 @@ def main():
         mlflow.set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
         print("MLflow tracking URI:", mlflow.get_tracking_uri())
 
+        # Number of classes
+        df = __import__("pandas").read_csv(manifest_path)
+        num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
+        print("Num classes (sites):", num_classes)
+
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
         train_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -181,10 +186,7 @@ def main():
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
         )
 
-        # Number of classes
-        df = __import__("pandas").read_csv(manifest_path)
-        num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
-        print("Num classes (sites):", num_classes)
+
         with open(out_dir / "config.json", "w") as f:
             json.dump(
                 {
@@ -233,18 +235,24 @@ def main():
         preproc_path.write_text(json.dumps(preproc_cfg, indent=2))
         mlflow.log_artifact(str(preproc_path))
 
+        pin = (device.type == "cuda")
+
         # Sampler with replacement lets us train longer than dataset length
         train_loader = DataLoader(
             train_ds,
             batch_size=batch_size,
             sampler=RandomSampler(train_ds, replacement=True, num_samples=batch_size * steps_per_epoch),
-            num_workers=0,
+            num_workers=4,
+            pin_memory=pin,
+            persistent_workers=(4 > 0),
         )
         val_loader = DataLoader(
             val_ds,
             batch_size=batch_size,
             shuffle=False,
-            num_workers=0,
+            num_workers=4,
+            pin_memory=pin,
+            persistent_workers=(4 > 0),
         )
 
         # Model: ResNet18 adapted to 1-channel input
@@ -313,6 +321,7 @@ def main():
             print(f"[VAL] Epoch {epoch} | acc={acc:.4f} | bal_acc={bal:.4f} | epoch_time={epoch_elapsed:.1f}s")
             mlflow.log_metric("val_acc", acc, step=epoch)
             mlflow.log_metric("val_bal_acc", bal, step=epoch)
+            mlflow.log_metric("epoch_time_sec", epoch_elapsed, step=epoch)
 
             # Save confusion matrix artifacts (local) and log PNG to MLflow
             cm_npy_path = out_dir / f"cm_epoch{epoch}.npy"
@@ -328,7 +337,7 @@ def main():
             if bal > best_val_bal:
                 best_val_bal = bal
                 torch.save(model.state_dict(), out_dir / "model_best.pt")
-                mlflow.log_artifact(str(out_dir / "model_best.pt"))
+            mlflow.log_artifact(str(out_dir / "model_best.pt"))
 
         print("Done. Best val balanced accuracy:", best_val_bal)
         print("Run dir:", out_dir)
