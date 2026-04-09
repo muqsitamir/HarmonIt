@@ -87,12 +87,13 @@ def main():
     out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Hyperparams (CPU-friendly defaults)
-    batch_size = 64
-    epochs = 10
-    lr = 3e-4
-    steps_per_epoch = 50 # controls how many batches we draw (sampling w/ replacement)
-    val_batches = 30
+    # Hyperparams (overridable via environment variables)
+    batch_size = int(os.getenv("BATCH_SIZE", "64"))
+    epochs = int(os.getenv("EPOCHS", "10"))
+    lr = float(os.getenv("LR", "3e-4"))
+    steps_per_epoch = int(os.getenv("STEPS_PER_EPOCH", "50"))  # batches per epoch (sampling w/ replacement)
+    val_batches = int(os.getenv("VAL_BATCHES", "30"))
+    print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} val_batches={val_batches}")
 
     preproc_cfg = {
         "preproc_version": "v0.1",
