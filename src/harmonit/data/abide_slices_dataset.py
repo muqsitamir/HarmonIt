@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from collections import OrderedDict
+from collections import OrderedDict, deque
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -78,6 +78,106 @@ def resize_to_hw(img2d: np.ndarray, out_hw: Tuple[int, int]) -> np.ndarray:
     return t[0, 0].cpu().numpy().astype(np.float32)
 
 
+def binary_dilate(mask: np.ndarray, iters: int = 1) -> np.ndarray:
+    out = mask.astype(bool).copy()
+    for _ in range(iters):
+        p = np.pad(out, 1, mode="constant", constant_values=False)
+        out = (
+            p[1:-1, 1:-1]
+            | p[:-2, 1:-1]
+            | p[2:, 1:-1]
+            | p[1:-1, :-2]
+            | p[1:-1, 2:]
+            | p[:-2, :-2]
+            | p[:-2, 2:]
+            | p[2:, :-2]
+            | p[2:, 2:]
+        )
+    return out
+
+
+def fill_holes(mask: np.ndarray) -> np.ndarray:
+    """Fill holes in a binary mask using flood-fill from the border."""
+    h, w = mask.shape
+    visited = np.zeros_like(mask, dtype=bool)
+    q = deque()
+
+    # enqueue all background border pixels
+    for x in range(w):
+        if not mask[0, x]:
+            q.append((0, x))
+        if not mask[h - 1, x]:
+            q.append((h - 1, x))
+    for y in range(h):
+        if not mask[y, 0]:
+            q.append((y, 0))
+        if not mask[y, w - 1]:
+            q.append((y, w - 1))
+
+    while q:
+        y, x = q.popleft()
+        if y < 0 or y >= h or x < 0 or x >= w:
+            continue
+        if visited[y, x] or mask[y, x]:
+            continue
+        visited[y, x] = True
+        q.extend([(y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1)])
+
+    holes = (~mask) & (~visited)
+    return mask | holes
+
+
+def largest_connected_component(mask: np.ndarray) -> np.ndarray:
+    """Return largest 4-connected component of a binary mask."""
+    h, w = mask.shape
+    visited = np.zeros_like(mask, dtype=bool)
+    best = np.zeros_like(mask, dtype=bool)
+    best_size = 0
+
+    for y in range(h):
+        for x in range(w):
+            if not mask[y, x] or visited[y, x]:
+                continue
+
+            q = deque([(y, x)])
+            comp = []
+            visited[y, x] = True
+
+            while q:
+                cy, cx = q.popleft()
+                comp.append((cy, cx))
+                for ny, nx in [(cy - 1, cx), (cy + 1, cx), (cy, cx - 1), (cy, cx + 1)]:
+                    if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not visited[ny, nx]:
+                        visited[ny, nx] = True
+                        q.append((ny, nx))
+
+            if len(comp) > best_size:
+                best_size = len(comp)
+                best[:] = False
+                for cy, cx in comp:
+                    best[cy, cx] = True
+
+    return best
+
+
+def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) -> np.ndarray:
+    """Conservative head/foreground mask.
+
+    1) Threshold |img| on the normalized slice.
+    2) Keep the largest connected component.
+    3) Fill holes.
+    4) Dilate slightly for safety (avoid cutting cortex edges).
+    """
+    mask = np.abs(img2d) > thr
+    if not mask.any():
+        return np.ones_like(img2d, dtype=bool)
+
+    mask = largest_connected_component(mask)
+    mask = fill_holes(mask)
+    mask = binary_dilate(mask, iters=dilate_iters)
+    return mask
+
+
 @dataclass
 class AbideSample:
     subject_id: str
@@ -116,6 +216,9 @@ class AbideSlicesDataset(Dataset):
         volume_cache_size: int = 12,
         mask_mode: str = "none",  # none | bg_only | brain_only
         label_permutation: Optional[list] = None,
+        bg_suppress: bool = True,
+        head_mask_thr: float = 0.08,
+        head_mask_dilate: int = 3,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -162,6 +265,10 @@ class AbideSlicesDataset(Dataset):
 
         self.mask_mode = mask_mode
         self._label_perm = label_permutation
+
+        self.bg_suppress = bg_suppress
+        self.head_mask_thr = head_mask_thr
+        self.head_mask_dilate = head_mask_dilate
 
     def __len__(self) -> int:
         return len(self.samples)
@@ -278,15 +385,23 @@ class AbideSlicesDataset(Dataset):
         sl = crop_to_foreground_bbox(sl, thr=self.fg_bbox_thr, margin=self.fg_bbox_margin)
         sl = resize_to_hw(sl, self.out_hw)
 
-        # Optional masking ablations to detect "cheating" cues
+        # Conservative head/foreground mask (used to remove background shortcut cues)
+        head_mask = make_head_mask(sl, thr=self.head_mask_thr, dilate_iters=self.head_mask_dilate)
+
+        # Default: suppress background so it cannot carry site signal
+        if self.bg_suppress:
+            sl = sl.copy()
+            sl[~head_mask] = 0.0
+
+        # Diagnostic masking ablations (define background as outside head_mask)
         if self.mask_mode == "bg_only":
-            # Keep only low-intensity/background pixels
-            thr = 0.05
-            sl = np.where(np.abs(sl) <= thr, sl, 0.0).astype(np.float32)
+            out = np.zeros_like(sl, dtype=np.float32)
+            out[~head_mask] = sl[~head_mask]
+            sl = out
         elif self.mask_mode == "brain_only":
-            # Keep only foreground-like pixels (cheap brain proxy)
-            thr = 0.05
-            sl = np.where(np.abs(sl) > thr, sl, 0.0).astype(np.float32)
+            out = np.zeros_like(sl, dtype=np.float32)
+            out[head_mask] = sl[head_mask]
+            sl = out
         elif self.mask_mode != "none":
             raise ValueError(f"Unknown mask_mode={self.mask_mode}")
 
