@@ -96,7 +96,7 @@ def main():
     print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} val_batches={val_batches}")
 
     preproc_cfg = {
-        "preproc_version": "v0.1",
+        "preproc_version": "v0.2",
         "canonical_orientation": True,
         "intensity_clip_pcts": "1,99",
         "zscore_mask": "nonzero",
