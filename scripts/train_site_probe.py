@@ -82,15 +82,17 @@ def main():
 
     # Output run dir
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = Path("runs/site_probe") / run_id
+    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.1")
+    out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Hyperparams (CPU-friendly defaults)
-    batch_size = 32
-    epochs = 3
-    lr = 3e-4
-    steps_per_epoch = 50 # controls how many batches we draw (sampling w/ replacement)
-    val_batches = 30
+    # Hyperparams (overridable via environment variables)
+    batch_size = int(os.getenv("BATCH_SIZE", "64"))
+    epochs = int(os.getenv("EPOCHS", "10"))
+    lr = float(os.getenv("LR", "3e-4"))
+    steps_per_epoch = int(os.getenv("STEPS_PER_EPOCH", "50"))  # batches per epoch (sampling w/ replacement)
+    val_batches = int(os.getenv("VAL_BATCHES", "30"))
+    print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} val_batches={val_batches}")
 
     preproc_cfg = {
         "preproc_version": "v0.1",
@@ -103,18 +105,34 @@ def main():
         "valid_fg_frac": 0.02,
         "out_hw": "256x256",
         "volume_cache_size": 12,
+        "mask_mode": os.getenv("MASK_MODE", "none"),  # none | bg_only | brain_only
+        "label_shuffle": os.getenv("LABEL_SHUFFLE", "0") == "1",
     }
 
-    # Data + code fingerprints for reproducibility
-    manifest_hash = sha256_file(Path(manifest_path))
-    splits_hash = sha256_file(Path(splits_path))
-    ginfo = git_info()
+    # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
+    # while storing artifacts alongside the project (which should live on persistent storage,
+    # e.g. rhome on the lab VM). Allow env vars to override both locations.
+    project_root = Path(__file__).resolve().parents[1]
+    local_mlflow_dir = Path.home() / "mlflow_local"
+    artifact_dir = project_root / "mlruns"
 
-    # MLflow local tracking (falls back to ./mlflow.db if env var not set)
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db"))
+    local_mlflow_dir.mkdir(parents=True, exist_ok=True)
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+
+    default_tracking_uri = f"sqlite:///{local_mlflow_dir / 'mlflow.db'}"
+    default_artifact_root = artifact_dir.resolve().as_uri()
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", default_tracking_uri)
+    artifact_root = os.getenv("MLFLOW_ARTIFACT_ROOT", default_artifact_root)
+
+    mlflow.set_tracking_uri(tracking_uri)
+
+    client = mlflow.tracking.MlflowClient()
+    exp = client.get_experiment_by_name("site_probe")
+    if exp is None:
+        client.create_experiment("site_probe", artifact_location=artifact_root)
     mlflow.set_experiment("site_probe")
 
-    with mlflow.start_run(run_name=run_id):
+    with mlflow.start_run(run_name=f"{ablation_name}__{run_id}"):
         # log key params
         mlflow.log_params({
             "batch_size": batch_size,
@@ -129,13 +147,24 @@ def main():
             "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
         })
         mlflow.set_tag("run_dir", str(out_dir))
+        mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
+        mlflow.set_tag("mlflow_artifact_root", artifact_root)
         # Log preprocessing config and fingerprints
         mlflow.log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
+        manifest_hash = sha256_file(Path(manifest_path))
+        splits_hash = sha256_file(Path(splits_path))
+        ginfo = git_info()
+        mlflow.set_tag("ablation_name", ablation_name)
         mlflow.set_tag("abide_manifest_sha256", manifest_hash)
         mlflow.set_tag("splits_sha256", splits_hash)
         mlflow.set_tag("git_commit", ginfo.get("git_commit", "unknown"))
         mlflow.set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
         print("MLflow tracking URI:", mlflow.get_tracking_uri())
+
+        # Number of classes
+        df = __import__("pandas").read_csv(manifest_path)
+        num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
+        print("Num classes (sites):", num_classes)
 
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
         train_ds = AbideSlicesDataset(
@@ -147,6 +176,7 @@ def main():
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
             seed=42,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
+            mask_mode=preproc_cfg["mask_mode"],
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -157,12 +187,16 @@ def main():
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
             seed=123,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
+            mask_mode=preproc_cfg["mask_mode"],
         )
 
-        # Number of classes
-        df = __import__("pandas").read_csv(manifest_path)
-        num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
-        print("Num classes (sites):", num_classes)
+
+        if preproc_cfg["label_shuffle"]:
+            rng = np.random.RandomState(12345)
+            perm = rng.permutation(num_classes)
+            train_ds.set_label_permutation(perm.tolist())
+            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
+
         with open(out_dir / "config.json", "w") as f:
             json.dump(
                 {
@@ -193,6 +227,9 @@ def main():
             "paths": {
                 "manifest_path": manifest_path,
                 "splits_path": splits_path,
+                "project_root": str(project_root),
+                "mlflow_tracking_uri": tracking_uri,
+                "mlflow_artifact_root": artifact_root,
             },
             "hashes": {
                 "abide_manifest_sha256": manifest_hash,
@@ -208,18 +245,24 @@ def main():
         preproc_path.write_text(json.dumps(preproc_cfg, indent=2))
         mlflow.log_artifact(str(preproc_path))
 
+        pin = (device.type == "cuda")
+
         # Sampler with replacement lets us train longer than dataset length
         train_loader = DataLoader(
             train_ds,
             batch_size=batch_size,
             sampler=RandomSampler(train_ds, replacement=True, num_samples=batch_size * steps_per_epoch),
-            num_workers=0,
+            num_workers=4,
+            pin_memory=pin,
+            persistent_workers=(4 > 0),
         )
         val_loader = DataLoader(
             val_ds,
             batch_size=batch_size,
             shuffle=False,
-            num_workers=0,
+            num_workers=4,
+            pin_memory=pin,
+            persistent_workers=(4 > 0),
         )
 
         # Model: ResNet18 adapted to 1-channel input
@@ -260,6 +303,9 @@ def main():
 
                 if step >= steps_per_epoch:
                     break
+
+            avg_train_loss = running_loss / max(1, steps_per_epoch)
+            mlflow.log_metric("train_loss", avg_train_loss, step=epoch)
 
             # ---- Validation ----
             from collections import defaultdict
@@ -314,18 +360,26 @@ def main():
             print(f"[VAL] Epoch {epoch} | acc={acc:.4f} | bal_acc={bal:.4f} | epoch_time={epoch_elapsed:.1f}s")
             mlflow.log_metric("val_acc", acc, step=epoch)
             mlflow.log_metric("val_bal_acc", bal, step=epoch)
+            mlflow.log_metric("epoch_time_sec", epoch_elapsed, step=epoch)
 
-            # Save artifacts
-            torch.save(model.state_dict(), out_dir / f"model_epoch{epoch}.pt")
-            np.save(out_dir / f"cm_epoch{epoch}.npy", cm)
-            save_confusion_matrix_png(cm, out_dir / f"cm_epoch{epoch}.png")
-            mlflow.log_artifact(str(out_dir / f"cm_epoch{epoch}.png"))
+            # Save confusion matrix artifacts (local) and log PNG to MLflow
+            cm_npy_path = out_dir / f"cm_epoch{epoch}.npy"
+            cm_png_path = out_dir / f"cm_epoch{epoch}.png"
+
+            np.save(cm_npy_path, cm)
+            save_confusion_matrix_png(cm, cm_png_path)
+
+            # Log only the confusion matrix PNG per epoch
+            mlflow.log_artifact(str(cm_png_path))
 
             # Track best
             if bal > best_val_bal:
                 best_val_bal = bal
                 torch.save(model.state_dict(), out_dir / "model_best.pt")
-                mlflow.log_artifact(str(out_dir / "model_best.pt"))
+
+        best_path = out_dir / "model_best.pt"
+        if best_path.exists():
+            mlflow.log_artifact(str(best_path))
 
         print("Done. Best val balanced accuracy:", best_val_bal)
         print("Run dir:", out_dir)

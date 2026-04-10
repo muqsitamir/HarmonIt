@@ -15,15 +15,16 @@ A **slice** is simply a 2D cross-section of the 3D volume (e.g., an axial slice 
 
 ---
 
-## Pipeline summary (v0)
+## Pipeline summary (v0.2)
 
 **Input:** ABIDE T1 NIfTI volumes (1112 subjects)  
-**Output (training-time):** 2D axial slices, normalized and standardized for batch training.
+**Output (training-time):** 2D axial slices, normalized and standardized for batch training with geometry standardization (foreground bounding box crop + resize) and a robust slice selection policy focusing on mid-brain proxy slices.
 
 We avoid pre-saving all slices (storage explosion). Instead:
 1) preprocess **per-volume on-the-fly** (CPU-friendly),
-2) extract standardized **2D axial slices**,
-3) feed slices to the site-probe and harmonizer models.
+2) extract standardized **2D axial slices** using a foreground bounding box crop with margin and resizing,
+3) select slices based on percentile anchors and max foreground area scoring,
+4) feed slices to the site-probe and harmonizer models.
 
 ---
 
@@ -85,6 +86,11 @@ We avoid pre-saving all slices (storage explosion). Instead:
 **Why optional in v0:** skull stripping can fail and requires QC; cropping can provide a simpler first baseline.  
 **If we skip entirely:** site-probe accuracy may be inflated due to non-brain cues (still informative, but less clinically meaningful).
 
+**New masking ablations:** We introduce lightweight masking modes as probe sanity checks:  
+- `MASK_MODE=bg_only` keeps only low-intensity/background pixels, removing brain tissue.  
+- `MASK_MODE=brain_only` keeps only foreground-like pixels, masking out background.  
+These are diagnostic tools to test probe reliance on different image regions and are not part of the final pipeline.
+
 **Ablation:** compare probe accuracy:
 - no mask (baseline)
 - simple brain-centered crop (v0 default)
@@ -93,9 +99,12 @@ We avoid pre-saving all slices (storage explosion). Instead:
 ---
 
 ### Step 5 — Spatial standardization for 2D training (crop/pad, optional resampling)
-**What (v0):**
+**What (v0.2):**
 - Extract axial slices from the 3D volume.
-- Apply consistent 2D center crop/pad to a fixed size (e.g., 256×256), optionally resize to model input size.
+- Crop each slice to a foreground bounding box (a cheap brain proxy) with margin (default 20 pixels).
+- Resize the cropped slice to 256×256 using bilinear interpolation.
+
+This approach reduces probe cheating via borders or field-of-view differences and ensures the probe focuses on in-brain scanner signatures. Geometric standardization is a common practice in medical preprocessing to improve model robustness.
 
 **Why it’s necessary:**
 - ABIDE volumes have varying shapes and voxel spacings across sites; you cannot batch them otherwise.
@@ -106,6 +115,19 @@ We avoid pre-saving all slices (storage explosion). Instead:
 **Optional (later):** 3D resampling to isotropic spacing is common in medical pipelines, but we defer heavy resampling because we are using 2D and compute is constrained.
 
 **Ablation:** crop size and slice range (e.g., mid-slices only vs full range) and measure probe accuracy stability.
+
+---
+
+### Step 5b — Slice selection policy (robust mid-brain sampling)
+**What:**  
+- Filter valid slices by selecting those in a middle depth band of the volume and with sufficient foreground fraction.  
+- Define anchor slices at fixed depth percentiles (0.40, 0.50, 0.60) of the brain volume.  
+- For each anchor, choose candidate slices near it and score them by foreground area.  
+- During validation, select the max-foreground slice deterministically to ensure consistency.  
+- During training, sample among the top-K scored slices to add variance while staying focused on mid-brain regions.
+
+**Why it matters:**  
+This policy avoids shortcuts based on slice-level or coverage differences that could bias the probe. Sampling robust mid-brain slices ensures the probe learns relevant scanner and anatomical features rather than trivial positional cues.
 
 ---
 
@@ -124,14 +146,14 @@ We adopt 2D because:
 
 ---
 
-## Default v0 parameters
+## Default v0.2 parameters
 - Orientation: `as_closest_canonical`
 - Intensity: clip [p1, p99] then z-score (within nonzero mask)
-- Slice plane: axial
-- Slice filtering: discard slices with very low nonzero fraction (empty)
-- 2D size: center crop/pad to 256×256; optional resize to 224×224
-- Brain extraction: off in v0 (use crop); optional BET later
-- Bias correction: off in v0; optional N4 later
+- Slice selection: percentile anchors (0.40, 0.50, 0.60) + max-foreground scoring; training samples top-K, validation picks best
+- 2D size: foreground bounding box crop (threshold=0.05) with margin=20 then resize to 256×256
+- Mask mode default: none (with ablation modes `bg_only` and `brain_only` available)
+- Brain extraction: off in v0.2 (use crop); optional BET later
+- Bias correction: off in v0.2; optional N4 later
 
 ---
 
@@ -140,3 +162,14 @@ We adopt 2D because:
 - preprocessing details + parameter values,
 - QC examples across multiple sites,
 - ablation evidence for key steps (intensity normalization, masking/crop, optional N4).
+
+---
+
+## Run provenance (reproducibility)
+
+Each run logs comprehensive metadata to ensure reproducibility and traceability of ablation experiments, including:  
+- `preprocessing.json` capturing preprocessing parameters and pipeline versions,  
+- `run_metadata.json` containing hashes for the manifest and splits files, git commit hash and dirty state,  
+- MLflow parameters and tags for experiment tracking.
+
+This metadata ensures that differences in probe or harmonizer performance can be confidently attributed to preprocessing choices.
