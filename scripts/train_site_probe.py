@@ -82,7 +82,7 @@ def main():
 
     # Output run dir
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.1")
+    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.2")
     out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -94,8 +94,14 @@ def main():
     val_batches = int(os.getenv("VAL_BATCHES", "30"))
     print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} val_batches={val_batches}")
 
+    seed = int(os.getenv("SEED", "42"))
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
     preproc_cfg = {
-        "preproc_version": "v0.1",
+        "preproc_version": "v0.2",
         "canonical_orientation": True,
         "intensity_clip_pcts": "1,99",
         "zscore_mask": "nonzero",
@@ -107,6 +113,10 @@ def main():
         "volume_cache_size": 12,
         "mask_mode": os.getenv("MASK_MODE", "none"),  # none | bg_only | brain_only
         "label_shuffle": os.getenv("LABEL_SHUFFLE", "0") == "1",
+        "bg_suppress": os.getenv("BG_SUPPRESS", "1") == "1",
+        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.08")),
+        "head_mask_dilate": int(os.getenv("HEAD_MASK_DILATE", "3")),
+        "seed": seed,
     }
 
     # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
@@ -145,6 +155,12 @@ def main():
             "slice_mode_val": "fixed",
             "valid_nonzero_frac": float(preproc_cfg["valid_fg_frac"]),
             "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
+            "seed": seed,
+            "bg_suppress": bool(preproc_cfg["bg_suppress"]),
+            "head_mask_thr": float(preproc_cfg["head_mask_thr"]),
+            "head_mask_dilate": int(preproc_cfg["head_mask_dilate"]),
+            "mask_mode": preproc_cfg["mask_mode"],
+            "label_shuffle": bool(preproc_cfg["label_shuffle"]),
         })
         mlflow.set_tag("run_dir", str(out_dir))
         mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
@@ -174,9 +190,12 @@ def main():
             out_hw=(256, 256),
             slice_mode="random",
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
-            seed=42,
+            seed=seed,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
+            bg_suppress=bool(preproc_cfg["bg_suppress"]),
+            head_mask_thr=float(preproc_cfg["head_mask_thr"]),
+            head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -185,9 +204,12 @@ def main():
             out_hw=(256, 256),
             slice_mode="fixed",  # deterministic validation
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
-            seed=123,
+            seed=seed + 1,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
+            bg_suppress=bool(preproc_cfg["bg_suppress"]),
+            head_mask_thr=float(preproc_cfg["head_mask_thr"]),
+            head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
         )
 
 
@@ -206,6 +228,12 @@ def main():
                     "steps_per_epoch": steps_per_epoch,
                     "val_batches": val_batches,
                     "num_classes": num_classes,
+                    "seed": seed,
+                    "bg_suppress": bool(preproc_cfg["bg_suppress"]),
+                    "head_mask_thr": float(preproc_cfg["head_mask_thr"]),
+                    "head_mask_dilate": int(preproc_cfg["head_mask_dilate"]),
+                    "mask_mode": preproc_cfg["mask_mode"],
+                    "label_shuffle": bool(preproc_cfg["label_shuffle"]),
                 },
                 f,
                 indent=2,

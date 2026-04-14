@@ -26,6 +26,11 @@ def robust_normalize(vol: np.ndarray, eps: float = 1e-6) -> np.ndarray:
     vals2 = v[mask] if mask.any() else v.reshape(-1)
     mu, sigma = float(vals2.mean()), float(vals2.std())
     v = (v - mu) / (sigma + eps)
+
+    # Important: preserve true background as exact zeros.
+    # After z-scoring, background zeros become negative and can be mistaken as foreground.
+    # We restore background voxels (defined by original v>0 mask) to 0.
+    v[~mask] = 0.0
     return v
 
 
@@ -76,6 +81,14 @@ def resize_to_hw(img2d: np.ndarray, out_hw: Tuple[int, int]) -> np.ndarray:
     t = torch.from_numpy(img2d.astype(np.float32)).unsqueeze(0).unsqueeze(0)  # [1,1,H,W]
     t = F.interpolate(t, size=(oh, ow), mode="bilinear", align_corners=False)
     return t[0, 0].cpu().numpy().astype(np.float32)
+
+
+def resize_mask_to_hw(mask2d: np.ndarray, out_hw: Tuple[int, int]) -> np.ndarray:
+    """Resize a binary mask to (H,W) using nearest-neighbor."""
+    oh, ow = out_hw
+    t = torch.from_numpy(mask2d.astype(np.float32)).unsqueeze(0).unsqueeze(0)  # [1,1,H,W]
+    t = F.interpolate(t, size=(oh, ow), mode="nearest")
+    return (t[0, 0].cpu().numpy() > 0.5)
 
 
 def binary_dilate(mask: np.ndarray, iters: int = 1) -> np.ndarray:
@@ -176,6 +189,29 @@ def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) 
     mask = fill_holes(mask)
     mask = binary_dilate(mask, iters=dilate_iters)
     return mask
+
+
+# --- Helper functions for bbox cropping of head mask ---
+def bbox_from_mask(mask: np.ndarray, margin: int = 20) -> Tuple[int, int, int, int]:
+    """Return (y0, y1, x0, x1) bbox from a binary mask, expanded by margin."""
+    ys, xs = np.where(mask)
+    if len(ys) == 0 or len(xs) == 0:
+        h, w = mask.shape
+        return 0, h, 0, w
+
+    y0, y1 = int(ys.min()), int(ys.max())
+    x0, x1 = int(xs.min()), int(xs.max())
+
+    y0 = max(0, y0 - margin)
+    x0 = max(0, x0 - margin)
+    y1 = min(mask.shape[0], y1 + margin + 1)
+    x1 = min(mask.shape[1], x1 + margin + 1)
+    return y0, y1, x0, x1
+
+
+def crop_with_bbox(img2d: np.ndarray, bbox: Tuple[int, int, int, int]) -> np.ndarray:
+    y0, y1, x0, x1 = bbox
+    return img2d[y0:y1, x0:x1]
 
 
 @dataclass
@@ -379,19 +415,24 @@ class AbideSlicesDataset(Dataset):
 
         k = self._pick_slice_index(vol_n, valid)
 
-        sl = vol_n[:, :, k]
+        sl_full = vol_n[:, :, k]
 
-        # Geometry standardization: crop to foreground bbox (cheap brain proxy) then resize
-        sl = crop_to_foreground_bbox(sl, thr=self.fg_bbox_thr, margin=self.fg_bbox_margin)
-        sl = resize_to_hw(sl, self.out_hw)
+        # Compute head/foreground mask on the FULL slice (before any crop)
+        head_mask_full = make_head_mask(sl_full, thr=self.head_mask_thr, dilate_iters=self.head_mask_dilate)
 
-        # Conservative head/foreground mask (used to remove background shortcut cues)
-        head_mask = make_head_mask(sl, thr=self.head_mask_thr, dilate_iters=self.head_mask_dilate)
+        # Crop slice and mask together using the head-mask bbox (+ margin)
+        bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
+        sl = crop_with_bbox(sl_full, bbox)
+        head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
 
-        # Default: suppress background so it cannot carry site signal
+        # Default: suppress background BEFORE resize so it cannot carry site signal
         if self.bg_suppress:
             sl = sl.copy()
-            sl[~head_mask] = 0.0
+            sl[~head_mask_pre] = 0.0
+
+        # Resize image and mask separately
+        sl = resize_to_hw(sl, self.out_hw)
+        head_mask = resize_mask_to_hw(head_mask_pre, self.out_hw)
 
         # Diagnostic masking ablations (define background as outside head_mask)
         if self.mask_mode == "bg_only":

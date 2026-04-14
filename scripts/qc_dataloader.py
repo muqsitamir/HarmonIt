@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import numpy as np
 
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
@@ -19,6 +20,14 @@ def main():
     n_batches = int(os.getenv("N_BATCHES", "1"))
     valid_fg_frac = float(os.getenv("VALID_FG_FRAC", "0.02"))
 
+    bg_suppress = os.getenv("BG_SUPPRESS", "1") == "1"
+    head_mask_thr = float(os.getenv("HEAD_MASK_THR", "0.08"))
+    head_mask_dilate = int(os.getenv("HEAD_MASK_DILATE", "3"))
+
+    # Fixed display range for imshow (helps avoid misleading auto-contrast)
+    vmin = float(os.getenv("VMIN", "-2.0"))
+    vmax = float(os.getenv("VMAX", "2.0"))
+
     ds = AbideSlicesDataset(
         manifest_path="data/abide_manifest.csv",
         splits_path="data/splits.json",
@@ -28,6 +37,9 @@ def main():
         valid_nonzero_frac=valid_fg_frac,
         seed=42,
         mask_mode=mask_mode,
+        bg_suppress=bg_suppress,
+        head_mask_thr=head_mask_thr,
+        head_mask_dilate=head_mask_dilate,
     )
 
     loader = DataLoader(
@@ -41,7 +53,20 @@ def main():
         imgs, site_ids, subject_ids, slice_idxs = batch
 
         print("\n--- QC Batch", b_idx, "---")
-        print("Split:", split, "| mask_mode:", mask_mode, "| out_hw:", out_hw)
+        print(
+            "Split:",
+            split,
+            "| mask_mode:",
+            mask_mode,
+            "| out_hw:",
+            out_hw,
+            "| bg_suppress:",
+            bg_suppress,
+            "| head_mask_thr:",
+            head_mask_thr,
+            "| head_mask_dilate:",
+            head_mask_dilate,
+        )
         print("Batch shapes:", imgs.shape)  # [B,1,H,W]
         print("Site IDs:", site_ids.tolist())
         print("Subjects:", list(subject_ids))
@@ -50,6 +75,8 @@ def main():
         # quick numeric sanity stats
         x = imgs.numpy()
         print("Value stats: min", float(x.min()), "max", float(x.max()), "mean", float(x.mean()), "std", float(x.std()))
+        nz_frac = float((np.abs(x) > 1e-6).mean())
+        print("Nonzero frac:", nz_frac)
 
         B = imgs.shape[0]
         ncols = 4
@@ -63,7 +90,7 @@ def main():
             if i >= B:
                 continue
             im = imgs[i, 0].numpy()
-            ax.imshow(im.T, cmap="gray", origin="lower")
+            ax.imshow(im.T, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
             ax.set_title(f"{subject_ids[i]} | site={int(site_ids[i])} | z={int(slice_idxs[i])}", fontsize=8)
 
         fig.tight_layout()
