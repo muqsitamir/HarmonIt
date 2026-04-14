@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import json
-from collections import OrderedDict
+from collections import OrderedDict, deque
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 import nibabel as nib
 import torch
+import torch.nn.functional as F
 from torch.utils.data import Dataset
 
 
@@ -25,6 +26,11 @@ def robust_normalize(vol: np.ndarray, eps: float = 1e-6) -> np.ndarray:
     vals2 = v[mask] if mask.any() else v.reshape(-1)
     mu, sigma = float(vals2.mean()), float(vals2.std())
     v = (v - mu) / (sigma + eps)
+
+    # Important: preserve true background as exact zeros.
+    # After z-scoring, background zeros become negative and can be mistaken as foreground.
+    # We restore background voxels (defined by original v>0 mask) to 0.
+    v[~mask] = 0.0
     return v
 
 
@@ -45,6 +51,167 @@ def center_crop_or_pad(img2d: np.ndarray, out_hw: Tuple[int, int] = (256, 256)) 
     px0 = max(0, (ow - cropped.shape[1]) // 2)
     out[py0:py0 + cropped.shape[0], px0:px0 + cropped.shape[1]] = cropped
     return out
+
+
+def crop_to_foreground_bbox(img2d: np.ndarray, thr: float = 0.05, margin: int = 10) -> np.ndarray:
+    """Crop a 2D slice to the bounding box of foreground pixels (cheap brain proxy).
+
+    Foreground is defined as |img| > thr (after z-score). If no foreground is found,
+    returns the original image.
+    """
+    m = np.abs(img2d) > thr
+    if not m.any():
+        return img2d
+
+    ys, xs = np.where(m)
+    y0, y1 = int(ys.min()), int(ys.max())
+    x0, x1 = int(xs.min()), int(xs.max())
+
+    y0 = max(0, y0 - margin)
+    x0 = max(0, x0 - margin)
+    y1 = min(img2d.shape[0] - 1, y1 + margin)
+    x1 = min(img2d.shape[1] - 1, x1 + margin)
+
+    return img2d[y0 : y1 + 1, x0 : x1 + 1]
+
+
+def resize_to_hw(img2d: np.ndarray, out_hw: Tuple[int, int]) -> np.ndarray:
+    """Resize a 2D numpy array to (H,W) using torch bilinear interpolation."""
+    oh, ow = out_hw
+    t = torch.from_numpy(img2d.astype(np.float32)).unsqueeze(0).unsqueeze(0)  # [1,1,H,W]
+    t = F.interpolate(t, size=(oh, ow), mode="bilinear", align_corners=False)
+    return t[0, 0].cpu().numpy().astype(np.float32)
+
+
+def resize_mask_to_hw(mask2d: np.ndarray, out_hw: Tuple[int, int]) -> np.ndarray:
+    """Resize a binary mask to (H,W) using nearest-neighbor."""
+    oh, ow = out_hw
+    t = torch.from_numpy(mask2d.astype(np.float32)).unsqueeze(0).unsqueeze(0)  # [1,1,H,W]
+    t = F.interpolate(t, size=(oh, ow), mode="nearest")
+    return (t[0, 0].cpu().numpy() > 0.5)
+
+
+def binary_dilate(mask: np.ndarray, iters: int = 1) -> np.ndarray:
+    out = mask.astype(bool).copy()
+    for _ in range(iters):
+        p = np.pad(out, 1, mode="constant", constant_values=False)
+        out = (
+            p[1:-1, 1:-1]
+            | p[:-2, 1:-1]
+            | p[2:, 1:-1]
+            | p[1:-1, :-2]
+            | p[1:-1, 2:]
+            | p[:-2, :-2]
+            | p[:-2, 2:]
+            | p[2:, :-2]
+            | p[2:, 2:]
+        )
+    return out
+
+
+def fill_holes(mask: np.ndarray) -> np.ndarray:
+    """Fill holes in a binary mask using flood-fill from the border."""
+    h, w = mask.shape
+    visited = np.zeros_like(mask, dtype=bool)
+    q = deque()
+
+    # enqueue all background border pixels
+    for x in range(w):
+        if not mask[0, x]:
+            q.append((0, x))
+        if not mask[h - 1, x]:
+            q.append((h - 1, x))
+    for y in range(h):
+        if not mask[y, 0]:
+            q.append((y, 0))
+        if not mask[y, w - 1]:
+            q.append((y, w - 1))
+
+    while q:
+        y, x = q.popleft()
+        if y < 0 or y >= h or x < 0 or x >= w:
+            continue
+        if visited[y, x] or mask[y, x]:
+            continue
+        visited[y, x] = True
+        q.extend([(y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1)])
+
+    holes = (~mask) & (~visited)
+    return mask | holes
+
+
+def largest_connected_component(mask: np.ndarray) -> np.ndarray:
+    """Return largest 4-connected component of a binary mask."""
+    h, w = mask.shape
+    visited = np.zeros_like(mask, dtype=bool)
+    best = np.zeros_like(mask, dtype=bool)
+    best_size = 0
+
+    for y in range(h):
+        for x in range(w):
+            if not mask[y, x] or visited[y, x]:
+                continue
+
+            q = deque([(y, x)])
+            comp = []
+            visited[y, x] = True
+
+            while q:
+                cy, cx = q.popleft()
+                comp.append((cy, cx))
+                for ny, nx in [(cy - 1, cx), (cy + 1, cx), (cy, cx - 1), (cy, cx + 1)]:
+                    if 0 <= ny < h and 0 <= nx < w and mask[ny, nx] and not visited[ny, nx]:
+                        visited[ny, nx] = True
+                        q.append((ny, nx))
+
+            if len(comp) > best_size:
+                best_size = len(comp)
+                best[:] = False
+                for cy, cx in comp:
+                    best[cy, cx] = True
+
+    return best
+
+
+def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) -> np.ndarray:
+    """Conservative head/foreground mask.
+
+    1) Threshold |img| on the normalized slice.
+    2) Keep the largest connected component.
+    3) Fill holes.
+    4) Dilate slightly for safety (avoid cutting cortex edges).
+    """
+    mask = np.abs(img2d) > thr
+    if not mask.any():
+        return np.ones_like(img2d, dtype=bool)
+
+    mask = largest_connected_component(mask)
+    mask = fill_holes(mask)
+    mask = binary_dilate(mask, iters=dilate_iters)
+    return mask
+
+
+# --- Helper functions for bbox cropping of head mask ---
+def bbox_from_mask(mask: np.ndarray, margin: int = 20) -> Tuple[int, int, int, int]:
+    """Return (y0, y1, x0, x1) bbox from a binary mask, expanded by margin."""
+    ys, xs = np.where(mask)
+    if len(ys) == 0 or len(xs) == 0:
+        h, w = mask.shape
+        return 0, h, 0, w
+
+    y0, y1 = int(ys.min()), int(ys.max())
+    x0, x1 = int(xs.min()), int(xs.max())
+
+    y0 = max(0, y0 - margin)
+    x0 = max(0, x0 - margin)
+    y1 = min(mask.shape[0], y1 + margin + 1)
+    x1 = min(mask.shape[1], x1 + margin + 1)
+    return y0, y1, x0, x1
+
+
+def crop_with_bbox(img2d: np.ndarray, bbox: Tuple[int, int, int, int]) -> np.ndarray:
+    y0, y1, x0, x1 = bbox
+    return img2d[y0:y1, x0:x1]
 
 
 @dataclass
@@ -78,8 +245,16 @@ class AbideSlicesDataset(Dataset):
         out_hw: Tuple[int, int] = (256, 256),
         slice_mode: str = "random",
         valid_nonzero_frac: float = 0.10,
+        slice_percentiles: Tuple[float, ...] = (0.40, 0.50, 0.60),
+        fg_bbox_thr: float = 0.05,
+        fg_bbox_margin: int = 20,
         seed: int = 42,
         volume_cache_size: int = 12,
+        mask_mode: str = "none",  # none | bg_only | brain_only
+        label_permutation: Optional[list] = None,
+        bg_suppress: bool = True,
+        head_mask_thr: float = 0.08,
+        head_mask_dilate: int = 3,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -87,6 +262,9 @@ class AbideSlicesDataset(Dataset):
         self.out_hw = out_hw
         self.slice_mode = slice_mode
         self.valid_nonzero_frac = valid_nonzero_frac
+        self.slice_percentiles = slice_percentiles
+        self.fg_bbox_thr = fg_bbox_thr
+        self.fg_bbox_margin = fg_bbox_margin
         self.rng = np.random.RandomState(seed)
 
         df = pd.read_csv(self.manifest_path)
@@ -121,8 +299,19 @@ class AbideSlicesDataset(Dataset):
         self._vol_cache: "OrderedDict[str, np.ndarray]" = OrderedDict()
         self.volume_cache_size = volume_cache_size
 
+        self.mask_mode = mask_mode
+        self._label_perm = label_permutation
+
+        self.bg_suppress = bg_suppress
+        self.head_mask_thr = head_mask_thr
+        self.head_mask_dilate = head_mask_dilate
+
     def __len__(self) -> int:
         return len(self.samples)
+
+    def set_label_permutation(self, perm: list) -> None:
+        """Apply a permutation to site_id labels (used for label-shuffle sanity checks)."""
+        self._label_perm = perm
 
     def _load_volume(self, sample: AbideSample) -> np.ndarray:
         sid = sample.subject_id
@@ -174,21 +363,94 @@ class AbideSlicesDataset(Dataset):
         self._valid_slices[sample.subject_id] = valid
         return valid
 
+    def _pick_slice_index(self, vol_n: np.ndarray, valid: List[int]) -> int:
+        """Pick a slice index using fixed depth percentiles but prefer the slice(s)
+        with the largest foreground area (cheap mid-brain proxy).
+
+        This reduces slice-level/coverage shortcuts for the site probe.
+        """
+        D = int(vol_n.shape[2])
+        if len(valid) == 0:
+            return D // 2
+
+        targets = [int(p * (D - 1)) for p in self.slice_percentiles]
+        base = []
+        for t in targets:
+            k = min(valid, key=lambda vv: abs(vv - t))
+            base.append(int(k))
+
+        valid_sorted = sorted(valid)
+        idx_map = {k: i for i, k in enumerate(valid_sorted)}
+        cand = []
+        for k in base:
+            i = idx_map.get(k, None)
+            if i is None:
+                continue
+            for j in range(max(0, i - 3), min(len(valid_sorted), i + 4)):
+                cand.append(int(valid_sorted[j]))
+
+        cand = list(dict.fromkeys(cand))
+        if len(cand) == 0:
+            cand = valid_sorted
+
+        thr = float(self.fg_bbox_thr)
+        scores = []
+        for k in cand:
+            sl = vol_n[:, :, k]
+            scores.append(float(np.mean(np.abs(sl) > thr)))
+
+        order = np.argsort(-np.asarray(scores))
+        cand_sorted = [cand[i] for i in order]
+
+        if self.slice_mode == "fixed":
+            return int(cand_sorted[0])
+
+        topk = min(3, len(cand_sorted))
+        return int(self.rng.choice(cand_sorted[:topk]))
+
     def __getitem__(self, idx: int):
         sample = self.samples[idx]
         vol_n = self._load_volume(sample)
         valid = self._compute_valid_slices(sample, vol_n)
 
-        if self.slice_mode == "random":
-            k = int(self.rng.choice(valid))
-        elif self.slice_mode == "fixed":
-            k = int(valid[len(valid) // 2])
-        else:
-            raise ValueError(f"Unknown slice_mode={self.slice_mode}")
+        k = self._pick_slice_index(vol_n, valid)
 
-        sl = vol_n[:, :, k]
-        sl = center_crop_or_pad(sl, self.out_hw)
+        sl_full = vol_n[:, :, k]
+
+        # Compute head/foreground mask on the FULL slice (before any crop)
+        head_mask_full = make_head_mask(sl_full, thr=self.head_mask_thr, dilate_iters=self.head_mask_dilate)
+
+        # Crop slice and mask together using the head-mask bbox (+ margin)
+        bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
+        sl = crop_with_bbox(sl_full, bbox)
+        head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
+
+        # Default: suppress background BEFORE resize so it cannot carry site signal
+        if self.bg_suppress:
+            sl = sl.copy()
+            sl[~head_mask_pre] = 0.0
+
+        # Resize image and mask separately
+        sl = resize_to_hw(sl, self.out_hw)
+        head_mask = resize_mask_to_hw(head_mask_pre, self.out_hw)
+
+        # Diagnostic masking ablations (define background as outside head_mask)
+        if self.mask_mode == "bg_only":
+            out = np.zeros_like(sl, dtype=np.float32)
+            out[~head_mask] = sl[~head_mask]
+            sl = out
+        elif self.mask_mode == "brain_only":
+            out = np.zeros_like(sl, dtype=np.float32)
+            out[head_mask] = sl[head_mask]
+            sl = out
+        elif self.mask_mode != "none":
+            raise ValueError(f"Unknown mask_mode={self.mask_mode}")
 
         # return as [1, H, W]
         img_t = torch.from_numpy(sl).float().unsqueeze(0)
-        return img_t, sample.site_id, sample.subject_id, k
+
+        site_id = sample.site_id
+        if self._label_perm is not None:
+            site_id = int(self._label_perm[int(site_id)])
+
+        return img_t, site_id, sample.subject_id, k
