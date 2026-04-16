@@ -430,21 +430,20 @@ class AbideSlicesDataset(Dataset):
             sl = sl.copy()
             sl[~head_mask_pre] = 0.0
 
-        # Resize image and mask separately
-        sl = resize_to_hw(sl, self.out_hw)
-        head_mask = resize_mask_to_hw(head_mask_pre, self.out_hw)
-
-        # Diagnostic masking ablations (define background as outside head_mask)
+        # Apply diagnostic masking ablations BEFORE resize (avoid interpolation leakage)
         if self.mask_mode == "bg_only":
             out = np.zeros_like(sl, dtype=np.float32)
-            out[~head_mask] = sl[~head_mask]
+            out[~head_mask_pre] = sl[~head_mask_pre]
             sl = out
         elif self.mask_mode == "brain_only":
             out = np.zeros_like(sl, dtype=np.float32)
-            out[head_mask] = sl[head_mask]
+            out[head_mask_pre] = sl[head_mask_pre]
             sl = out
         elif self.mask_mode != "none":
             raise ValueError(f"Unknown mask_mode={self.mask_mode}")
+
+        # Resize final slice to model input size
+        sl = resize_to_hw(sl, self.out_hw)
 
         # return as [1, H, W]
         img_t = torch.from_numpy(sl).float().unsqueeze(0)
