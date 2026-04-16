@@ -19,6 +19,8 @@ def main():
     num_workers = int(os.getenv("NUM_WORKERS", "0"))
     n_batches = int(os.getenv("N_BATCHES", "1"))
     valid_fg_frac = float(os.getenv("VALID_FG_FRAC", "0.02"))
+    input_mode = os.getenv("INPUT_MODE", "image")  # image | mask_only
+    bbox_jitter = int(os.getenv("BBOX_JITTER", "0"))
 
     bg_suppress = os.getenv("BG_SUPPRESS", "1") == "1"
     head_mask_thr = float(os.getenv("HEAD_MASK_THR", "0.08"))
@@ -40,6 +42,8 @@ def main():
         bg_suppress=bg_suppress,
         head_mask_thr=head_mask_thr,
         head_mask_dilate=head_mask_dilate,
+        input_mode=input_mode,
+        bbox_jitter=bbox_jitter,
     )
 
     loader = DataLoader(
