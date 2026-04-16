@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler
 
+from harmonit.metrics import evaluate_all_metrics
 from harmonit.data.abide_slices_dataset import AbideSlicesDataset
 
 load_dotenv()
@@ -72,7 +73,52 @@ def save_confusion_matrix_png(cm: np.ndarray, out_path: Path):
     plt.close(fig)
 
 
+class NullMlflowContext:
+    """Dummy context manager when MLflow is unavailable."""
+    def __enter__(self):
+        return self
+    def __exit__(self, *args):
+        pass
+
+
+def log_metric(name, value, step=None):
+    """Safely log metrics, handling MLflow unavailability."""
+    if hasattr(log_metric, '_available') and log_metric._available:
+        try:
+            mlflow.log_metric(name, value, step=step)
+        except:
+            pass
+
+
+def log_params(params):
+    """Safely log params, handling MLflow unavailability."""
+    if hasattr(log_params, '_available') and log_params._available:
+        try:
+            mlflow.log_params(params)
+        except:
+            pass
+
+
+def set_tag(key, value):
+    """Safely set tags, handling MLflow unavailability."""
+    if hasattr(set_tag, '_available') and set_tag._available:
+        try:
+            mlflow.set_tag(key, value)
+        except:
+            pass
+
+
+def log_artifact(path):
+    """Safely log artifacts, handling MLflow unavailability."""
+    if hasattr(log_artifact, '_available') and log_artifact._available:
+        try:
+            mlflow.log_artifact(str(path))
+        except:
+            pass
+
+
 def main():
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Device:", device)
 
@@ -119,32 +165,50 @@ def main():
         "seed": seed,
     }
 
-    # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
-    # while storing artifacts alongside the project (which should live on persistent storage,
-    # e.g. rhome on the lab VM). Allow env vars to override both locations.
+    # MLflow tracking: use file-based store to avoid SQLite schema issues
     project_root = Path(__file__).resolve().parents[1]
-    local_mlflow_dir = Path.home() / "mlflow_local"
     artifact_dir = project_root / "mlruns"
+    mlflow_dir = artifact_dir / "mlflow"
 
-    local_mlflow_dir.mkdir(parents=True, exist_ok=True)
     artifact_dir.mkdir(parents=True, exist_ok=True)
+    mlflow_dir.mkdir(parents=True, exist_ok=True)
 
-    default_tracking_uri = f"sqlite:///{local_mlflow_dir / 'mlflow.db'}"
-    default_artifact_root = artifact_dir.resolve().as_uri()
+    # Use file:// URI for local file-based experiment tracking
+    default_tracking_uri = f"file:///{mlflow_dir.resolve().as_posix()}"
+    default_artifact_root = (artifact_dir / "artifacts").resolve().as_uri()
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", default_tracking_uri)
     artifact_root = os.getenv("MLFLOW_ARTIFACT_ROOT", default_artifact_root)
 
-    mlflow.set_tracking_uri(tracking_uri)
+    # Try to initialize MLflow, but don't crash if it fails
+    mlflow_available = False
+    try:
+        mlflow.set_tracking_uri(tracking_uri)
+        client = mlflow.tracking.MlflowClient()
+        exp = client.get_experiment_by_name("site_probe")
+        if exp is None:
+            client.create_experiment("site_probe", artifact_location=artifact_root)
+        mlflow.set_experiment("site_probe")
+        # Mark functions as available
+        log_metric._available = True
+        log_params._available = True
+        set_tag._available = True
+        log_artifact._available = True
+        mlflow_available = True
+        print(f"MLflow tracking URI: {tracking_uri}")
+    except Exception as mlflow_err:
+        print(f"Warning: MLflow initialization failed ({mlflow_err}). Continuing without experiment tracking.")
+        log_metric._available = False
+        log_params._available = False
+        set_tag._available = False
+        log_artifact._available = False
+        mlflow_available = False
 
-    client = mlflow.tracking.MlflowClient()
-    exp = client.get_experiment_by_name("site_probe")
-    if exp is None:
-        client.create_experiment("site_probe", artifact_location=artifact_root)
-    mlflow.set_experiment("site_probe")
-
-    with mlflow.start_run(run_name=f"{ablation_name}__{run_id}"):
+    # Use dummy context if MLflow not available
+    mlflow_context = mlflow.start_run(run_name=f"{ablation_name}__{run_id}") if mlflow_available else NullMlflowContext()
+    
+    with mlflow_context:
         # log key params
-        mlflow.log_params({
+        log_params({
             "batch_size": batch_size,
             "epochs": epochs,
             "lr": lr,
@@ -162,20 +226,21 @@ def main():
             "mask_mode": preproc_cfg["mask_mode"],
             "label_shuffle": bool(preproc_cfg["label_shuffle"]),
         })
-        mlflow.set_tag("run_dir", str(out_dir))
-        mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
-        mlflow.set_tag("mlflow_artifact_root", artifact_root)
+        set_tag("run_dir", str(out_dir))
+        set_tag("mlflow_tracking_uri", tracking_uri)
+        set_tag("mlflow_artifact_root", artifact_root)
         # Log preprocessing config and fingerprints
-        mlflow.log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
+        log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
         manifest_hash = sha256_file(Path(manifest_path))
         splits_hash = sha256_file(Path(splits_path))
         ginfo = git_info()
-        mlflow.set_tag("ablation_name", ablation_name)
-        mlflow.set_tag("abide_manifest_sha256", manifest_hash)
-        mlflow.set_tag("splits_sha256", splits_hash)
-        mlflow.set_tag("git_commit", ginfo.get("git_commit", "unknown"))
-        mlflow.set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
-        print("MLflow tracking URI:", mlflow.get_tracking_uri())
+        set_tag("ablation_name", ablation_name)
+        set_tag("abide_manifest_sha256", manifest_hash)
+        set_tag("splits_sha256", splits_hash)
+        set_tag("git_commit", ginfo.get("git_commit", "unknown"))
+        set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
+        if mlflow_available:
+            print("MLflow tracking URI:", mlflow.get_tracking_uri())
 
         # Number of classes
         df = __import__("pandas").read_csv(manifest_path)
@@ -217,7 +282,7 @@ def main():
             rng = np.random.RandomState(12345)
             perm = rng.permutation(num_classes)
             train_ds.set_label_permutation(perm.tolist())
-            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
+            set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
 
         with open(out_dir / "config.json", "w") as f:
             json.dump(
@@ -239,7 +304,7 @@ def main():
                 indent=2,
             )
         # log config file as artifact (after writing)
-        mlflow.log_artifact(str(out_dir / "config.json"))
+        log_artifact(out_dir / "config.json")
 
         metadata = {
             "run_id": run_id,
@@ -267,11 +332,11 @@ def main():
         }
         meta_path = out_dir / "run_metadata.json"
         meta_path.write_text(json.dumps(metadata, indent=2))
-        mlflow.log_artifact(str(meta_path))
+        log_artifact(meta_path)
 
         preproc_path = out_dir / "preprocessing.json"
         preproc_path.write_text(json.dumps(preproc_cfg, indent=2))
-        mlflow.log_artifact(str(preproc_path))
+        log_artifact(preproc_path)
 
         pin = (device.type == "cuda")
 
@@ -333,7 +398,7 @@ def main():
                     break
 
             avg_train_loss = running_loss / max(1, steps_per_epoch)
-            mlflow.log_metric("train_loss", avg_train_loss, step=epoch)
+            log_metric("train_loss", avg_train_loss, step=epoch)
 
             # ---- Validation ----
             from collections import defaultdict
@@ -384,11 +449,80 @@ def main():
 
             cm, acc, bal = confusion_and_balanced_acc(y_true, y_pred, num_classes)
 
+            # ---- OPTION A: Minimal Integration of Evaluation Framework ----
+            print("\n[Integrated Metrics Evaluation]")
+            
+            # Prepare evaluation data
+            eval_results = evaluate_all_metrics(
+                y_true=y_true,
+                y_pred=y_pred,
+                y_prob=None,  # Not available without capturing logits
+                y_true_site=y_true,  # Site is the classification target
+                y_pred_site=y_pred,
+                img1=None,
+                img2=None,
+                feat1=None,
+                feat2=None,
+                dist1=None,
+                dist2=None,
+            )
+
+            # Display and log classification metrics
+            if "classification" in eval_results:
+                cls_metrics = eval_results["classification"]
+                print(f"[Classification Metrics]")
+                print(f"  Accuracy:  {cls_metrics['accuracy']:.4f}")
+                print(f"  Precision: {cls_metrics['precision']:.4f}")
+                print(f"  Recall:    {cls_metrics['recall']:.4f}")
+                print(f"  F1-Score:  {cls_metrics['f1']:.4f}")
+                if "roc_auc" in cls_metrics and cls_metrics['roc_auc'] is not None:
+                    print(f"  ROC-AUC:   {cls_metrics['roc_auc']:.4f}")
+                    log_metric("val_roc_auc", float(cls_metrics['roc_auc']), step=epoch)
+                
+                # Log to MLflow/tracking
+                log_metric("val_classification_accuracy", float(cls_metrics['accuracy']), step=epoch)
+                log_metric("val_classification_precision", float(cls_metrics['precision']), step=epoch)
+                log_metric("val_classification_recall", float(cls_metrics['recall']), step=epoch)
+                log_metric("val_classification_f1", float(cls_metrics['f1']), step=epoch)
+
+            # Display and log site leakage metrics
+            if "site_leakage" in eval_results:
+                site_leakage_acc = eval_results["site_leakage"]
+                print(f"[Site Leakage Metrics]")
+                print(f"  Site Classification Accuracy: {site_leakage_acc:.4f}")
+                log_metric("val_site_leakage_accuracy", float(site_leakage_acc), step=epoch)
+
+            # Save detailed metrics to JSON for archival
+            metrics_file = out_dir / f"metrics_epoch{epoch}.json"
+            with open(metrics_file, "w") as f:
+                eval_results_serializable = {}
+                for k, v in eval_results.items():
+                    if k == "classification":
+                        # Convert numpy arrays in confusion matrix to list
+                        eval_results_serializable[k] = {
+                            "accuracy": float(v["accuracy"]),
+                            "precision": float(v["precision"]),
+                            "recall": float(v["recall"]),
+                            "f1": float(v["f1"]),
+                            "roc_auc": float(v.get("roc_auc", np.nan)) if v.get("roc_auc") is not None else None,
+                            "confusion_matrix": v["confusion_matrix"].tolist(),
+                        }
+                    elif isinstance(v, (float, np.floating)):
+                        eval_results_serializable[k] = float(v)
+                    else:
+                        eval_results_serializable[k] = str(v)
+                
+                json.dump(eval_results_serializable, f, indent=2)
+
+            log_artifact(metrics_file)
+            print(f"Metrics saved to: {metrics_file}\n")
+            # ---- END OPTION A ----
+
             epoch_elapsed = time.time() - epoch_start
             print(f"[VAL] Epoch {epoch} | acc={acc:.4f} | bal_acc={bal:.4f} | epoch_time={epoch_elapsed:.1f}s")
-            mlflow.log_metric("val_acc", acc, step=epoch)
-            mlflow.log_metric("val_bal_acc", bal, step=epoch)
-            mlflow.log_metric("epoch_time_sec", epoch_elapsed, step=epoch)
+            log_metric("val_acc", acc, step=epoch)
+            log_metric("val_bal_acc", bal, step=epoch)
+            log_metric("epoch_time_sec", epoch_elapsed, step=epoch)
 
             # Save confusion matrix artifacts (local) and log PNG to MLflow
             cm_npy_path = out_dir / f"cm_epoch{epoch}.npy"
@@ -398,7 +532,7 @@ def main():
             save_confusion_matrix_png(cm, cm_png_path)
 
             # Log only the confusion matrix PNG per epoch
-            mlflow.log_artifact(str(cm_png_path))
+            log_artifact(cm_png_path)
 
             # Track best
             if bal > best_val_bal:
@@ -407,7 +541,7 @@ def main():
 
         best_path = out_dir / "model_best.pt"
         if best_path.exists():
-            mlflow.log_artifact(str(best_path))
+            log_artifact(best_path)
 
         print("Done. Best val balanced accuracy:", best_val_bal)
         print("Run dir:", out_dir)

@@ -3,3 +3,4 @@ from .site_leakage import site_classification_accuracy
 from .structural_preservation import compute_ssim, compute_psnr
 from .feature_consistency import feature_similarity
 from .distribution_alignment import kl_divergence, wasserstein_dist
+from .evaluator import evaluate_all_metrics
