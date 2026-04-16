@@ -255,6 +255,8 @@ class AbideSlicesDataset(Dataset):
         bg_suppress: bool = True,
         head_mask_thr: float = 0.08,
         head_mask_dilate: int = 3,
+        input_mode: str = "image",  # image | mask_only
+        bbox_jitter: int = 0,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -305,6 +307,8 @@ class AbideSlicesDataset(Dataset):
         self.bg_suppress = bg_suppress
         self.head_mask_thr = head_mask_thr
         self.head_mask_dilate = head_mask_dilate
+        self.input_mode = str(input_mode)
+        self.bbox_jitter = int(bbox_jitter)
 
     def __len__(self) -> int:
         return len(self.samples)
@@ -422,8 +426,32 @@ class AbideSlicesDataset(Dataset):
 
         # Crop slice and mask together using the head-mask bbox (+ margin)
         bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
+        # Optional crop jitter (train only): reduces reliance on fixed boundary placement
+        if self.bbox_jitter > 0 and self.split == "train":
+            y0, y1, x0, x1 = bbox
+            h, w = head_mask_full.shape
+            dy = int(self.rng.randint(-self.bbox_jitter, self.bbox_jitter + 1))
+            dx = int(self.rng.randint(-self.bbox_jitter, self.bbox_jitter + 1))
+            y0 = max(0, min(h - 1, y0 + dy))
+            y1 = max(y0 + 1, min(h, y1 + dy))
+            x0 = max(0, min(w - 1, x0 + dx))
+            x1 = max(x0 + 1, min(w, x1 + dx))
+            bbox = (y0, y1, x0, x1)
         sl = crop_with_bbox(sl_full, bbox)
         head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
+
+        # Input-mode diagnostics
+        if self.input_mode == "mask_only":
+            # Use only the binary mask as input (tests whether mask geometry alone predicts site)
+            m = resize_mask_to_hw(head_mask_pre, self.out_hw).astype(np.float32)
+            img_t = torch.from_numpy(m).float().unsqueeze(0)
+
+            site_id = sample.site_id
+            if self._label_perm is not None:
+                site_id = int(self._label_perm[int(site_id)])
+            return img_t, site_id, sample.subject_id, k
+        elif self.input_mode != "image":
+            raise ValueError(f"Unknown input_mode={self.input_mode}")
 
         # Default: suppress background BEFORE resize so it cannot carry site signal
         if self.bg_suppress:

@@ -91,6 +91,29 @@ def main():
                 continue
             im = imgs[i, 0].numpy()
             ax.imshow(im.T, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
+
+            """
+            # For console to debug
+            # 1. Find the most negative value
+            min_val = im.min()
+            print(f"Lowest value found: {min_val}")
+
+            # 2. Define your 'closeness' threshold (e.g., within 5% of the range or a fixed number)
+            # Change '0.1' to whatever tolerance you need
+            threshold = 0.1
+
+            # 3. Create a copy and zero out the cluster
+            im_filtered = im.copy()
+            im_filtered[(im_filtered >= min_val) & (im_filtered <= min_val + threshold)] = 0
+
+            # 4. Visualize
+            plt.figure(figsize=(6, 5))
+            plt.imshow(im_filtered.T, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
+            plt.colorbar()
+            plt.title(f"Min ({min_val}) + Threshold ({threshold}) zeroed")
+            plt.show()
+            """
+
             ax.set_title(f"{subject_ids[i]} | site={int(site_ids[i])} | z={int(slice_idxs[i])}", fontsize=8)
 
         fig.tight_layout()

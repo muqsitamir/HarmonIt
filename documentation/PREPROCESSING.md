@@ -24,7 +24,10 @@ We avoid pre-saving all slices (storage explosion). Instead:
 1) preprocess **per-volume on-the-fly** (CPU-friendly),
 2) extract standardized **2D axial slices** using a foreground bounding box crop with margin and resizing,
 3) select slices based on percentile anchors and max foreground area scoring,
+
 4) feed slices to the site-probe and harmonizer models.
+
+**Key update (masking robustness):** We use a conservative **head/foreground mask** (largest connected component + hole filling + dilation) computed on the normalized slice *before any resizing*. We then (optionally) **suppress background** by setting pixels outside this mask to 0 *before interpolation*. This prevents the site-probe from exploiting framing/background shortcuts while preserving in-mask anatomy exactly.
 
 ---
 
@@ -51,6 +54,7 @@ We avoid pre-saving all slices (storage explosion). Instead:
 
 ### Step 2 — Intensity normalization (mandatory in MRI)
 **What:** per-volume robust normalization: clip intensities to [p1, p99] then z-score (within nonzero mask or within brain crop).  
+**Implementation note:** after z-scoring, we explicitly restore true background voxels to exact 0 to prevent background from becoming a constant negative value (which would break threshold-based masking).
 **Why it’s necessary:**
 - MRI intensities are not standardized units; scale/contrast vary across scanners and protocols.
 - Without normalization, models often overfit to site-specific intensity scaling rather than anatomy.
@@ -86,10 +90,13 @@ We avoid pre-saving all slices (storage explosion). Instead:
 **Why optional in v0:** skull stripping can fail and requires QC; cropping can provide a simpler first baseline.  
 **If we skip entirely:** site-probe accuracy may be inflated due to non-brain cues (still informative, but less clinically meaningful).
 
-**New masking ablations:** We introduce lightweight masking modes as probe sanity checks:  
-- `MASK_MODE=bg_only` keeps only low-intensity/background pixels, removing brain tissue.  
-- `MASK_MODE=brain_only` keeps only foreground-like pixels, masking out background.  
-These are diagnostic tools to test probe reliance on different image regions and are not part of the final pipeline.
+**Masking diagnostics (probe sanity checks):** We expose masking modes to test whether the probe is learning shortcuts:
+- `MASK_MODE=brain_only`: keeps only pixels **inside** the head/foreground mask.
+- `MASK_MODE=bg_only`: keeps only pixels **outside** the head/foreground mask.
+
+**Important:** `BG_SUPPRESS=1` zeros pixels outside the head mask *before resize* (production setting). Therefore `MASK_MODE=bg_only` with `BG_SUPPRESS=1` should collapse to chance by design. For a *true diagnostic* of what the probe can learn from outside-head regions, run `MASK_MODE=bg_only` with `BG_SUPPRESS=0`.
+
+These diagnostics are used to validate evaluation integrity; they are not the harmonization objective.
 
 **Ablation:** compare probe accuracy:
 - no mask (baseline)
@@ -101,7 +108,7 @@ These are diagnostic tools to test probe reliance on different image regions and
 ### Step 5 — Spatial standardization for 2D training (crop/pad, optional resampling)
 **What (v0.2):**
 - Extract axial slices from the 3D volume.
-- Crop each slice to a foreground bounding box (a cheap brain proxy) with margin (default 20 pixels).
+- Crop each slice using a head-mask bounding box (+ margin; default 20 pixels).
 - Resize the cropped slice to 256×256 using bilinear interpolation.
 
 This approach reduces probe cheating via borders or field-of-view differences and ensures the probe focuses on in-brain scanner signatures. Geometric standardization is a common practice in medical preprocessing to improve model robustness.
@@ -114,7 +121,19 @@ This approach reduces probe cheating via borders or field-of-view differences an
 
 **Optional (later):** 3D resampling to isotropic spacing is common in medical pipelines, but we defer heavy resampling because we are using 2D and compute is constrained.
 
+
 **Ablation:** crop size and slice range (e.g., mid-slices only vs full range) and measure probe accuracy stability.
+
+### Step 5a — Head-mask crop + background suppression (probe robustness)
+**What (v0.2+):**
+- Compute a conservative head/foreground mask on the **full normalized slice** (before any resizing).
+- Derive a tight crop region from the mask bounding box plus margin; crop the slice and mask together.
+- If `BG_SUPPRESS=1`, set pixels outside the mask to 0 **before resize**.
+- Resize the final slice to 256×256 for model input.
+
+**Why it’s necessary:** resizing/interpolation can blur nonzero values into the background. If masking is applied after resize, background pixels can become nonzero and the mask can degenerate (covering everything), reintroducing shortcut learning. Applying masking/suppression pre-resize makes the definition of “background” stable and interpretable.
+
+**Evidence (our QC):** `scripts/qc_head_mask.py` reports non-degenerate mask coverage across sites (e.g., mean mask area ~0.83 with nonzero variance) and retains nearly all in-mask energy (~0.999), indicating we are not cutting anatomy while preserving a meaningful outside-mask region.
 
 ---
 
@@ -150,9 +169,10 @@ We adopt 2D because:
 - Orientation: `as_closest_canonical`
 - Intensity: clip [p1, p99] then z-score (within nonzero mask)
 - Slice selection: percentile anchors (0.40, 0.50, 0.60) + max-foreground scoring; training samples top-K, validation picks best
-- 2D size: foreground bounding box crop (threshold=0.05) with margin=20 then resize to 256×256
-- Mask mode default: none (with ablation modes `bg_only` and `brain_only` available)
-- Brain extraction: off in v0.2 (use crop); optional BET later
+- 2D size: head-mask bbox crop (margin=20) then resize to 256×256
+- Head mask: threshold on |slice| (default thr=0.08), largest component + hole fill + dilation (default 3)
+- Background suppression (probe): `BG_SUPPRESS=1` (default) zeros pixels outside head mask pre-resize
+- Mask mode default: `MASK_MODE=none` (diagnostics: `bg_only`, `brain_only`; use `BG_SUPPRESS=0` for true outside-mask diagnostics)
 - Bias correction: off in v0.2; optional N4 later
 
 ---
