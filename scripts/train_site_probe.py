@@ -59,17 +59,23 @@ def confusion_and_balanced_acc(y_true: np.ndarray, y_pred: np.ndarray, num_class
     return cm, acc, bal_acc
 
 
-def save_confusion_matrix_png(cm: np.ndarray, out_path: Path):
+def save_confusion_matrix_png(cm: np.ndarray, out_path: Path, class_names: list[str]):
     import matplotlib.pyplot as plt
 
-    fig = plt.figure(figsize=(8, 7))
+    n = len(class_names)
+    fig = plt.figure(figsize=(max(8, 0.55 * n), max(7, 0.50 * n)))
     plt.imshow(cm, interpolation="nearest")
     plt.title("Site Probe Confusion Matrix")
     plt.colorbar(fraction=0.046, pad=0.04)
+
+    tick_positions = np.arange(n)
+    plt.xticks(tick_positions, class_names, rotation=90)
+    plt.yticks(tick_positions, class_names)
+
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.tight_layout()
-    fig.savefig(out_path, dpi=160)
+    fig.savefig(out_path, dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -199,7 +205,17 @@ def main():
         # Number of classes
         df = __import__("pandas").read_csv(manifest_path)
         num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
+
+        if "site_id" in df.columns and "site" in df.columns:
+            site_map_df = df[["site_id", "site"]].drop_duplicates().sort_values("site_id")
+            class_names = site_map_df["site"].astype(str).tolist()
+        elif "site" in df.columns:
+            class_names = sorted(df["site"].astype(str).unique().tolist())
+        else:
+            class_names = [str(i) for i in range(num_classes)]
+
         print("Num classes (sites):", num_classes)
+        print("Class names:", class_names)
 
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
         train_ds = AbideSlicesDataset(
@@ -255,6 +271,7 @@ def main():
                     "steps_per_epoch": steps_per_epoch,
                     "val_batches": val_batches,
                     "num_classes": num_classes,
+                    "class_names": class_names,
                     "seed": seed,
                     "bg_suppress": bool(preproc_cfg["bg_suppress"]),
                     "head_mask_thr": float(preproc_cfg["head_mask_thr"]),
@@ -289,6 +306,7 @@ def main():
                 "val_batches": val_batches,
             },
             "preprocessing": preproc_cfg,
+            "class_names": class_names,
             "paths": {
                 "manifest_path": manifest_path,
                 "splits_path": splits_path,
@@ -403,7 +421,7 @@ def main():
             cm_png_path = out_dir / f"cm_epoch{epoch}.png"
 
             np.save(cm_npy_path, cm)
-            save_confusion_matrix_png(cm, cm_png_path)
+            save_confusion_matrix_png(cm, cm_png_path, class_names)
 
             # Log only the confusion matrix PNG per epoch
             mlflow.log_artifact(str(cm_png_path))
