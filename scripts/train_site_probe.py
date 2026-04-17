@@ -83,7 +83,7 @@ def main():
 
     # Output run dir
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.2")
+    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.3")
     out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -121,6 +121,11 @@ def main():
         "input_mode": os.getenv("INPUT_MODE", "image"),  # image | mask_only
         "bbox_jitter": int(os.getenv("BBOX_JITTER", "0")),
         "mask_only_repr": os.getenv("MASK_ONLY_REPR", "binary"),  # binary | dist
+        "aug_affine": os.getenv("AUG_AFFINE", "0") == "1",
+        "aug_prob": float(os.getenv("AUG_PROB", "1.0")),
+        "aug_rot_deg": float(os.getenv("AUG_ROT_DEG", "7")),
+        "aug_trans_px": int(os.getenv("AUG_TRANS_PX", "16")),
+        "aug_scale_jitter": float(os.getenv("AUG_SCALE_JITTER", "0.10")),
     }
 
     # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
@@ -170,6 +175,11 @@ def main():
             "input_mode": preproc_cfg["input_mode"],
             "bbox_jitter": int(preproc_cfg["bbox_jitter"]),
             "mask_only_repr": preproc_cfg["mask_only_repr"],
+            "aug_affine": preproc_cfg["aug_affine"],
+            "aug_prob": float(preproc_cfg["aug_prob"]),
+            "aug_rot_deg": float(preproc_cfg["aug_rot_deg"]),
+            "aug_trans_px": int(preproc_cfg["aug_trans_px"]),
+            "aug_scale_jitter": float(preproc_cfg["aug_scale_jitter"]),
         })
         mlflow.set_tag("run_dir", str(out_dir))
         mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
@@ -256,6 +266,11 @@ def main():
                     "mask_only_repr": preproc_cfg["mask_only_repr"],
                     "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
                     "intensity_norm": preproc_cfg["intensity_norm"],
+                    "aug_affine": preproc_cfg["aug_affine"],
+                    "aug_prob": float(preproc_cfg["aug_prob"]),
+                    "aug_rot_deg": float(preproc_cfg["aug_rot_deg"]),
+                    "aug_trans_px": int(preproc_cfg["aug_trans_px"]),
+                    "aug_scale_jitter": float(preproc_cfg["aug_scale_jitter"]),
                 },
                 f,
                 indent=2,

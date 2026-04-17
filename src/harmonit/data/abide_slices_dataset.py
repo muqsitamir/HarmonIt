@@ -13,6 +13,11 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset
 
 try:
+    import torchvision.transforms.functional as TF
+except Exception:  # pragma: no cover
+    TF = None
+
+try:
     from scipy.ndimage import distance_transform_edt
 except Exception:  # pragma: no cover
     distance_transform_edt = None
@@ -189,8 +194,7 @@ def largest_connected_component(mask: np.ndarray) -> np.ndarray:
 
     return best
 
-
-def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) -> np.ndarray:
+def make_head_mask(img2d: np.ndarray, thr: float = 0.02, dilate_iters: int = 3) -> np.ndarray:
     """Conservative head/foreground mask.
 
     1) Threshold |img| on the normalized slice.
@@ -206,7 +210,6 @@ def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) 
     mask = fill_holes(mask)
     mask = binary_dilate(mask, iters=dilate_iters)
     return mask
-
 
 # --- Helper functions for bbox cropping of head mask ---
 def bbox_from_mask(mask: np.ndarray, margin: int = 20) -> Tuple[int, int, int, int]:
@@ -332,6 +335,13 @@ class AbideSlicesDataset(Dataset):
         import os
         self.mask_only_repr = str(os.getenv("MASK_ONLY_REPR", "binary"))
 
+        # --- Optional geometry-invariance augmentation (train only) ---
+        self.aug_affine = (os.getenv("AUG_AFFINE", "0") == "1")
+        self.aug_prob = float(os.getenv("AUG_PROB", "1.0"))
+        self.aug_rot_deg = float(os.getenv("AUG_ROT_DEG", "7"))
+        self.aug_trans_px = int(os.getenv("AUG_TRANS_PX", "16"))
+        self.aug_scale_jitter = float(os.getenv("AUG_SCALE_JITTER", "0.10"))
+
     def __len__(self) -> int:
         return len(self.samples)
 
@@ -388,6 +398,39 @@ class AbideSlicesDataset(Dataset):
 
         self._valid_slices[sample.subject_id] = valid
         return valid
+
+    def _maybe_apply_affine(self, img_t: torch.Tensor) -> torch.Tensor:
+        """Apply random affine augmentation to a [1,H,W] tensor (train only).
+
+        This aims to reduce site shortcut learning from geometry/alignment while
+        preserving intensity-based scanner signature.
+        """
+        if not self.aug_affine or self.split != "train":
+            return img_t
+        if self.aug_prob < 1.0 and float(self.rng.rand()) > self.aug_prob:
+            return img_t
+
+        # Sample params
+        angle = float(self.rng.uniform(-self.aug_rot_deg, self.aug_rot_deg))
+        tx = int(self.rng.randint(-self.aug_trans_px, self.aug_trans_px + 1))
+        ty = int(self.rng.randint(-self.aug_trans_px, self.aug_trans_px + 1))
+        scale = float(self.rng.uniform(1.0 - self.aug_scale_jitter, 1.0 + self.aug_scale_jitter))
+
+        if TF is not None:
+            # torchvision expects [C,H,W]
+            return TF.affine(
+                img_t,
+                angle=angle,
+                translate=[tx, ty],
+                scale=scale,
+                shear=[0.0, 0.0],
+                interpolation=TF.InterpolationMode.BILINEAR,
+                fill=0.0,
+                center=None,
+            )
+
+        # Fallback: no torchvision
+        return img_t
 
     def _pick_slice_index(self, vol_n: np.ndarray, valid: List[int]) -> int:
         """Pick a slice index using fixed depth percentiles but prefer the slice(s)
@@ -475,6 +518,7 @@ class AbideSlicesDataset(Dataset):
                     dt = dt / (dt.max() + 1e-6)
                 m = dt.astype(np.float32)
             img_t = torch.from_numpy(m).float().unsqueeze(0)
+            img_t = self._maybe_apply_affine(img_t)
 
             site_id = sample.site_id
             if self._label_perm is not None:
@@ -505,6 +549,7 @@ class AbideSlicesDataset(Dataset):
 
         # return as [1, H, W]
         img_t = torch.from_numpy(sl).float().unsqueeze(0)
+        img_t = self._maybe_apply_affine(img_t)
 
         site_id = sample.site_id
         if self._label_perm is not None:
