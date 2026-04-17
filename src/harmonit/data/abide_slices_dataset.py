@@ -276,7 +276,6 @@ class AbideSlicesDataset(Dataset):
         head_mask_thr: float = 0.02,
         head_mask_dilate: int = 3,
         input_mode: str = "image",  # image | mask_only
-        bbox_jitter: int = 0,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -328,7 +327,6 @@ class AbideSlicesDataset(Dataset):
         self.head_mask_thr = head_mask_thr
         self.head_mask_dilate = head_mask_dilate
         self.input_mode = str(input_mode)
-        self.bbox_jitter = int(bbox_jitter)
 
         # For mask-only diagnostics, optionally use a smooth distance-transform instead of a hard binary mask.
         # Values: "binary" (default) or "dist".
@@ -491,19 +489,6 @@ class AbideSlicesDataset(Dataset):
 
         # Crop slice and mask together using the head-mask bbox (+ margin)
         bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
-        if self.bbox_jitter > 0 and self.split == "train":
-            y0, y1, x0, x1 = bbox
-            j = int(self.bbox_jitter)
-            dy = int(self.rng.randint(-j, j + 1))
-            dx = int(self.rng.randint(-j, j + 1))
-            y0 = max(0, y0 + dy)
-            x0 = max(0, x0 + dx)
-            y1 = min(head_mask_full.shape[0], y1 + dy)
-            x1 = min(head_mask_full.shape[1], x1 + dx)
-            # Ensure valid bbox
-            if y1 <= y0 + 1 or x1 <= x0 + 1:
-                y0, y1, x0, x1 = bbox
-            bbox = (y0, y1, x0, x1)
 
         sl = crop_with_bbox(sl_full, bbox)
         head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
