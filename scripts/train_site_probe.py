@@ -102,20 +102,20 @@ def main():
         torch.cuda.manual_seed_all(seed)
 
     preproc_cfg = {
-        "preproc_version": "v0.2",
+        "preproc_version": "v0.3",
         "canonical_orientation": True,
-        "intensity_clip_pcts": "1,99",
-        "zscore_mask": "nonzero",
+        "intensity_norm": "clip_p1p99_minmax01_bg0",
         "slice_plane": "axial",
         "slice_range_frac": "0.15,0.85",
-        "slice_fg_thr": 0.05,
+        "slice_fg_thr": float(os.getenv("FG_THR", "0.02")),
         "valid_fg_frac": 0.02,
+        "fg_bbox_thr": float(os.getenv("FG_BBOX_THR", "0.02")),
         "out_hw": "256x256",
         "volume_cache_size": 12,
         "mask_mode": os.getenv("MASK_MODE", "none"),  # none | bg_only | brain_only
         "label_shuffle": os.getenv("LABEL_SHUFFLE", "0") == "1",
         "bg_suppress": os.getenv("BG_SUPPRESS", "1") == "1",
-        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.08")),
+        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.02")),
         "head_mask_dilate": int(os.getenv("HEAD_MASK_DILATE", "3")),
         "seed": seed,
         "input_mode": os.getenv("INPUT_MODE", "image"),  # image | mask_only
@@ -158,6 +158,8 @@ def main():
             "slice_mode_train": "random",
             "slice_mode_val": "fixed",
             "valid_nonzero_frac": float(preproc_cfg["valid_fg_frac"]),
+            "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
+            "slice_fg_thr": float(preproc_cfg["slice_fg_thr"]),
             "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
             "seed": seed,
             "bg_suppress": bool(preproc_cfg["bg_suppress"]),
@@ -197,6 +199,7 @@ def main():
             out_hw=(256, 256),
             slice_mode="random",
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
+            fg_bbox_thr=float(preproc_cfg["fg_bbox_thr"]),
             seed=seed,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
@@ -213,6 +216,7 @@ def main():
             out_hw=(256, 256),
             slice_mode="fixed",  # deterministic validation
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
+            fg_bbox_thr=float(preproc_cfg["fg_bbox_thr"]),
             seed=seed + 1,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
@@ -227,8 +231,10 @@ def main():
         if preproc_cfg["label_shuffle"]:
             rng = np.random.RandomState(12345)
             perm = rng.permutation(num_classes)
-            train_ds.set_label_permutation(perm.tolist())
-            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
+            perm_list = perm.tolist()
+            train_ds.set_label_permutation(perm_list)
+            val_ds.set_label_permutation(perm_list)
+            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm_list)))
 
         with open(out_dir / "config.json", "w") as f:
             json.dump(
@@ -248,6 +254,8 @@ def main():
                     "input_mode": preproc_cfg["input_mode"],
                     "bbox_jitter": int(preproc_cfg["bbox_jitter"]),
                     "mask_only_repr": preproc_cfg["mask_only_repr"],
+                    "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
+                    "intensity_norm": preproc_cfg["intensity_norm"],
                 },
                 f,
                 indent=2,

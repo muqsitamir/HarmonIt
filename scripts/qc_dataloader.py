@@ -27,8 +27,8 @@ def main():
     head_mask_dilate = int(os.getenv("HEAD_MASK_DILATE", "3"))
 
     # Fixed display range for imshow (helps avoid misleading auto-contrast)
-    vmin = float(os.getenv("VMIN", "-2.0"))
-    vmax = float(os.getenv("VMAX", "2.0"))
+    vmin = float(os.getenv("VMIN", "0.0"))
+    vmax = float(os.getenv("VMAX", "1.0"))
 
     ds = AbideSlicesDataset(
         manifest_path="data/abide_manifest.csv",

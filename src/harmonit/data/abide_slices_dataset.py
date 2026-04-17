@@ -70,10 +70,10 @@ def center_crop_or_pad(img2d: np.ndarray, out_hw: Tuple[int, int] = (256, 256)) 
     return out
 
 
-def crop_to_foreground_bbox(img2d: np.ndarray, thr: float = 0.05, margin: int = 10) -> np.ndarray:
+def crop_to_foreground_bbox(img2d: np.ndarray, thr: float = 0.02, margin: int = 10) -> np.ndarray:
     """Crop a 2D slice to the bounding box of foreground pixels (cheap brain proxy).
 
-    Foreground is defined as |img| > thr (after z-score). If no foreground is found,
+    Foreground is defined as |img| > thr (after 0..1 normalization). If no foreground is found,
     returns the original image.
     """
     m = np.abs(img2d) > thr
@@ -374,7 +374,7 @@ class AbideSlicesDataset(Dataset):
         z_max = max(z_min + 1, min(z_max, D))
 
         valid = []
-        thr = 0.05  # threshold after z-score; filters background/noise
+        thr = float(self.fg_bbox_thr)  # threshold in 0..1 space; filters background/noise
         for k in range(z_min, z_max):
             sl = vol_n[:, :, k]
             fg = float((np.abs(sl) > thr).mean())
