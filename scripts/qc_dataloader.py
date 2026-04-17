@@ -43,7 +43,6 @@ def main():
         head_mask_thr=head_mask_thr,
         head_mask_dilate=head_mask_dilate,
         input_mode=input_mode,
-        bbox_jitter=bbox_jitter,
     )
 
     loader = DataLoader(
@@ -96,32 +95,10 @@ def main():
             im = imgs[i, 0].numpy()
             ax.imshow(im.T, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
 
-            """
-            # For console to debug
-            # 1. Find the most negative value
-            min_val = im.min()
-            print(f"Lowest value found: {min_val}")
-
-            # 2. Define your 'closeness' threshold (e.g., within 5% of the range or a fixed number)
-            # Change '0.1' to whatever tolerance you need
-            threshold = 0.1
-
-            # 3. Create a copy and zero out the cluster
-            im_filtered = im.copy()
-            im_filtered[(im_filtered >= min_val) & (im_filtered <= min_val + threshold)] = 0
-
-            # 4. Visualize
-            plt.figure(figsize=(6, 5))
-            plt.imshow(im_filtered.T, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
-            plt.colorbar()
-            plt.title(f"Min ({min_val}) + Threshold ({threshold}) zeroed")
-            plt.show()
-            """
-
             ax.set_title(f"{subject_ids[i]} | site={int(site_ids[i])} | z={int(slice_idxs[i])}", fontsize=8)
 
         fig.tight_layout()
-        out_path = out_dir / f"qc_{split}_{mask_mode}_batch{b_idx}.png"
+        out_path = out_dir / f"qc_MM-{mask_mode}_IM-{input_mode}_BS-{bg_suppress}.png"
         fig.savefig(out_path, dpi=160)
         plt.close(fig)
         print(f"Saved QC grid -> {out_path}")

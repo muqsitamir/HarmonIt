@@ -5,7 +5,6 @@ from collections import OrderedDict, deque
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-
 import numpy as np
 import pandas as pd
 import nibabel as nib
@@ -13,26 +12,39 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 
-
 def robust_normalize(vol: np.ndarray, eps: float = 1e-6) -> np.ndarray:
-    """Clip p1-p99 then z-score using nonzero voxels (fallback to all voxels)."""
+    """Robust 0..1 normalization with background preserved.
+
+    - Treat voxels with value 0 as background and keep them exactly 0.
+    - Clip foreground (v>0) to [p1, p99] to reduce outliers.
+    - Min-max scale foreground to (0,1].
+
+    This yields a stable intensity range across sites while maintaining the
+    interpretation that background equals the minimum value (0).
+    """
     v = vol.astype(np.float32)
-    mask = v > 0
-    vals = v[mask] if mask.any() else v.reshape(-1)
 
-    p1, p99 = np.percentile(vals, [1, 99])
-    v = np.clip(v, p1, p99)
+    bg = v == 0
+    fg = ~bg
 
-    vals2 = v[mask] if mask.any() else v.reshape(-1)
-    mu, sigma = float(vals2.mean()), float(vals2.std())
-    v = (v - mu) / (sigma + eps)
+    if fg.any():
+        vals = v[fg]
+        p1, p99 = np.percentile(vals, [1, 99])
+        # Guard against degenerate percentiles
+        if p99 <= p1 + eps:
+            p1 = float(vals.min())
+            p99 = float(vals.max())
 
-    # Important: preserve true background as exact zeros.
-    # After z-scoring, background zeros become negative and can be mistaken as foreground.
-    # We restore background voxels (defined by original v>0 mask) to 0.
-    v[~mask] = 0.0
+        v_fg = np.clip(v[fg], p1, p99)
+        denom = (p99 - p1) + eps
+        v_fg = (v_fg - p1) / denom
+        # Ensure foreground stays within [0,1]
+        v_fg = np.clip(v_fg, 0.0, 1.0)
+        v[fg] = v_fg
+
+    # Keep true background at exactly 0
+    v[bg] = 0.0
     return v
-
 
 def center_crop_or_pad(img2d: np.ndarray, out_hw: Tuple[int, int] = (256, 256)) -> np.ndarray:
     """Center crop/pad a 2D array to out_hw."""
@@ -246,17 +258,16 @@ class AbideSlicesDataset(Dataset):
         slice_mode: str = "random",
         valid_nonzero_frac: float = 0.10,
         slice_percentiles: Tuple[float, ...] = (0.40, 0.50, 0.60),
-        fg_bbox_thr: float = 0.05,
+        fg_bbox_thr: float = 0.02,
         fg_bbox_margin: int = 20,
         seed: int = 42,
         volume_cache_size: int = 12,
         mask_mode: str = "none",  # none | bg_only | brain_only
         label_permutation: Optional[list] = None,
         bg_suppress: bool = True,
-        head_mask_thr: float = 0.08,
+        head_mask_thr: float = 0.02,
         head_mask_dilate: int = 3,
         input_mode: str = "image",  # image | mask_only
-        bbox_jitter: int = 0,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -308,7 +319,6 @@ class AbideSlicesDataset(Dataset):
         self.head_mask_thr = head_mask_thr
         self.head_mask_dilate = head_mask_dilate
         self.input_mode = str(input_mode)
-        self.bbox_jitter = int(bbox_jitter)
 
     def __len__(self) -> int:
         return len(self.samples)
@@ -426,17 +436,7 @@ class AbideSlicesDataset(Dataset):
 
         # Crop slice and mask together using the head-mask bbox (+ margin)
         bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
-        # Optional crop jitter (train only): reduces reliance on fixed boundary placement
-        if self.bbox_jitter > 0 and self.split == "train":
-            y0, y1, x0, x1 = bbox
-            h, w = head_mask_full.shape
-            dy = int(self.rng.randint(-self.bbox_jitter, self.bbox_jitter + 1))
-            dx = int(self.rng.randint(-self.bbox_jitter, self.bbox_jitter + 1))
-            y0 = max(0, min(h - 1, y0 + dy))
-            y1 = max(y0 + 1, min(h, y1 + dy))
-            x0 = max(0, min(w - 1, x0 + dx))
-            x1 = max(x0 + 1, min(w, x1 + dx))
-            bbox = (y0, y1, x0, x1)
+
         sl = crop_with_bbox(sl_full, bbox)
         head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
 
