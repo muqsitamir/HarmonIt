@@ -119,6 +119,8 @@ def main():
         "head_mask_dilate": int(os.getenv("HEAD_MASK_DILATE", "3")),
         "seed": seed,
         "input_mode": os.getenv("INPUT_MODE", "image"),  # image | mask_only
+        "bbox_jitter": int(os.getenv("BBOX_JITTER", "0")),
+        "mask_only_repr": os.getenv("MASK_ONLY_REPR", "binary"),  # binary | dist
     }
 
     # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
@@ -164,6 +166,8 @@ def main():
             "mask_mode": preproc_cfg["mask_mode"],
             "label_shuffle": bool(preproc_cfg["label_shuffle"]),
             "input_mode": preproc_cfg["input_mode"],
+            "bbox_jitter": int(preproc_cfg["bbox_jitter"]),
+            "mask_only_repr": preproc_cfg["mask_only_repr"],
         })
         mlflow.set_tag("run_dir", str(out_dir))
         mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
@@ -200,6 +204,7 @@ def main():
             head_mask_thr=float(preproc_cfg["head_mask_thr"]),
             head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
             input_mode=str(preproc_cfg["input_mode"]),
+            bbox_jitter=int(preproc_cfg["bbox_jitter"]),
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -215,6 +220,7 @@ def main():
             head_mask_thr=float(preproc_cfg["head_mask_thr"]),
             head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
             input_mode=str(preproc_cfg["input_mode"]),
+            bbox_jitter=0,
         )
 
 
@@ -240,6 +246,8 @@ def main():
                     "mask_mode": preproc_cfg["mask_mode"],
                     "label_shuffle": bool(preproc_cfg["label_shuffle"]),
                     "input_mode": preproc_cfg["input_mode"],
+                    "bbox_jitter": int(preproc_cfg["bbox_jitter"]),
+                    "mask_only_repr": preproc_cfg["mask_only_repr"],
                 },
                 f,
                 indent=2,

@@ -12,6 +12,11 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 
+try:
+    from scipy.ndimage import distance_transform_edt
+except Exception:  # pragma: no cover
+    distance_transform_edt = None
+
 def robust_normalize(vol: np.ndarray, eps: float = 1e-6) -> np.ndarray:
     """Robust 0..1 normalization with background preserved.
 
@@ -268,6 +273,7 @@ class AbideSlicesDataset(Dataset):
         head_mask_thr: float = 0.02,
         head_mask_dilate: int = 3,
         input_mode: str = "image",  # image | mask_only
+        bbox_jitter: int = 0,
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -319,6 +325,12 @@ class AbideSlicesDataset(Dataset):
         self.head_mask_thr = head_mask_thr
         self.head_mask_dilate = head_mask_dilate
         self.input_mode = str(input_mode)
+        self.bbox_jitter = int(bbox_jitter)
+
+        # For mask-only diagnostics, optionally use a smooth distance-transform instead of a hard binary mask.
+        # Values: "binary" (default) or "dist".
+        import os
+        self.mask_only_repr = str(os.getenv("MASK_ONLY_REPR", "binary"))
 
     def __len__(self) -> int:
         return len(self.samples)
@@ -436,6 +448,19 @@ class AbideSlicesDataset(Dataset):
 
         # Crop slice and mask together using the head-mask bbox (+ margin)
         bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
+        if self.bbox_jitter > 0 and self.split == "train":
+            y0, y1, x0, x1 = bbox
+            j = int(self.bbox_jitter)
+            dy = int(self.rng.randint(-j, j + 1))
+            dx = int(self.rng.randint(-j, j + 1))
+            y0 = max(0, y0 + dy)
+            x0 = max(0, x0 + dx)
+            y1 = min(head_mask_full.shape[0], y1 + dy)
+            x1 = min(head_mask_full.shape[1], x1 + dx)
+            # Ensure valid bbox
+            if y1 <= y0 + 1 or x1 <= x0 + 1:
+                y0, y1, x0, x1 = bbox
+            bbox = (y0, y1, x0, x1)
 
         sl = crop_with_bbox(sl_full, bbox)
         head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
@@ -444,6 +469,11 @@ class AbideSlicesDataset(Dataset):
         if self.input_mode == "mask_only":
             # Use only the binary mask as input (tests whether mask geometry alone predicts site)
             m = resize_mask_to_hw(head_mask_pre, self.out_hw).astype(np.float32)
+            if self.mask_only_repr == "dist" and distance_transform_edt is not None:
+                dt = distance_transform_edt(m > 0)
+                if dt.max() > 0:
+                    dt = dt / (dt.max() + 1e-6)
+                m = dt.astype(np.float32)
             img_t = torch.from_numpy(m).float().unsqueeze(0)
 
             site_id = sample.site_id

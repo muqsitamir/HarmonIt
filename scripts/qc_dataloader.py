@@ -43,6 +43,7 @@ def main():
         head_mask_thr=head_mask_thr,
         head_mask_dilate=head_mask_dilate,
         input_mode=input_mode,
+        bbox_jitter=bbox_jitter,
     )
 
     loader = DataLoader(
@@ -69,6 +70,10 @@ def main():
             head_mask_thr,
             "| head_mask_dilate:",
             head_mask_dilate,
+            "| input_mode:",
+            input_mode,
+            "| bbox_jitter:",
+            bbox_jitter,
         )
         print("Batch shapes:", imgs.shape)  # [B,1,H,W]
         print("Site IDs:", site_ids.tolist())
@@ -98,7 +103,9 @@ def main():
             ax.set_title(f"{subject_ids[i]} | site={int(site_ids[i])} | z={int(slice_idxs[i])}", fontsize=8)
 
         fig.tight_layout()
-        out_path = out_dir / f"qc_MM-{mask_mode}_IM-{input_mode}_BS-{bg_suppress}.png"
+        out_path = out_dir / (
+            f"qc_{split}_MM-{mask_mode}_IM-{input_mode}_BS-{int(bg_suppress)}_JIT-{bbox_jitter}_batch{b_idx}.png"
+        )
         fig.savefig(out_path, dpi=160)
         plt.close(fig)
         print(f"Saved QC grid -> {out_path}")
