@@ -42,9 +42,8 @@ def main():
     head_mask_thr = float(os.getenv("HEAD_MASK_THR", "0.02"))
     head_mask_dilate = int(os.getenv("HEAD_MASK_DILATE", "3"))
     input_mode = os.getenv("INPUT_MODE", "image")
-    bbox_jitter = 0  # never jitter on val
 
-    # Build val dataset (deterministic slice policy is handled by your dataset when split="val")
+    # Build val dataset (deterministic slice policy is handled by the dataset when split="val")
     ds = AbideSlicesDataset(
         manifest_path=manifest_path,
         splits_path=splits_path,
@@ -62,7 +61,7 @@ def main():
     )
 
     # Load checkpoint once (support plain and DataParallel keys)
-    state = torch.load(str(ckpt_path), map_location="cpu")
+    state = torch.load(str(ckpt_path), map_location="cpu", weights_only=True)
     if isinstance(state, dict) and "state_dict" in state:
         state = state["state_dict"]
 

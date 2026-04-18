@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import json
 from collections import OrderedDict, deque
 from dataclasses import dataclass
@@ -330,7 +331,6 @@ class AbideSlicesDataset(Dataset):
 
         # For mask-only diagnostics, optionally use a smooth distance-transform instead of a hard binary mask.
         # Values: "binary" (default) or "dist".
-        import os
         self.mask_only_repr = str(os.getenv("MASK_ONLY_REPR", "binary"))
 
         # --- Optional geometry-invariance augmentation (train only) ---
