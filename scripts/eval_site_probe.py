@@ -43,22 +43,33 @@ def main():
     head_mask_dilate = int(os.getenv("HEAD_MASK_DILATE", "3"))
     input_mode = os.getenv("INPUT_MODE", "image")
 
-    # Build val dataset (deterministic slice policy is handled by the dataset when split="val")
-    ds = AbideSlicesDataset(
-        manifest_path=manifest_path,
-        splits_path=splits_path,
-        split="val",
-        out_hw=(256, 256),
-        slice_mode="fixed",
-        valid_nonzero_frac=float(os.getenv("VALID_FG_FRAC", "0.02")),
-        fg_bbox_thr=float(os.getenv("FG_BBOX_THR", "0.02")),
-        seed=seed,
-        mask_mode=mask_mode,
-        bg_suppress=bg_suppress,
-        head_mask_thr=head_mask_thr,
-        head_mask_dilate=head_mask_dilate,
-        input_mode=input_mode,
-    )
+    # --- Evaluation mode ---
+    # det: deterministic validation (slice_mode=fixed)
+    # ms:  multi-slice evaluation (K random slices per subject; slice_mode=random) aggregated across runs
+    eval_mode = os.getenv("EVAL_MODE", "det").lower()  # det | ms
+    ms_k = int(os.getenv("MS_K", "1"))
+    ms_seed_stride = int(os.getenv("MS_SEED_STRIDE", "1000"))
+    if eval_mode not in {"det", "ms"}:
+        raise ValueError(f"EVAL_MODE must be 'det' or 'ms', got: {eval_mode}")
+    if eval_mode == "ms" and ms_k < 1:
+        raise ValueError(f"MS_K must be >= 1, got: {ms_k}")
+
+    def build_val_dataset(ds_seed: int, slice_mode: str):
+        return AbideSlicesDataset(
+            manifest_path=manifest_path,
+            splits_path=splits_path,
+            split="val",
+            out_hw=(256, 256),
+            slice_mode=slice_mode,
+            valid_nonzero_frac=float(os.getenv("VALID_FG_FRAC", "0.02")),
+            fg_bbox_thr=float(os.getenv("FG_BBOX_THR", "0.02")),
+            seed=ds_seed,
+            mask_mode=mask_mode,
+            bg_suppress=bg_suppress,
+            head_mask_thr=head_mask_thr,
+            head_mask_dilate=head_mask_dilate,
+            input_mode=input_mode,
+        )
 
     # Load checkpoint once (support plain and DataParallel keys)
     state = torch.load(str(ckpt_path), map_location="cpu", weights_only=True)
@@ -82,15 +93,6 @@ def main():
     print("Num classes:", num_classes)
     print("Class names:", class_names)
 
-    loader = DataLoader(
-        ds,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=num_workers,
-        pin_memory=(device.type == "cuda"),
-        persistent_workers=(num_workers > 0),
-    )
-
     # Model: ResNet18 1-channel
     from torchvision.models import resnet18
 
@@ -106,20 +108,44 @@ def main():
     model.to(device)
     model.eval()
 
-    y_true, y_pred = [], []
-    with torch.no_grad():
-        for x, y, _, _ in loader:
-            x = x.to(device)
-            logits = model(x)
-            pred = torch.argmax(logits, dim=1).cpu().numpy()
-            y_true.append(y.numpy())
-            y_pred.append(pred)
+    def run_once(ds_seed: int, slice_mode: str):
+        ds_local = build_val_dataset(ds_seed=ds_seed, slice_mode=slice_mode)
+        loader_local = DataLoader(
+            ds_local,
+            batch_size=batch_size,
+            shuffle=False,
+            num_workers=num_workers,
+            pin_memory=(device.type == "cuda"),
+            persistent_workers=(num_workers > 0),
+        )
 
-    y_true = np.concatenate(y_true)
-    y_pred = np.concatenate(y_pred)
+        yt, yp = [], []
+        with torch.no_grad():
+            for x, y, _, _ in loader_local:
+                x = x.to(device)
+                logits = model(x)
+                pred = torch.argmax(logits, dim=1).cpu().numpy()
+                yt.append(y.numpy())
+                yp.append(pred)
+
+        return np.concatenate(yt), np.concatenate(yp)
+
+    if eval_mode == "det":
+        y_true, y_pred = run_once(ds_seed=seed, slice_mode="fixed")
+        tag = "DET"
+    else:
+        ys_t, ys_p = [], []
+        for r in range(ms_k):
+            ds_seed = seed + r * ms_seed_stride
+            yt, yp = run_once(ds_seed=ds_seed, slice_mode="random")
+            ys_t.append(yt)
+            ys_p.append(yp)
+        y_true = np.concatenate(ys_t)
+        y_pred = np.concatenate(ys_p)
+        tag = f"MS(K={ms_k})"
 
     cm, acc, bal = confusion_and_balanced_acc(y_true, y_pred, num_classes)
-    print(f"[FULL VAL] acc={acc:.4f} | bal_acc={bal:.4f} | N={len(y_true)}")
+    print(f"[{tag} FULL VAL] acc={acc:.4f} | bal_acc={bal:.4f} | N={len(y_true)}")
 
     # Save artifacts
     np.save(out_dir / "cm_fullval.npy", cm)
@@ -131,6 +157,9 @@ def main():
         "n_val_samples": int(len(y_true)),
         "ckpt_path": str(ckpt_path),
         "run_tag": run_tag,
+        "eval_mode": eval_mode,
+        "ms_k": int(ms_k),
+        "ms_seed_stride": int(ms_seed_stride),
         "mask_mode": mask_mode,
         "bg_suppress": bg_suppress,
         "head_mask_thr": head_mask_thr,
@@ -149,6 +178,9 @@ def main():
             mlflow.log_params({
                 "ckpt_path": str(ckpt_path),
                 "run_tag": run_tag,
+                "eval_mode": eval_mode,
+                "ms_k": int(ms_k),
+                "ms_seed_stride": int(ms_seed_stride),
                 "mask_mode": mask_mode,
                 "bg_suppress": int(bg_suppress),
                 "head_mask_thr": head_mask_thr,
