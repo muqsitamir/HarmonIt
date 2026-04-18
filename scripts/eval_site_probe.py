@@ -59,7 +59,6 @@ def main():
         head_mask_thr=head_mask_thr,
         head_mask_dilate=head_mask_dilate,
         input_mode=input_mode,
-        bbox_jitter=bbox_jitter,
     )
 
     # Load checkpoint once (support plain and DataParallel keys)
