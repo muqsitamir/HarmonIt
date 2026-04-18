@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from pathlib import Path
-import time
 from datetime import datetime
 
 import mlflow
@@ -13,7 +12,7 @@ import mlflow
 from harmonit.data.abide_slices_dataset import AbideSlicesDataset
 from harmonit.utils.plotting import save_confusion_matrix_png
 from harmonit.utils.metrics import confusion_and_balanced_acc
-from harmonit.utils.system import *
+from harmonit.utils.system import load_class_names_from_manifest
 
 
 def main():

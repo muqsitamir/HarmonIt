@@ -2,6 +2,21 @@ from pathlib import Path
 import hashlib
 import subprocess
 
+
+def load_class_names_from_manifest(manifest_path: str):
+    import pandas as pd
+    df = pd.read_csv(manifest_path)
+    if "site_id" in df.columns:
+        mapping = (
+            df[["site_id", "site"]]
+            .drop_duplicates()
+            .sort_values("site_id")
+            .reset_index(drop=True)
+        )
+        return mapping["site"].tolist()
+    return sorted(df["site"].unique().tolist())
+
+
 # Helper functions for fingerprinting and reproducibility
 def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
     h = hashlib.sha256()
