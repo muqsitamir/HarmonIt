@@ -1,9 +1,6 @@
 import json
-from pathlib import Path
 from datetime import datetime
 import os
-import hashlib
-import subprocess
 from dotenv import load_dotenv
 import mlflow
 import mlflow.pytorch
@@ -15,68 +12,11 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler
 
 from harmonit.data.abide_slices_dataset import AbideSlicesDataset
+from harmonit.utils.plotting import save_confusion_matrix_png
+from harmonit.utils.metrics import confusion_and_balanced_acc
+from harmonit.utils.system import *
 
 load_dotenv()
-
-
-# Helper functions for fingerprinting and reproducibility
-def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        while True:
-            b = f.read(chunk_size)
-            if not b:
-                break
-            h.update(b)
-    return h.hexdigest()
-
-
-def git_info() -> dict:
-    """Best-effort git fingerprinting. Returns commit SHA and dirty flag."""
-    info = {"git_commit": "unknown", "git_dirty": "unknown"}
-    try:
-        sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
-        info["git_commit"] = sha
-        code = subprocess.call(["git", "diff", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        info["git_dirty"] = (code != 0)
-    except Exception:
-        pass
-    return info
-
-def confusion_and_balanced_acc(y_true: np.ndarray, y_pred: np.ndarray, num_classes: int):
-    cm = np.zeros((num_classes, num_classes), dtype=np.int64)
-    for t, p in zip(y_true, y_pred):
-        cm[int(t), int(p)] += 1
-
-    # per-class recall; avoid divide-by-zero
-    recalls = []
-    for c in range(num_classes):
-        denom = cm[c, :].sum()
-        if denom > 0:
-            recalls.append(cm[c, c] / denom)
-    bal_acc = float(np.mean(recalls)) if recalls else 0.0
-    acc = float((y_true == y_pred).mean()) if len(y_true) else 0.0
-    return cm, acc, bal_acc
-
-
-def save_confusion_matrix_png(cm: np.ndarray, out_path: Path, class_names: list[str]):
-    import matplotlib.pyplot as plt
-
-    n = len(class_names)
-    fig = plt.figure(figsize=(max(8, 0.55 * n), max(7, 0.50 * n)))
-    plt.imshow(cm, interpolation="nearest")
-    plt.title("Site Probe Confusion Matrix")
-    plt.colorbar(fraction=0.046, pad=0.04)
-
-    tick_positions = np.arange(n)
-    plt.xticks(tick_positions, class_names, rotation=90)
-    plt.yticks(tick_positions, class_names)
-
-    plt.xlabel("Predicted")
-    plt.ylabel("True")
-    plt.tight_layout()
-    fig.savefig(out_path, dpi=160, bbox_inches="tight")
-    plt.close(fig)
 
 
 def main():
