@@ -1,6 +1,5 @@
 from .classification import compute_classification_metrics
 from .site_leakage import site_classification_accuracy
-from .structural_preservation import compute_ssim, compute_psnr
-from .feature_consistency import feature_similarity
+from .structural_preservation import compute_psnr
+from .feature_consistency import feature_similarity, cross_correlation
 from .distribution_alignment import kl_divergence, wasserstein_dist
-from .evaluator import evaluate_all_metrics
