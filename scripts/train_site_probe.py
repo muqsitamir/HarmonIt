@@ -1,9 +1,6 @@
 import json
-from pathlib import Path
 from datetime import datetime
 import os
-import hashlib
-import subprocess
 from dotenv import load_dotenv
 import mlflow
 import mlflow.pytorch
@@ -14,111 +11,15 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler
 
-from harmonit.metrics import evaluate_all_metrics
 from harmonit.data.abide_slices_dataset import AbideSlicesDataset
+from harmonit.utils.plotting import save_confusion_matrix_png
+from harmonit.utils.metrics import confusion_and_balanced_acc
+from harmonit.utils.system import *
 
 load_dotenv()
 
 
-def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        while True:
-            b = f.read(chunk_size)
-            if not b:
-                break
-            h.update(b)
-    return h.hexdigest()
-
-
-def git_info() -> dict:
-    """Best-effort git fingerprinting. Returns commit SHA and dirty flag."""
-    info = {"git_commit": "unknown", "git_dirty": "unknown"}
-    try:
-        sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
-        info["git_commit"] = sha
-        code = subprocess.call(["git", "diff", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        info["git_dirty"] = (code != 0)
-    except Exception:
-        pass
-    return info
-
-def confusion_and_balanced_acc(y_true: np.ndarray, y_pred: np.ndarray, num_classes: int):
-    cm = np.zeros((num_classes, num_classes), dtype=np.int64)
-    for t, p in zip(y_true, y_pred):
-        cm[int(t), int(p)] += 1
-
-    # per-class recall; avoid divide-by-zero
-    recalls = []
-    for c in range(num_classes):
-        denom = cm[c, :].sum()
-        if denom > 0:
-            recalls.append(cm[c, c] / denom)
-    bal_acc = float(np.mean(recalls)) if recalls else 0.0
-    acc = float((y_true == y_pred).mean()) if len(y_true) else 0.0
-    return cm, acc, bal_acc
-
-
-def save_confusion_matrix_png(cm: np.ndarray, out_path: Path):
-    import matplotlib.pyplot as plt
-
-    fig = plt.figure(figsize=(8, 7))
-    plt.imshow(cm, interpolation="nearest")
-    plt.title("Site Probe Confusion Matrix")
-    plt.colorbar(fraction=0.046, pad=0.04)
-    plt.xlabel("Predicted")
-    plt.ylabel("True")
-    plt.tight_layout()
-    fig.savefig(out_path, dpi=160)
-    plt.close(fig)
-
-
-class NullMlflowContext:
-    """Dummy context manager when MLflow is unavailable."""
-    def __enter__(self):
-        return self
-    def __exit__(self, *args):
-        pass
-
-
-def log_metric(name, value, step=None):
-    """Safely log metrics, handling MLflow unavailability."""
-    if hasattr(log_metric, '_available') and log_metric._available:
-        try:
-            mlflow.log_metric(name, value, step=step)
-        except:
-            pass
-
-
-def log_params(params):
-    """Safely log params, handling MLflow unavailability."""
-    if hasattr(log_params, '_available') and log_params._available:
-        try:
-            mlflow.log_params(params)
-        except:
-            pass
-
-
-def set_tag(key, value):
-    """Safely set tags, handling MLflow unavailability."""
-    if hasattr(set_tag, '_available') and set_tag._available:
-        try:
-            mlflow.set_tag(key, value)
-        except:
-            pass
-
-
-def log_artifact(path):
-    """Safely log artifacts, handling MLflow unavailability."""
-    if hasattr(log_artifact, '_available') and log_artifact._available:
-        try:
-            mlflow.log_artifact(str(path))
-        except:
-            pass
-
-
 def main():
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Device:", device)
 
@@ -128,7 +29,7 @@ def main():
 
     # Output run dir
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.2")
+    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.3")
     out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -147,68 +48,57 @@ def main():
         torch.cuda.manual_seed_all(seed)
 
     preproc_cfg = {
-        "preproc_version": "v0.2",
+        "preproc_version": "v0.3",
         "canonical_orientation": True,
-        "intensity_clip_pcts": "1,99",
-        "zscore_mask": "nonzero",
+        "intensity_norm": "clip_p1p99_minmax01_bg0",
         "slice_plane": "axial",
         "slice_range_frac": "0.15,0.85",
-        "slice_fg_thr": 0.05,
+        "slice_fg_thr": float(os.getenv("FG_THR", "0.02")),
         "valid_fg_frac": 0.02,
+        "fg_bbox_thr": float(os.getenv("FG_BBOX_THR", "0.02")),
         "out_hw": "256x256",
         "volume_cache_size": 12,
         "mask_mode": os.getenv("MASK_MODE", "none"),  # none | bg_only | brain_only
         "label_shuffle": os.getenv("LABEL_SHUFFLE", "0") == "1",
         "bg_suppress": os.getenv("BG_SUPPRESS", "1") == "1",
-        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.08")),
+        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.02")),
         "head_mask_dilate": int(os.getenv("HEAD_MASK_DILATE", "3")),
         "seed": seed,
+        "input_mode": os.getenv("INPUT_MODE", "image"),  # image | mask_only
+        "mask_only_repr": os.getenv("MASK_ONLY_REPR", "binary"),  # binary | dist
+        "aug_affine": os.getenv("AUG_AFFINE", "0") == "1",
+        "aug_prob": float(os.getenv("AUG_PROB", "1.0")),
+        "aug_rot_deg": float(os.getenv("AUG_ROT_DEG", "7")),
+        "aug_trans_px": int(os.getenv("AUG_TRANS_PX", "16")),
+        "aug_scale_jitter": float(os.getenv("AUG_SCALE_JITTER", "0.10")),
     }
 
-    # MLflow tracking: use file-based store to avoid SQLite schema issues
+    # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
+    # while storing artifacts alongside the project (which should live on persistent storage,
+    # e.g. rhome on the lab VM). Allow env vars to override both locations.
     project_root = Path(__file__).resolve().parents[1]
+    local_mlflow_dir = Path.home() / "mlflow_local"
     artifact_dir = project_root / "mlruns"
-    mlflow_dir = artifact_dir / "mlflow"
 
+    local_mlflow_dir.mkdir(parents=True, exist_ok=True)
     artifact_dir.mkdir(parents=True, exist_ok=True)
-    mlflow_dir.mkdir(parents=True, exist_ok=True)
 
-    # Use file:// URI for local file-based experiment tracking
-    default_tracking_uri = f"file:///{mlflow_dir.resolve().as_posix()}"
-    default_artifact_root = (artifact_dir / "artifacts").resolve().as_uri()
+    default_tracking_uri = f"sqlite:///{local_mlflow_dir / 'mlflow.db'}"
+    default_artifact_root = artifact_dir.resolve().as_uri()
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", default_tracking_uri)
     artifact_root = os.getenv("MLFLOW_ARTIFACT_ROOT", default_artifact_root)
 
-    # Try to initialize MLflow, but don't crash if it fails
-    mlflow_available = False
-    try:
-        mlflow.set_tracking_uri(tracking_uri)
-        client = mlflow.tracking.MlflowClient()
-        exp = client.get_experiment_by_name("site_probe")
-        if exp is None:
-            client.create_experiment("site_probe", artifact_location=artifact_root)
-        mlflow.set_experiment("site_probe")
-        # Mark functions as available
-        log_metric._available = True
-        log_params._available = True
-        set_tag._available = True
-        log_artifact._available = True
-        mlflow_available = True
-        print(f"MLflow tracking URI: {tracking_uri}")
-    except Exception as mlflow_err:
-        print(f"Warning: MLflow initialization failed ({mlflow_err}). Continuing without experiment tracking.")
-        log_metric._available = False
-        log_params._available = False
-        set_tag._available = False
-        log_artifact._available = False
-        mlflow_available = False
+    mlflow.set_tracking_uri(tracking_uri)
 
-    # Use dummy context if MLflow not available
-    mlflow_context = mlflow.start_run(run_name=f"{ablation_name}__{run_id}") if mlflow_available else NullMlflowContext()
-    
-    with mlflow_context:
+    client = mlflow.tracking.MlflowClient()
+    exp = client.get_experiment_by_name("site_probe")
+    if exp is None:
+        client.create_experiment("site_probe", artifact_location=artifact_root)
+    mlflow.set_experiment("site_probe")
+
+    with mlflow.start_run(run_name=f"{ablation_name}__{run_id}"):
         # log key params
-        log_params({
+        mlflow.log_params({
             "batch_size": batch_size,
             "epochs": epochs,
             "lr": lr,
@@ -218,6 +108,8 @@ def main():
             "slice_mode_train": "random",
             "slice_mode_val": "fixed",
             "valid_nonzero_frac": float(preproc_cfg["valid_fg_frac"]),
+            "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
+            "slice_fg_thr": float(preproc_cfg["slice_fg_thr"]),
             "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
             "seed": seed,
             "bg_suppress": bool(preproc_cfg["bg_suppress"]),
@@ -225,27 +117,43 @@ def main():
             "head_mask_dilate": int(preproc_cfg["head_mask_dilate"]),
             "mask_mode": preproc_cfg["mask_mode"],
             "label_shuffle": bool(preproc_cfg["label_shuffle"]),
+            "input_mode": preproc_cfg["input_mode"],
+            "mask_only_repr": preproc_cfg["mask_only_repr"],
+            "aug_affine": preproc_cfg["aug_affine"],
+            "aug_prob": float(preproc_cfg["aug_prob"]),
+            "aug_rot_deg": float(preproc_cfg["aug_rot_deg"]),
+            "aug_trans_px": int(preproc_cfg["aug_trans_px"]),
+            "aug_scale_jitter": float(preproc_cfg["aug_scale_jitter"]),
         })
-        set_tag("run_dir", str(out_dir))
-        set_tag("mlflow_tracking_uri", tracking_uri)
-        set_tag("mlflow_artifact_root", artifact_root)
+        mlflow.set_tag("run_dir", str(out_dir))
+        mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
+        mlflow.set_tag("mlflow_artifact_root", artifact_root)
         # Log preprocessing config and fingerprints
-        log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
+        mlflow.log_params({f"preproc_{k}": (str(v) if isinstance(v, bool) else v) for k, v in preproc_cfg.items()})
         manifest_hash = sha256_file(Path(manifest_path))
         splits_hash = sha256_file(Path(splits_path))
         ginfo = git_info()
-        set_tag("ablation_name", ablation_name)
-        set_tag("abide_manifest_sha256", manifest_hash)
-        set_tag("splits_sha256", splits_hash)
-        set_tag("git_commit", ginfo.get("git_commit", "unknown"))
-        set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
-        if mlflow_available:
-            print("MLflow tracking URI:", mlflow.get_tracking_uri())
+        mlflow.set_tag("ablation_name", ablation_name)
+        mlflow.set_tag("abide_manifest_sha256", manifest_hash)
+        mlflow.set_tag("splits_sha256", splits_hash)
+        mlflow.set_tag("git_commit", ginfo.get("git_commit", "unknown"))
+        mlflow.set_tag("git_dirty", str(ginfo.get("git_dirty", "unknown")))
+        print("MLflow tracking URI:", mlflow.get_tracking_uri())
 
         # Number of classes
         df = __import__("pandas").read_csv(manifest_path)
         num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
+
+        if "site_id" in df.columns and "site" in df.columns:
+            site_map_df = df[["site_id", "site"]].drop_duplicates().sort_values("site_id")
+            class_names = site_map_df["site"].astype(str).tolist()
+        elif "site" in df.columns:
+            class_names = sorted(df["site"].astype(str).unique().tolist())
+        else:
+            class_names = [str(i) for i in range(num_classes)]
+
         print("Num classes (sites):", num_classes)
+        print("Class names:", class_names)
 
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
         train_ds = AbideSlicesDataset(
@@ -255,12 +163,14 @@ def main():
             out_hw=(256, 256),
             slice_mode="random",
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
+            fg_bbox_thr=float(preproc_cfg["fg_bbox_thr"]),
             seed=seed,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
             bg_suppress=bool(preproc_cfg["bg_suppress"]),
             head_mask_thr=float(preproc_cfg["head_mask_thr"]),
             head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
+            input_mode=str(preproc_cfg["input_mode"]),
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -269,20 +179,24 @@ def main():
             out_hw=(256, 256),
             slice_mode="fixed",  # deterministic validation
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
+            fg_bbox_thr=float(preproc_cfg["fg_bbox_thr"]),
             seed=seed + 1,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
             bg_suppress=bool(preproc_cfg["bg_suppress"]),
             head_mask_thr=float(preproc_cfg["head_mask_thr"]),
             head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
+            input_mode=str(preproc_cfg["input_mode"]),
         )
 
 
         if preproc_cfg["label_shuffle"]:
             rng = np.random.RandomState(12345)
             perm = rng.permutation(num_classes)
-            train_ds.set_label_permutation(perm.tolist())
-            set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
+            perm_list = perm.tolist()
+            train_ds.set_label_permutation(perm_list)
+            val_ds.set_label_permutation(perm_list)
+            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm_list)))
 
         with open(out_dir / "config.json", "w") as f:
             json.dump(
@@ -293,18 +207,28 @@ def main():
                     "steps_per_epoch": steps_per_epoch,
                     "val_batches": val_batches,
                     "num_classes": num_classes,
+                    "class_names": class_names,
                     "seed": seed,
                     "bg_suppress": bool(preproc_cfg["bg_suppress"]),
                     "head_mask_thr": float(preproc_cfg["head_mask_thr"]),
                     "head_mask_dilate": int(preproc_cfg["head_mask_dilate"]),
                     "mask_mode": preproc_cfg["mask_mode"],
                     "label_shuffle": bool(preproc_cfg["label_shuffle"]),
+                    "input_mode": preproc_cfg["input_mode"],
+                    "mask_only_repr": preproc_cfg["mask_only_repr"],
+                    "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
+                    "intensity_norm": preproc_cfg["intensity_norm"],
+                    "aug_affine": preproc_cfg["aug_affine"],
+                    "aug_prob": float(preproc_cfg["aug_prob"]),
+                    "aug_rot_deg": float(preproc_cfg["aug_rot_deg"]),
+                    "aug_trans_px": int(preproc_cfg["aug_trans_px"]),
+                    "aug_scale_jitter": float(preproc_cfg["aug_scale_jitter"]),
                 },
                 f,
                 indent=2,
             )
         # log config file as artifact (after writing)
-        log_artifact(out_dir / "config.json")
+        mlflow.log_artifact(str(out_dir / "config.json"))
 
         metadata = {
             "run_id": run_id,
@@ -317,6 +241,7 @@ def main():
                 "val_batches": val_batches,
             },
             "preprocessing": preproc_cfg,
+            "class_names": class_names,
             "paths": {
                 "manifest_path": manifest_path,
                 "splits_path": splits_path,
@@ -332,11 +257,11 @@ def main():
         }
         meta_path = out_dir / "run_metadata.json"
         meta_path.write_text(json.dumps(metadata, indent=2))
-        log_artifact(meta_path)
+        mlflow.log_artifact(str(meta_path))
 
         preproc_path = out_dir / "preprocessing.json"
         preproc_path.write_text(json.dumps(preproc_cfg, indent=2))
-        log_artifact(preproc_path)
+        mlflow.log_artifact(str(preproc_path))
 
         pin = (device.type == "cuda")
 
@@ -378,7 +303,7 @@ def main():
             running_loss = 0.0
 
             for step, batch in enumerate(train_loader, start=1):
-                x, y, subject_ids, _ = batch
+                x, y, _, _ = batch
                 x = x.to(device)              # [B,1,256,256]
                 y = y.to(device).long()
 
@@ -398,141 +323,43 @@ def main():
                     break
 
             avg_train_loss = running_loss / max(1, steps_per_epoch)
-            log_metric("train_loss", avg_train_loss, step=epoch)
+            mlflow.log_metric("train_loss", avg_train_loss, step=epoch)
 
             # ---- Validation ----
-            from collections import defaultdict
-
             model.eval()
-
-            # store predictions grouped by subject
-            subject_preds = defaultdict(list)
-            subject_targets = {}
-
+            y_true, y_pred = [], []
             with torch.no_grad():
                 for i, batch in enumerate(val_loader, start=1):
-                    x, y, subject_ids, _ = batch
-
+                    x, y, _, _ = batch
                     x = x.to(device)
                     logits = model(x)
-                    preds = torch.argmax(logits, dim=1).cpu().numpy()
+                    pred = torch.argmax(logits, dim=1).cpu().numpy()
 
-                    y = y.numpy()
-
-                    # group predictions by subject
-                    for pred, target, sid in zip(preds, y, subject_ids):
-                        subject_preds[sid].append(pred)
-                        subject_targets[sid] = target
+                    y_true.append(y.numpy())
+                    y_pred.append(pred)
 
                     if i >= val_batches:
                         break
 
-            # ---- Aggregate per subject ----
-            final_preds = []
-            final_targets = []
-
-            for sid in subject_preds:
-                preds = subject_preds[sid]
-
-                # majority vote
-                counts = np.bincount(preds, minlength=num_classes)
-                final_pred = np.argmax(counts)
-
-                final_preds.append(final_pred)
-                final_targets.append(subject_targets[sid])
-
-            y_true = np.array(final_targets)
-            y_pred = np.array(final_preds)
-
-            print("Validation subjects:", len(subject_preds))
-            print("Total slices used:", sum(len(v) for v in subject_preds.values()))
-
+            y_true = np.concatenate(y_true)
+            y_pred = np.concatenate(y_pred)
             cm, acc, bal = confusion_and_balanced_acc(y_true, y_pred, num_classes)
-
-            # ---- OPTION A: Minimal Integration of Evaluation Framework ----
-            print("\n[Integrated Metrics Evaluation]")
-            
-            # Prepare evaluation data
-            eval_results = evaluate_all_metrics(
-                y_true=y_true,
-                y_pred=y_pred,
-                y_prob=None,  # Not available without capturing logits
-                y_true_site=y_true,  # Site is the classification target
-                y_pred_site=y_pred,
-                img1=None,
-                img2=None,
-                feat1=None,
-                feat2=None,
-                dist1=None,
-                dist2=None,
-            )
-
-            # Display and log classification metrics
-            if "classification" in eval_results:
-                cls_metrics = eval_results["classification"]
-                print(f"[Classification Metrics]")
-                print(f"  Accuracy:  {cls_metrics['accuracy']:.4f}")
-                print(f"  Precision: {cls_metrics['precision']:.4f}")
-                print(f"  Recall:    {cls_metrics['recall']:.4f}")
-                print(f"  F1-Score:  {cls_metrics['f1']:.4f}")
-                if "roc_auc" in cls_metrics and cls_metrics['roc_auc'] is not None:
-                    print(f"  ROC-AUC:   {cls_metrics['roc_auc']:.4f}")
-                    log_metric("val_roc_auc", float(cls_metrics['roc_auc']), step=epoch)
-                
-                # Log to MLflow/tracking
-                log_metric("val_classification_accuracy", float(cls_metrics['accuracy']), step=epoch)
-                log_metric("val_classification_precision", float(cls_metrics['precision']), step=epoch)
-                log_metric("val_classification_recall", float(cls_metrics['recall']), step=epoch)
-                log_metric("val_classification_f1", float(cls_metrics['f1']), step=epoch)
-
-            # Display and log site leakage metrics
-            if "site_leakage" in eval_results:
-                site_leakage_acc = eval_results["site_leakage"]
-                print(f"[Site Leakage Metrics]")
-                print(f"  Site Classification Accuracy: {site_leakage_acc:.4f}")
-                log_metric("val_site_leakage_accuracy", float(site_leakage_acc), step=epoch)
-
-            # Save detailed metrics to JSON for archival
-            metrics_file = out_dir / f"metrics_epoch{epoch}.json"
-            with open(metrics_file, "w") as f:
-                eval_results_serializable = {}
-                for k, v in eval_results.items():
-                    if k == "classification":
-                        # Convert numpy arrays in confusion matrix to list
-                        eval_results_serializable[k] = {
-                            "accuracy": float(v["accuracy"]),
-                            "precision": float(v["precision"]),
-                            "recall": float(v["recall"]),
-                            "f1": float(v["f1"]),
-                            "roc_auc": float(v.get("roc_auc", np.nan)) if v.get("roc_auc") is not None else None,
-                            "confusion_matrix": v["confusion_matrix"].tolist(),
-                        }
-                    elif isinstance(v, (float, np.floating)):
-                        eval_results_serializable[k] = float(v)
-                    else:
-                        eval_results_serializable[k] = str(v)
-                
-                json.dump(eval_results_serializable, f, indent=2)
-
-            log_artifact(metrics_file)
-            print(f"Metrics saved to: {metrics_file}\n")
-            # ---- END OPTION A ----
 
             epoch_elapsed = time.time() - epoch_start
             print(f"[VAL] Epoch {epoch} | acc={acc:.4f} | bal_acc={bal:.4f} | epoch_time={epoch_elapsed:.1f}s")
-            log_metric("val_acc", acc, step=epoch)
-            log_metric("val_bal_acc", bal, step=epoch)
-            log_metric("epoch_time_sec", epoch_elapsed, step=epoch)
+            mlflow.log_metric("val_acc", acc, step=epoch)
+            mlflow.log_metric("val_bal_acc", bal, step=epoch)
+            mlflow.log_metric("epoch_time_sec", epoch_elapsed, step=epoch)
 
             # Save confusion matrix artifacts (local) and log PNG to MLflow
             cm_npy_path = out_dir / f"cm_epoch{epoch}.npy"
             cm_png_path = out_dir / f"cm_epoch{epoch}.png"
 
             np.save(cm_npy_path, cm)
-            save_confusion_matrix_png(cm, cm_png_path)
+            save_confusion_matrix_png(cm, cm_png_path, class_names)
 
             # Log only the confusion matrix PNG per epoch
-            log_artifact(cm_png_path)
+            mlflow.log_artifact(str(cm_png_path))
 
             # Track best
             if bal > best_val_bal:
@@ -541,7 +368,7 @@ def main():
 
         best_path = out_dir / "model_best.pt"
         if best_path.exists():
-            log_artifact(best_path)
+            mlflow.log_artifact(str(best_path))
 
         print("Done. Best val balanced accuracy:", best_val_bal)
         print("Run dir:", out_dir)

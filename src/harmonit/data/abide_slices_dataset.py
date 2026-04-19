@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+import os
 import json
 from collections import OrderedDict, deque
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-
 import numpy as np
 import pandas as pd
 import nibabel as nib
@@ -13,26 +13,49 @@ import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 
+try:
+    import torchvision.transforms.functional as TF
+except Exception:  # pragma: no cover
+    TF = None
+
+try:
+    from scipy.ndimage import distance_transform_edt
+except Exception:  # pragma: no cover
+    distance_transform_edt = None
 
 def robust_normalize(vol: np.ndarray, eps: float = 1e-6) -> np.ndarray:
-    """Clip p1-p99 then z-score using nonzero voxels (fallback to all voxels)."""
+    """Robust 0..1 normalization with background preserved.
+
+    - Treat voxels with value 0 as background and keep them exactly 0.
+    - Clip foreground (v>0) to [p1, p99] to reduce outliers.
+    - Min-max scale foreground to (0,1].
+
+    This yields a stable intensity range across sites while maintaining the
+    interpretation that background equals the minimum value (0).
+    """
     v = vol.astype(np.float32)
-    mask = v > 0
-    vals = v[mask] if mask.any() else v.reshape(-1)
 
-    p1, p99 = np.percentile(vals, [1, 99])
-    v = np.clip(v, p1, p99)
+    bg = v == 0
+    fg = ~bg
 
-    vals2 = v[mask] if mask.any() else v.reshape(-1)
-    mu, sigma = float(vals2.mean()), float(vals2.std())
-    v = (v - mu) / (sigma + eps)
+    if fg.any():
+        vals = v[fg]
+        p1, p99 = np.percentile(vals, [1, 99])
+        # Guard against degenerate percentiles
+        if p99 <= p1 + eps:
+            p1 = float(vals.min())
+            p99 = float(vals.max())
 
-    # Important: preserve true background as exact zeros.
-    # After z-scoring, background zeros become negative and can be mistaken as foreground.
-    # We restore background voxels (defined by original v>0 mask) to 0.
-    v[~mask] = 0.0
+        v_fg = np.clip(v[fg], p1, p99)
+        denom = (p99 - p1) + eps
+        v_fg = (v_fg - p1) / denom
+        # Ensure foreground stays within [0,1]
+        v_fg = np.clip(v_fg, 0.0, 1.0)
+        v[fg] = v_fg
+
+    # Keep true background at exactly 0
+    v[bg] = 0.0
     return v
-
 
 def center_crop_or_pad(img2d: np.ndarray, out_hw: Tuple[int, int] = (256, 256)) -> np.ndarray:
     """Center crop/pad a 2D array to out_hw."""
@@ -53,10 +76,10 @@ def center_crop_or_pad(img2d: np.ndarray, out_hw: Tuple[int, int] = (256, 256)) 
     return out
 
 
-def crop_to_foreground_bbox(img2d: np.ndarray, thr: float = 0.05, margin: int = 10) -> np.ndarray:
+def crop_to_foreground_bbox(img2d: np.ndarray, thr: float = 0.02, margin: int = 10) -> np.ndarray:
     """Crop a 2D slice to the bounding box of foreground pixels (cheap brain proxy).
 
-    Foreground is defined as |img| > thr (after z-score). If no foreground is found,
+    Foreground is defined as |img| > thr (after 0..1 normalization). If no foreground is found,
     returns the original image.
     """
     m = np.abs(img2d) > thr
@@ -172,8 +195,7 @@ def largest_connected_component(mask: np.ndarray) -> np.ndarray:
 
     return best
 
-
-def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) -> np.ndarray:
+def make_head_mask(img2d: np.ndarray, thr: float = 0.02, dilate_iters: int = 3) -> np.ndarray:
     """Conservative head/foreground mask.
 
     1) Threshold |img| on the normalized slice.
@@ -189,7 +211,6 @@ def make_head_mask(img2d: np.ndarray, thr: float = 0.08, dilate_iters: int = 3) 
     mask = fill_holes(mask)
     mask = binary_dilate(mask, iters=dilate_iters)
     return mask
-
 
 # --- Helper functions for bbox cropping of head mask ---
 def bbox_from_mask(mask: np.ndarray, margin: int = 20) -> Tuple[int, int, int, int]:
@@ -246,15 +267,16 @@ class AbideSlicesDataset(Dataset):
         slice_mode: str = "random",
         valid_nonzero_frac: float = 0.10,
         slice_percentiles: Tuple[float, ...] = (0.40, 0.50, 0.60),
-        fg_bbox_thr: float = 0.05,
+        fg_bbox_thr: float = 0.02,
         fg_bbox_margin: int = 20,
         seed: int = 42,
         volume_cache_size: int = 12,
         mask_mode: str = "none",  # none | bg_only | brain_only
         label_permutation: Optional[list] = None,
         bg_suppress: bool = True,
-        head_mask_thr: float = 0.08,
+        head_mask_thr: float = 0.02,
         head_mask_dilate: int = 3,
+        input_mode: str = "image",  # image | mask_only
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
@@ -305,6 +327,18 @@ class AbideSlicesDataset(Dataset):
         self.bg_suppress = bg_suppress
         self.head_mask_thr = head_mask_thr
         self.head_mask_dilate = head_mask_dilate
+        self.input_mode = str(input_mode)
+
+        # For mask-only diagnostics, optionally use a smooth distance-transform instead of a hard binary mask.
+        # Values: "binary" (default) or "dist".
+        self.mask_only_repr = str(os.getenv("MASK_ONLY_REPR", "binary"))
+
+        # --- Optional geometry-invariance augmentation (train only) ---
+        self.aug_affine = (os.getenv("AUG_AFFINE", "0") == "1")
+        self.aug_prob = float(os.getenv("AUG_PROB", "1.0"))
+        self.aug_rot_deg = float(os.getenv("AUG_ROT_DEG", "7"))
+        self.aug_trans_px = int(os.getenv("AUG_TRANS_PX", "16"))
+        self.aug_scale_jitter = float(os.getenv("AUG_SCALE_JITTER", "0.10"))
 
     def __len__(self) -> int:
         return len(self.samples)
@@ -348,7 +382,7 @@ class AbideSlicesDataset(Dataset):
         z_max = max(z_min + 1, min(z_max, D))
 
         valid = []
-        thr = 0.05  # threshold after z-score; filters background/noise
+        thr = float(self.fg_bbox_thr)  # threshold in 0..1 space; filters background/noise
         for k in range(z_min, z_max):
             sl = vol_n[:, :, k]
             fg = float((np.abs(sl) > thr).mean())
@@ -362,6 +396,39 @@ class AbideSlicesDataset(Dataset):
 
         self._valid_slices[sample.subject_id] = valid
         return valid
+
+    def _maybe_apply_affine(self, img_t: torch.Tensor) -> torch.Tensor:
+        """Apply random affine augmentation to a [1,H,W] tensor (train only).
+
+        This aims to reduce site shortcut learning from geometry/alignment while
+        preserving intensity-based scanner signature.
+        """
+        if not self.aug_affine or self.split != "train":
+            return img_t
+        if self.aug_prob < 1.0 and float(self.rng.rand()) > self.aug_prob:
+            return img_t
+
+        # Sample params
+        angle = float(self.rng.uniform(-self.aug_rot_deg, self.aug_rot_deg))
+        tx = int(self.rng.randint(-self.aug_trans_px, self.aug_trans_px + 1))
+        ty = int(self.rng.randint(-self.aug_trans_px, self.aug_trans_px + 1))
+        scale = float(self.rng.uniform(1.0 - self.aug_scale_jitter, 1.0 + self.aug_scale_jitter))
+
+        if TF is not None:
+            # torchvision expects [C,H,W]
+            return TF.affine(
+                img_t,
+                angle=angle,
+                translate=[tx, ty],
+                scale=scale,
+                shear=[0.0, 0.0],
+                interpolation=TF.InterpolationMode.BILINEAR,
+                fill=0.0,
+                center=None,
+            )
+
+        # Fallback: no torchvision
+        return img_t
 
     def _pick_slice_index(self, vol_n: np.ndarray, valid: List[int]) -> int:
         """Pick a slice index using fixed depth percentiles but prefer the slice(s)
@@ -422,8 +489,28 @@ class AbideSlicesDataset(Dataset):
 
         # Crop slice and mask together using the head-mask bbox (+ margin)
         bbox = bbox_from_mask(head_mask_full, margin=self.fg_bbox_margin)
+
         sl = crop_with_bbox(sl_full, bbox)
         head_mask_pre = crop_with_bbox(head_mask_full.astype(np.uint8), bbox).astype(bool)
+
+        # Input-mode diagnostics
+        if self.input_mode == "mask_only":
+            # Use only the binary mask as input (tests whether mask geometry alone predicts site)
+            m = resize_mask_to_hw(head_mask_pre, self.out_hw).astype(np.float32)
+            if self.mask_only_repr == "dist" and distance_transform_edt is not None:
+                dt = distance_transform_edt(m > 0)
+                if dt.max() > 0:
+                    dt = dt / (dt.max() + 1e-6)
+                m = dt.astype(np.float32)
+            img_t = torch.from_numpy(m).float().unsqueeze(0)
+            img_t = self._maybe_apply_affine(img_t)
+
+            site_id = sample.site_id
+            if self._label_perm is not None:
+                site_id = int(self._label_perm[int(site_id)])
+            return img_t, site_id, sample.subject_id, k
+        elif self.input_mode != "image":
+            raise ValueError(f"Unknown input_mode={self.input_mode}")
 
         # Default: suppress background BEFORE resize so it cannot carry site signal
         if self.bg_suppress:
@@ -447,6 +534,7 @@ class AbideSlicesDataset(Dataset):
 
         # return as [1, H, W]
         img_t = torch.from_numpy(sl).float().unsqueeze(0)
+        img_t = self._maybe_apply_affine(img_t)
 
         site_id = sample.site_id
         if self._label_perm is not None:

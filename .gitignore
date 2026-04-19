@@ -216,3 +216,4 @@ __marimo__/
 runs/
 mlflow.db
 mlruns/
+/results/

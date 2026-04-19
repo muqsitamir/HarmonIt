@@ -19,14 +19,16 @@ def main():
     num_workers = int(os.getenv("NUM_WORKERS", "0"))
     n_batches = int(os.getenv("N_BATCHES", "1"))
     valid_fg_frac = float(os.getenv("VALID_FG_FRAC", "0.02"))
+    input_mode = os.getenv("INPUT_MODE", "image")  # image | mask_only
+    bbox_jitter = int(os.getenv("BBOX_JITTER", "0"))
 
     bg_suppress = os.getenv("BG_SUPPRESS", "1") == "1"
     head_mask_thr = float(os.getenv("HEAD_MASK_THR", "0.08"))
     head_mask_dilate = int(os.getenv("HEAD_MASK_DILATE", "3"))
 
     # Fixed display range for imshow (helps avoid misleading auto-contrast)
-    vmin = float(os.getenv("VMIN", "-2.0"))
-    vmax = float(os.getenv("VMAX", "2.0"))
+    vmin = float(os.getenv("VMIN", "0.0"))
+    vmax = float(os.getenv("VMAX", "1.0"))
 
     ds = AbideSlicesDataset(
         manifest_path="data/abide_manifest.csv",
@@ -40,6 +42,8 @@ def main():
         bg_suppress=bg_suppress,
         head_mask_thr=head_mask_thr,
         head_mask_dilate=head_mask_dilate,
+        input_mode=input_mode,
+        bbox_jitter=bbox_jitter,
     )
 
     loader = DataLoader(
@@ -66,6 +70,10 @@ def main():
             head_mask_thr,
             "| head_mask_dilate:",
             head_mask_dilate,
+            "| input_mode:",
+            input_mode,
+            "| bbox_jitter:",
+            bbox_jitter,
         )
         print("Batch shapes:", imgs.shape)  # [B,1,H,W]
         print("Site IDs:", site_ids.tolist())
@@ -91,10 +99,13 @@ def main():
                 continue
             im = imgs[i, 0].numpy()
             ax.imshow(im.T, cmap="gray", origin="lower", vmin=vmin, vmax=vmax)
+
             ax.set_title(f"{subject_ids[i]} | site={int(site_ids[i])} | z={int(slice_idxs[i])}", fontsize=8)
 
         fig.tight_layout()
-        out_path = out_dir / f"qc_{split}_{mask_mode}_batch{b_idx}.png"
+        out_path = out_dir / (
+            f"qc_{split}_MM-{mask_mode}_IM-{input_mode}_BS-{int(bg_suppress)}_JIT-{bbox_jitter}_batch{b_idx}.png"
+        )
         fig.savefig(out_path, dpi=160)
         plt.close(fig)
         print(f"Saved QC grid -> {out_path}")
