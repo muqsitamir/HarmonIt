@@ -12,7 +12,7 @@ from harmonit.data.abide_slices_dataset import AbideSlicesDataset, make_head_mas
 def main():
     # ---- Config (env overridable) ----
     split = os.getenv("SPLIT", "val")  # train|val|test
-    n_samples = int(os.getenv("N_SAMPLES", "40"))
+    n_samples = int(os.getenv("N_SAMPLES", "10"))
     out_hw = tuple(map(int, os.getenv("OUT_HW", "256,256").split(",")))
 
     # Mask params must match the dataset defaults (and be logged for reproducibility)

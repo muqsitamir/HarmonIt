@@ -1,9 +1,6 @@
 import json
-from pathlib import Path
 from datetime import datetime
 import os
-import hashlib
-import subprocess
 from dotenv import load_dotenv
 import mlflow
 import mlflow.pytorch
@@ -15,62 +12,11 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, RandomSampler
 
 from harmonit.data.abide_slices_dataset import AbideSlicesDataset
+from harmonit.utils.plotting import save_confusion_matrix_png
+from harmonit.utils.metrics import confusion_and_balanced_acc
+from harmonit.utils.system import *
 
 load_dotenv()
-
-
-# Helper functions for fingerprinting and reproducibility
-def sha256_file(path: Path, chunk_size: int = 1024 * 1024) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        while True:
-            b = f.read(chunk_size)
-            if not b:
-                break
-            h.update(b)
-    return h.hexdigest()
-
-
-def git_info() -> dict:
-    """Best-effort git fingerprinting. Returns commit SHA and dirty flag."""
-    info = {"git_commit": "unknown", "git_dirty": "unknown"}
-    try:
-        sha = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
-        info["git_commit"] = sha
-        code = subprocess.call(["git", "diff", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        info["git_dirty"] = (code != 0)
-    except Exception:
-        pass
-    return info
-
-def confusion_and_balanced_acc(y_true: np.ndarray, y_pred: np.ndarray, num_classes: int):
-    cm = np.zeros((num_classes, num_classes), dtype=np.int64)
-    for t, p in zip(y_true, y_pred):
-        cm[int(t), int(p)] += 1
-
-    # per-class recall; avoid divide-by-zero
-    recalls = []
-    for c in range(num_classes):
-        denom = cm[c, :].sum()
-        if denom > 0:
-            recalls.append(cm[c, c] / denom)
-    bal_acc = float(np.mean(recalls)) if recalls else 0.0
-    acc = float((y_true == y_pred).mean()) if len(y_true) else 0.0
-    return cm, acc, bal_acc
-
-
-def save_confusion_matrix_png(cm: np.ndarray, out_path: Path):
-    import matplotlib.pyplot as plt
-
-    fig = plt.figure(figsize=(8, 7))
-    plt.imshow(cm, interpolation="nearest")
-    plt.title("Site Probe Confusion Matrix")
-    plt.colorbar(fraction=0.046, pad=0.04)
-    plt.xlabel("Predicted")
-    plt.ylabel("True")
-    plt.tight_layout()
-    fig.savefig(out_path, dpi=160)
-    plt.close(fig)
 
 
 def main():
@@ -83,7 +29,7 @@ def main():
 
     # Output run dir
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.2")
+    ablation_name = os.getenv("ABLATION_NAME", "baseline_v0.3")
     out_dir = Path("runs/site_probe") / ablation_name / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -102,22 +48,29 @@ def main():
         torch.cuda.manual_seed_all(seed)
 
     preproc_cfg = {
-        "preproc_version": "v0.2",
+        "preproc_version": "v0.3",
         "canonical_orientation": True,
-        "intensity_clip_pcts": "1,99",
-        "zscore_mask": "nonzero",
+        "intensity_norm": "clip_p1p99_minmax01_bg0",
         "slice_plane": "axial",
         "slice_range_frac": "0.15,0.85",
-        "slice_fg_thr": 0.05,
+        "slice_fg_thr": float(os.getenv("FG_THR", "0.02")),
         "valid_fg_frac": 0.02,
+        "fg_bbox_thr": float(os.getenv("FG_BBOX_THR", "0.02")),
         "out_hw": "256x256",
         "volume_cache_size": 12,
         "mask_mode": os.getenv("MASK_MODE", "none"),  # none | bg_only | brain_only
         "label_shuffle": os.getenv("LABEL_SHUFFLE", "0") == "1",
         "bg_suppress": os.getenv("BG_SUPPRESS", "1") == "1",
-        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.08")),
+        "head_mask_thr": float(os.getenv("HEAD_MASK_THR", "0.02")),
         "head_mask_dilate": int(os.getenv("HEAD_MASK_DILATE", "3")),
         "seed": seed,
+        "input_mode": os.getenv("INPUT_MODE", "image"),  # image | mask_only
+        "mask_only_repr": os.getenv("MASK_ONLY_REPR", "binary"),  # binary | dist
+        "aug_affine": os.getenv("AUG_AFFINE", "0") == "1",
+        "aug_prob": float(os.getenv("AUG_PROB", "1.0")),
+        "aug_rot_deg": float(os.getenv("AUG_ROT_DEG", "7")),
+        "aug_trans_px": int(os.getenv("AUG_TRANS_PX", "16")),
+        "aug_scale_jitter": float(os.getenv("AUG_SCALE_JITTER", "0.10")),
     }
 
     # MLflow tracking: keep the SQLite metadata DB on local disk to avoid NFS locking,
@@ -155,6 +108,8 @@ def main():
             "slice_mode_train": "random",
             "slice_mode_val": "fixed",
             "valid_nonzero_frac": float(preproc_cfg["valid_fg_frac"]),
+            "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
+            "slice_fg_thr": float(preproc_cfg["slice_fg_thr"]),
             "volume_cache_size": int(preproc_cfg["volume_cache_size"]),
             "seed": seed,
             "bg_suppress": bool(preproc_cfg["bg_suppress"]),
@@ -162,6 +117,13 @@ def main():
             "head_mask_dilate": int(preproc_cfg["head_mask_dilate"]),
             "mask_mode": preproc_cfg["mask_mode"],
             "label_shuffle": bool(preproc_cfg["label_shuffle"]),
+            "input_mode": preproc_cfg["input_mode"],
+            "mask_only_repr": preproc_cfg["mask_only_repr"],
+            "aug_affine": preproc_cfg["aug_affine"],
+            "aug_prob": float(preproc_cfg["aug_prob"]),
+            "aug_rot_deg": float(preproc_cfg["aug_rot_deg"]),
+            "aug_trans_px": int(preproc_cfg["aug_trans_px"]),
+            "aug_scale_jitter": float(preproc_cfg["aug_scale_jitter"]),
         })
         mlflow.set_tag("run_dir", str(out_dir))
         mlflow.set_tag("mlflow_tracking_uri", tracking_uri)
@@ -181,7 +143,17 @@ def main():
         # Number of classes
         df = __import__("pandas").read_csv(manifest_path)
         num_classes = int(df["site_id"].max()) + 1 if "site_id" in df.columns else int(df["site"].nunique())
+
+        if "site_id" in df.columns and "site" in df.columns:
+            site_map_df = df[["site_id", "site"]].drop_duplicates().sort_values("site_id")
+            class_names = site_map_df["site"].astype(str).tolist()
+        elif "site" in df.columns:
+            class_names = sorted(df["site"].astype(str).unique().tolist())
+        else:
+            class_names = [str(i) for i in range(num_classes)]
+
         print("Num classes (sites):", num_classes)
+        print("Class names:", class_names)
 
         # Datasets (note: slice_mode=random already returns random valid slice per subject)
         train_ds = AbideSlicesDataset(
@@ -191,12 +163,14 @@ def main():
             out_hw=(256, 256),
             slice_mode="random",
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
+            fg_bbox_thr=float(preproc_cfg["fg_bbox_thr"]),
             seed=seed,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
             bg_suppress=bool(preproc_cfg["bg_suppress"]),
             head_mask_thr=float(preproc_cfg["head_mask_thr"]),
             head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
+            input_mode=str(preproc_cfg["input_mode"]),
         )
         val_ds = AbideSlicesDataset(
             manifest_path=manifest_path,
@@ -205,20 +179,24 @@ def main():
             out_hw=(256, 256),
             slice_mode="fixed",  # deterministic validation
             valid_nonzero_frac=float(preproc_cfg["valid_fg_frac"]),
+            fg_bbox_thr=float(preproc_cfg["fg_bbox_thr"]),
             seed=seed + 1,
             volume_cache_size=int(preproc_cfg["volume_cache_size"]),
             mask_mode=preproc_cfg["mask_mode"],
             bg_suppress=bool(preproc_cfg["bg_suppress"]),
             head_mask_thr=float(preproc_cfg["head_mask_thr"]),
             head_mask_dilate=int(preproc_cfg["head_mask_dilate"]),
+            input_mode=str(preproc_cfg["input_mode"]),
         )
 
 
         if preproc_cfg["label_shuffle"]:
             rng = np.random.RandomState(12345)
             perm = rng.permutation(num_classes)
-            train_ds.set_label_permutation(perm.tolist())
-            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm.tolist())))
+            perm_list = perm.tolist()
+            train_ds.set_label_permutation(perm_list)
+            val_ds.set_label_permutation(perm_list)
+            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm_list)))
 
         with open(out_dir / "config.json", "w") as f:
             json.dump(
@@ -229,12 +207,22 @@ def main():
                     "steps_per_epoch": steps_per_epoch,
                     "val_batches": val_batches,
                     "num_classes": num_classes,
+                    "class_names": class_names,
                     "seed": seed,
                     "bg_suppress": bool(preproc_cfg["bg_suppress"]),
                     "head_mask_thr": float(preproc_cfg["head_mask_thr"]),
                     "head_mask_dilate": int(preproc_cfg["head_mask_dilate"]),
                     "mask_mode": preproc_cfg["mask_mode"],
                     "label_shuffle": bool(preproc_cfg["label_shuffle"]),
+                    "input_mode": preproc_cfg["input_mode"],
+                    "mask_only_repr": preproc_cfg["mask_only_repr"],
+                    "fg_bbox_thr": float(preproc_cfg["fg_bbox_thr"]),
+                    "intensity_norm": preproc_cfg["intensity_norm"],
+                    "aug_affine": preproc_cfg["aug_affine"],
+                    "aug_prob": float(preproc_cfg["aug_prob"]),
+                    "aug_rot_deg": float(preproc_cfg["aug_rot_deg"]),
+                    "aug_trans_px": int(preproc_cfg["aug_trans_px"]),
+                    "aug_scale_jitter": float(preproc_cfg["aug_scale_jitter"]),
                 },
                 f,
                 indent=2,
@@ -253,6 +241,7 @@ def main():
                 "val_batches": val_batches,
             },
             "preprocessing": preproc_cfg,
+            "class_names": class_names,
             "paths": {
                 "manifest_path": manifest_path,
                 "splits_path": splits_path,
@@ -367,7 +356,7 @@ def main():
             cm_png_path = out_dir / f"cm_epoch{epoch}.png"
 
             np.save(cm_npy_path, cm)
-            save_confusion_matrix_png(cm, cm_png_path)
+            save_confusion_matrix_png(cm, cm_png_path, class_names)
 
             # Log only the confusion matrix PNG per epoch
             mlflow.log_artifact(str(cm_png_path))

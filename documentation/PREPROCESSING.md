@@ -15,16 +15,23 @@ A **slice** is simply a 2D cross-section of the 3D volume (e.g., an axial slice 
 
 ---
 
-## Pipeline summary (v0.2)
+## Pipeline summary (v0.3)
 
 **Input:** ABIDE T1 NIfTI volumes (1112 subjects)  
-**Output (training-time):** 2D axial slices, normalized and standardized for batch training with geometry standardization (foreground bounding box crop + resize) and a robust slice selection policy focusing on mid-brain proxy slices.
+**Output (training-time):** 2D axial slices, normalized and standardized for batch training with geometry standardization (head-mask bounding box crop + resize) and a robust slice selection policy focusing on mid-brain proxy slices.
 
 We avoid pre-saving all slices (storage explosion). Instead:
 1) preprocess **per-volume on-the-fly** (CPU-friendly),
-2) extract standardized **2D axial slices** using a foreground bounding box crop with margin and resizing,
+2) extract standardized **2D axial slices** using a head-mask bounding box crop with margin and resizing,
 3) select slices based on percentile anchors and max foreground area scoring,
+
 4) feed slices to the site-probe and harmonizer models.
+
+**Key update (intensity normalization):** v0.3 uses a new normalization scheme: clip foreground intensities to [p1, p99], then min-max scale foreground to [0,1], keeping true background voxels exactly 0 ("clip_p1p99_minmax01_bg0"). This avoids negative-valued padding or black rectangles that could leak site cues under z-score normalization used previously.
+
+**Additional diagnostics:**  
+- `INPUT_MODE=mask_only` with `MASK_ONLY_REPR={binary,dist}` allows testing probe reliance on mask representations alone.  
+- Optional strong affine augmentation for geometry invariance can be applied during probe training to reduce shortcut learning.
 
 ---
 
@@ -50,16 +57,18 @@ We avoid pre-saving all slices (storage explosion). Instead:
 ---
 
 ### Step 2 — Intensity normalization (mandatory in MRI)
-**What:** per-volume robust normalization: clip intensities to [p1, p99] then z-score (within nonzero mask or within brain crop).  
-**Why it’s necessary:**
-- MRI intensities are not standardized units; scale/contrast vary across scanners and protocols.
-- Without normalization, models often overfit to site-specific intensity scaling rather than anatomy.
+**What:** foreground-only percentile clipping then min-max scaling to 0..1; background=0 preserved.  
+**Implementation note:** background remains exact 0; we do not z-score in v0.3.  
+**Why it’s necessary:**  
+- MRI intensities are not standardized units; scale/contrast vary across scanners and protocols.  
+- Min-max scaling after clipping is a common robust approach to normalize intensity distributions while preserving background.  
 **Evidence:** Reinhold et al. show intensity normalization improves MR deep learning synthesis across methods and suggest it can be vital for successful DL-based MR synthesis.  [oai_citation:1‡PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6758567/?utm_source=chatgpt.com)  
 **If we skip:** the site-probe may become trivially strong due to global scaling, and harmonization may simply learn intensity rescaling rather than meaningful distribution alignment.
 
 **Ablation:** compare site-probe balanced accuracy and harmonizer outputs under:
 - z-score only
-- percentile clip + z-score (default)
+- percentile clip + z-score (previous default)
+- clip + min-max scaling on foreground with background=0 (v0.3 default)
 - alternative normalizations (optional later)
 
 ---
@@ -86,10 +95,13 @@ We avoid pre-saving all slices (storage explosion). Instead:
 **Why optional in v0:** skull stripping can fail and requires QC; cropping can provide a simpler first baseline.  
 **If we skip entirely:** site-probe accuracy may be inflated due to non-brain cues (still informative, but less clinically meaningful).
 
-**New masking ablations:** We introduce lightweight masking modes as probe sanity checks:  
-- `MASK_MODE=bg_only` keeps only low-intensity/background pixels, removing brain tissue.  
-- `MASK_MODE=brain_only` keeps only foreground-like pixels, masking out background.  
-These are diagnostic tools to test probe reliance on different image regions and are not part of the final pipeline.
+**Masking diagnostics (probe sanity checks):** We expose masking modes to test whether the probe is learning shortcuts:
+- `MASK_MODE=brain_only`: keeps only pixels **inside** the head/foreground mask.
+- `MASK_MODE=bg_only`: keeps only pixels **outside** the head/foreground mask.
+
+**Important:** `BG_SUPPRESS=1` zeros pixels outside the head mask *before resize* (production setting). Therefore `MASK_MODE=bg_only` with `BG_SUPPRESS=1` should collapse to chance by design. For a *true diagnostic* of what the probe can learn from outside-head regions, run `MASK_MODE=bg_only` with `BG_SUPPRESS=0`.
+
+These diagnostics are used to validate evaluation integrity; they are not the harmonization objective.
 
 **Ablation:** compare probe accuracy:
 - no mask (baseline)
@@ -99,9 +111,11 @@ These are diagnostic tools to test probe reliance on different image regions and
 ---
 
 ### Step 5 — Spatial standardization for 2D training (crop/pad, optional resampling)
-**What (v0.2):**
+**What (v0.3):**
 - Extract axial slices from the 3D volume.
-- Crop each slice to a foreground bounding box (a cheap brain proxy) with margin (default 20 pixels).
+- Compute a head/foreground mask on the full normalized slice.
+- Crop each slice using the head-mask bounding box plus margin (default 20 pixels).
+- If `BG_SUPPRESS=1`, set pixels outside the mask to 0 before resizing.
 - Resize the cropped slice to 256×256 using bilinear interpolation.
 
 This approach reduces probe cheating via borders or field-of-view differences and ensures the probe focuses on in-brain scanner signatures. Geometric standardization is a common practice in medical preprocessing to improve model robustness.
@@ -118,6 +132,19 @@ This approach reduces probe cheating via borders or field-of-view differences an
 
 ---
 
+### Step 5a — Head-mask crop + background suppression (probe robustness)
+**What (v0.3):**
+- Compute a conservative head/foreground mask on the **full normalized slice** (before any resizing).
+- Derive a tight crop region from the mask bounding box plus margin; crop the slice and mask together.
+- If `BG_SUPPRESS=1`, set pixels outside the mask to 0 **before resize**.
+- Resize the final slice to 256×256 for model input.
+
+**Why it’s necessary:** resizing/interpolation can blur nonzero values into the background. If masking is applied after resize, background pixels can become nonzero and the mask can degenerate (covering everything), reintroducing shortcut learning. Applying masking/suppression pre-resize makes the definition of “background” stable and interpretable.
+
+**Evidence (our QC):** QC scripts generate per-site overlays and summary statistics used to check that masks are neither empty nor full-frame, ensuring mask quality and consistency across sites.
+
+---
+
 ### Step 5b — Slice selection policy (robust mid-brain sampling)
 **What:**  
 - Filter valid slices by selecting those in a middle depth band of the volume and with sufficient foreground fraction.  
@@ -128,6 +155,19 @@ This approach reduces probe cheating via borders or field-of-view differences an
 
 **Why it matters:**  
 This policy avoids shortcuts based on slice-level or coverage differences that could bias the probe. Sampling robust mid-brain slices ensures the probe learns relevant scanner and anatomical features rather than trivial positional cues.
+
+---
+
+### Step 5c — Geometry-invariance augmentation (probe robustness; train-only)
+**What:** optional random affine augmentation applied to the final [1,H,W] tensor for training only.
+
+**Two presets:**  
+- "ramp1": smaller default values currently described in code (rotation ±7°, translation ±16 px, scale jitter ±10%, prob=1.0).  
+- "ramp2": stronger augmentation defined exactly as rotation ±25°, translation ±80 px, scale jitter ±40%, prob=1.0; train only.
+
+**Why:** reduces shortcut learning from silhouette/crop geometry while preserving intensity-based scanner signature.
+
+**Evidence:** data augmentation is widely used to improve robustness in medical imaging DL; include a survey/paper here. [oai_citation:6‡(fill)]
 
 ---
 
@@ -146,14 +186,18 @@ We adopt 2D because:
 
 ---
 
-## Default v0.2 parameters
+## Default v0.3 parameters
 - Orientation: `as_closest_canonical`
-- Intensity: clip [p1, p99] then z-score (within nonzero mask)
+- Intensity: clip [p1, p99] + min-max to [0,1] on foreground; background=0
 - Slice selection: percentile anchors (0.40, 0.50, 0.60) + max-foreground scoring; training samples top-K, validation picks best
-- 2D size: foreground bounding box crop (threshold=0.05) with margin=20 then resize to 256×256
-- Mask mode default: none (with ablation modes `bg_only` and `brain_only` available)
-- Brain extraction: off in v0.2 (use crop); optional BET later
-- Bias correction: off in v0.2; optional N4 later
+- 2D size: head-mask bbox crop (margin=20) then resize to 256×256
+- Head mask: threshold on |slice| (default thr=0.02), largest component + hole fill + dilation (default 3)
+- Background suppression (probe): `BG_SUPPRESS=1` (default) zeros pixels outside head mask pre-resize
+- Mask mode default: `MASK_MODE=none` (diagnostics: `bg_only`, `brain_only`; use `BG_SUPPRESS=0` for true outside-mask diagnostics)
+- Bias correction: off in v0.3; optional N4 later
+- `INPUT_MODE`: image | mask_only (diagnostic toggle)
+- `MASK_ONLY_REPR`: binary | dist (when `INPUT_MODE=mask_only`)
+- `AUG_AFFINE`: none | ramp1 | ramp2 (affine augmentation presets for probe training)
 
 ---
 
@@ -170,6 +214,7 @@ We adopt 2D because:
 Each run logs comprehensive metadata to ensure reproducibility and traceability of ablation experiments, including:  
 - `preprocessing.json` capturing preprocessing parameters and pipeline versions,  
 - `run_metadata.json` containing hashes for the manifest and splits files, git commit hash and dirty state,  
-- MLflow parameters and tags for experiment tracking.
+- MLflow parameters and tags for experiment tracking,  
+- augmentation and diagnostic modes logged via environment variables into `preprocessing.json` and MLflow params.
 
 This metadata ensures that differences in probe or harmonizer performance can be confidently attributed to preprocessing choices.
