@@ -1,5 +1,3 @@
-import numpy as np
-import torch
 from torch.utils.data import DataLoader
 
 from harmonit.data.abide_slices_dataset import AbideSlicesDataset
@@ -45,7 +43,7 @@ def main():
     dist1 = img1.flatten()
     dist2 = img2.flatten()
 
-    print("KL divergence:", kl_divergence(dist1, dist2))
+    print("KL divergence:", kl_divergence(dist1, dist1))
     print("Wasserstein:", wasserstein_dist(dist1, dist2))
 
 
