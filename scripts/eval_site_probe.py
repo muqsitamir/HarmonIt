@@ -42,10 +42,15 @@ def main():
     head_mask_thr = float(os.getenv("HEAD_MASK_THR", "0.02"))
     head_mask_dilate = int(os.getenv("HEAD_MASK_DILATE", "3"))
     input_mode = os.getenv("INPUT_MODE", "image")
+    label_shuffle = os.getenv("LABEL_SHUFFLE", "0") == "1"
 
     # --- Evaluation mode ---
     # det: deterministic validation (slice_mode=fixed)
     # ms:  multi-slice evaluation (K random slices per subject; slice_mode=random) aggregated across runs
+    eval_split = os.getenv("EVAL_SPLIT", "val").lower()
+    if eval_split not in {"train", "val", "test"}:
+        raise ValueError(f"EVAL_SPLIT must be train, val, or test, got: {eval_split}")
+
     eval_mode = os.getenv("EVAL_MODE", "det").lower()  # det | ms
     ms_k = int(os.getenv("MS_K", "1"))
     ms_seed_stride = int(os.getenv("MS_SEED_STRIDE", "1000"))
@@ -54,11 +59,11 @@ def main():
     if eval_mode == "ms" and ms_k < 1:
         raise ValueError(f"MS_K must be >= 1, got: {ms_k}")
 
-    def build_val_dataset(ds_seed: int, slice_mode: str):
-        return AbideSlicesDataset(
+    def build_eval_dataset(ds_seed: int, slice_mode: str):
+        ds = AbideSlicesDataset(
             manifest_path=manifest_path,
             splits_path=splits_path,
-            split="val",
+            split=eval_split,
             out_hw=(256, 256),
             slice_mode=slice_mode,
             valid_nonzero_frac=float(os.getenv("VALID_FG_FRAC", "0.02")),
@@ -70,6 +75,12 @@ def main():
             head_mask_dilate=head_mask_dilate,
             input_mode=input_mode,
         )
+        if label_shuffle:
+            rng = np.random.RandomState(12345)
+            perm = rng.permutation(num_classes).tolist()
+            ds.set_label_permutation(perm)
+            print("Label shuffle permutation:", perm)
+        return ds
 
     # Load checkpoint once (support plain and DataParallel keys)
     state = torch.load(str(ckpt_path), map_location="cpu", weights_only=True)
@@ -109,7 +120,7 @@ def main():
     model.eval()
 
     def run_once(ds_seed: int, slice_mode: str):
-        ds_local = build_val_dataset(ds_seed=ds_seed, slice_mode=slice_mode)
+        ds_local = build_eval_dataset(ds_seed=ds_seed, slice_mode=slice_mode)
         loader_local = DataLoader(
             ds_local,
             batch_size=batch_size,
@@ -145,18 +156,20 @@ def main():
         tag = f"MS(K={ms_k})"
 
     cm, acc, bal = confusion_and_balanced_acc(y_true, y_pred, num_classes)
-    print(f"[{tag} FULL VAL] acc={acc:.4f} | bal_acc={bal:.4f} | N={len(y_true)}")
+    split_tag = eval_split.upper()
+    print(f"[{tag} FULL {split_tag}] acc={acc:.4f} | bal_acc={bal:.4f} | N={len(y_true)}")
 
     # Save artifacts
-    np.save(out_dir / "cm_fullval.npy", cm)
-    save_confusion_matrix_png(cm, out_dir / "cm_fullval.png", class_names=class_names)
+    np.save(out_dir / f"cm_full{eval_split}.npy", cm)
+    save_confusion_matrix_png(cm, out_dir / f"cm_full{eval_split}.png", class_names=class_names)
 
     metrics = {
-        "val_acc_full": acc,
-        "val_bal_acc_full": bal,
-        "n_val_samples": int(len(y_true)),
+        f"{eval_split}_acc_full": acc,
+        f"{eval_split}_bal_acc_full": bal,
+        f"n_{eval_split}_samples": int(len(y_true)),
         "ckpt_path": str(ckpt_path),
         "run_tag": run_tag,
+        "eval_split": eval_split,
         "eval_mode": eval_mode,
         "ms_k": int(ms_k),
         "ms_seed_stride": int(ms_seed_stride),
@@ -165,6 +178,7 @@ def main():
         "head_mask_thr": head_mask_thr,
         "head_mask_dilate": head_mask_dilate,
         "input_mode": input_mode,
+        "label_shuffle": label_shuffle,
     }
     (out_dir / "eval_metrics.json").write_text(json.dumps(metrics, indent=2))
 
@@ -188,9 +202,9 @@ def main():
                 "input_mode": input_mode,
                 "batch_size": batch_size,
             })
-            mlflow.log_metric("val_acc_full", acc)
-            mlflow.log_metric("val_bal_acc_full", bal)
-            mlflow.log_artifact(str(out_dir / "cm_fullval.png"))
+            mlflow.log_metric(f"{eval_split}_acc_full", acc)
+            mlflow.log_metric(f"{eval_split}_bal_acc_full", bal)
+            mlflow.log_artifact(str(out_dir / f"cm_full{eval_split}.png"))
             mlflow.log_artifact(str(out_dir / "eval_metrics.json"))
 
 

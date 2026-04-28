@@ -1,0 +1,19 @@
+{
+  "method": "neurocombat",
+  "split": "test",
+  "manifest_path": "data/abide_manifest.csv",
+  "splits_path": "data/splits.json",
+  "out_hw": [
+    256,
+    256
+  ],
+  "slice_mode": "fixed",
+  "input_mode": "image",
+  "mask_mode": "none",
+  "bg_suppress": true,
+  "valid_nonzero_frac": 0.02,
+  "fg_bbox_thr": 0.02,
+  "seed": 42,
+  "n_subjects": 109,
+  "n_sites": 17
+}

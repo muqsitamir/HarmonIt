@@ -9,3 +9,6 @@ xnat~=0.7.2
 mlflow~=3.10.1
 mlflow-skinny~=3.10.1
 scikit-image
+scipy
+scikit-learn
+neuroCombat
