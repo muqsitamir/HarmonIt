@@ -280,6 +280,7 @@ class AbideSlicesDataset(Dataset):
     ):
         self.manifest_path = Path(manifest_path)
         self.splits_path = Path(splits_path)
+        self.data_root = self.manifest_path.parent
         self.split = split
         self.out_hw = out_hw
         self.slice_mode = slice_mode
@@ -357,7 +358,14 @@ class AbideSlicesDataset(Dataset):
             return vol_n
 
         # Cache miss: load and normalize
-        img = nib.load(sample.t1_path)
+        t1_path = Path(sample.t1_path)
+        if not t1_path.exists():
+            parts = t1_path.parts
+            if "ABIDE" in parts:
+                fallback = self.data_root / Path(*parts[parts.index("ABIDE") :])
+                if fallback.exists():
+                    t1_path = fallback
+        img = nib.load(str(t1_path))
         img = nib.as_closest_canonical(img)
         vol = img.get_fdata(dtype=np.float32)
         vol_n = robust_normalize(vol)
