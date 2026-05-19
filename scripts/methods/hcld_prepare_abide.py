@@ -86,8 +86,9 @@ def main() -> None:
     volume_dir.mkdir(parents=True, exist_ok=True)
     label_dir.mkdir(parents=True, exist_ok=True)
 
-    rows_by_split: dict[str, list[dict[str, object]]] = {split: [] for split in splits}
-    split_by_subject = {subject_id: split for split, ids in splits.items() for subject_id in ids}
+    split_names = [name for name in ("train", "val", "test") if isinstance(splits.get(name), list)]
+    rows_by_split: dict[str, list[dict[str, object]]] = {split: [] for split in split_names}
+    split_by_subject = {subject_id: split for split in split_names for subject_id in splits[split]}
 
     for idx, row in manifest.iterrows():
         subject_id = str(row["subject_id"])
