@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=harmonit_diff_nyu
-#SBATCH --partition=gpu_lowpriority
-#SBATCH --gres=gpu:a100:1
+#SBATCH --partition=gpu_long
+#SBATCH --gres=gpu:v100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=18:00:00
@@ -14,10 +14,16 @@ REPO_DIR="${REPO_DIR:-/home/muqsitamir/repos/HarmonIt}"
 PYTHON="${PYTHON:-/home/muqsitamir/miniconda3/envs/harmonit311/bin/python}"
 OUT_DIR="${OUT_DIR:-outputs/harmonized/diffusion_img2img_nyu_s20000_strength035}"
 SITE_PROBE="${SITE_PROBE:-checkpoints/site_probe_v0.3_aug_ramp15/model_best.pt}"
+RESUME_CKPT="${RESUME_CKPT:-${OUT_DIR}/checkpoints/model_latest.pt}"
 
 cd "${REPO_DIR}"
 mkdir -p logs "${OUT_DIR}"
 export PYTHONPATH="${REPO_DIR}/src:${PYTHONPATH:-}"
+
+RESUME_ARGS=()
+if [ -f "${RESUME_CKPT}" ]; then
+  RESUME_ARGS=(--resume-checkpoint "${RESUME_CKPT}")
+fi
 
 "${PYTHON}" scripts/methods/diffusion_img2img.py train \
   --out-dir "${OUT_DIR}" \
@@ -28,7 +34,8 @@ export PYTHONPATH="${REPO_DIR}/src:${PYTHONPATH:-}"
   --channel-mults 1 2 4 4 \
   --num-timesteps 1000 \
   --log-every 100 \
-  --save-every 2000
+  --save-every 2000 \
+  "${RESUME_ARGS[@]}"
 
 "${PYTHON}" scripts/methods/diffusion_img2img.py export \
   --checkpoint "${OUT_DIR}/checkpoints/model_latest.pt" \

@@ -77,6 +77,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     train.add_argument("--grad-clip", type=float, default=1.0)
     train.add_argument("--log-every", type=int, default=100)
     train.add_argument("--save-every", type=int, default=2000)
+    train.add_argument(
+        "--resume-checkpoint",
+        default=None,
+        help="Optional checkpoint to continue training from. Loads model/EMA and optimizer when present.",
+    )
 
     export = subparsers.add_parser("export", parents=[common])
     export.add_argument("--split", default="test", choices=("train", "val", "test"))
@@ -309,6 +314,19 @@ def train(args: argparse.Namespace) -> None:
     ema_model.eval()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     schedule = DiffusionSchedule(args.num_timesteps, args.beta_start, args.beta_end, device)
+    start_step = 0
+    if args.resume_checkpoint:
+        resume_path = Path(args.resume_checkpoint)
+        if resume_path.exists():
+            payload = torch.load(resume_path, map_location=device)
+            model.load_state_dict(payload["model"])
+            ema_model.load_state_dict(payload.get("ema_model", payload["model"]))
+            if "optimizer" in payload:
+                optimizer.load_state_dict(payload["optimizer"])
+            start_step = int(payload.get("step", 0))
+            print(f"Resumed from {resume_path} at step={start_step}", flush=True)
+        else:
+            print(f"Resume checkpoint not found, starting fresh: {resume_path}", flush=True)
 
     out_dir = Path(args.out_dir)
     ckpt_dir = out_dir / "checkpoints"
@@ -335,7 +353,10 @@ def train(args: argparse.Namespace) -> None:
     start = time.time()
     running_loss = 0.0
     model.train()
-    for step, (images, sites, _subjects, _slices) in enumerate(loader, start=1):
+    for local_step, (images, sites, _subjects, _slices) in enumerate(loader, start=1):
+        step = start_step + local_step
+        if step > args.steps:
+            break
         images = to_model_range(images.to(device, non_blocking=True).float())
         sites = sites.to(device, non_blocking=True).long()
         t = torch.randint(0, args.num_timesteps, (images.shape[0],), device=device)
@@ -364,6 +385,7 @@ def train(args: argparse.Namespace) -> None:
                 {
                     "model": model.state_dict(),
                     "ema_model": ema_model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
                     "config": config,
                     "step": step,
                 },
@@ -373,6 +395,7 @@ def train(args: argparse.Namespace) -> None:
                 {
                     "model": model.state_dict(),
                     "ema_model": ema_model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
                     "config": config,
                     "step": step,
                 },
