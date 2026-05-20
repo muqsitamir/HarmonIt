@@ -43,6 +43,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--latent-channels", type=int, default=6)
     parser.add_argument("--num-res-blocks", type=int, default=2)
     parser.add_argument("--attention", action="store_true", help="Enable attention at the deepest AE level.")
+    parser.add_argument("--nonlocal-attention", action="store_true", help="Enable encoder/decoder non-local attention.")
     parser.add_argument("--use-flash-attention", action="store_true")
     parser.add_argument("--save-every-steps", type=int, default=1000)
     parser.add_argument("--val-every-steps", type=int, default=1000)
@@ -104,6 +105,8 @@ def build_models(args: argparse.Namespace, device: torch.device) -> tuple[torch.
         num_res_blocks=args.num_res_blocks,
         norm_num_groups=8,
         attention_levels=tuple(bool(args.attention) and i == len(channels) - 1 for i in range(len(channels))),
+        with_encoder_nonlocal_attn=bool(args.nonlocal_attention),
+        with_decoder_nonlocal_attn=bool(args.nonlocal_attention),
         use_flash_attention=bool(args.use_flash_attention),
     ).to(device)
     discriminator = PatchDiscriminator(
