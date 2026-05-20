@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=harmonit_hcld_ae
-#SBATCH --partition=gpu_long
-#SBATCH --gres=gpu:v100:1
+#SBATCH --partition=gpu_lowpriority
+#SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=96G
 #SBATCH --time=24:00:00
@@ -33,4 +33,6 @@ fi
   --epochs 30 \
   --save-every-steps 1000 \
   --val-every-steps 1000 \
+  --attention \
+  --nonlocal-attention \
   "${RESUME_ARGS[@]}"

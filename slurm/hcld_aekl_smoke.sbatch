@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=harmonit_hcld_ae_smoke
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=48G
 #SBATCH --time=00:45:00
@@ -25,4 +25,6 @@ export PYTHONPATH="${REPO_DIR}/src:${PYTHONPATH:-}"
   --num-workers 0 \
   --max-steps 2 \
   --save-every-steps 2 \
-  --val-every-steps 2
+  --val-every-steps 2 \
+  --attention \
+  --nonlocal-attention
