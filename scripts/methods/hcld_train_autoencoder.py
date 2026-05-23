@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
-from torch.cuda.amp import GradScaler, autocast
+from torch.amp import GradScaler, autocast
 from torch.utils.data import DataLoader, Dataset
 
 
@@ -44,9 +44,14 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--num-res-blocks", type=int, default=2)
     parser.add_argument("--attention", action="store_true", help="Enable attention at the deepest AE level.")
     parser.add_argument("--nonlocal-attention", action="store_true", help="Enable encoder/decoder non-local attention.")
+    parser.add_argument("--encoder-nonlocal-attention", action="store_true", help="Enable encoder non-local attention.")
+    parser.add_argument("--decoder-nonlocal-attention", action="store_true", help="Enable decoder non-local attention.")
     parser.add_argument("--use-flash-attention", action="store_true")
+    parser.add_argument("--gradient-checkpointing", action="store_true", help="Checkpoint encoder/decoder activations.")
+    parser.add_argument("--amp-dtype", choices=("fp16", "bf16"), default="bf16")
     parser.add_argument("--save-every-steps", type=int, default=1000)
     parser.add_argument("--val-every-steps", type=int, default=1000)
+    parser.add_argument("--export-recon-every-steps", type=int, default=0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--resume-checkpoint", default=None)
     return parser
@@ -96,6 +101,8 @@ def build_models(args: argparse.Namespace, device: torch.device) -> tuple[torch.
     from generative.networks.nets import AutoencoderKL, PatchDiscriminator
 
     channels = tuple(int(v) for v in args.base_channels)
+    encoder_nonlocal = bool(args.nonlocal_attention or args.encoder_nonlocal_attention)
+    decoder_nonlocal = bool(args.nonlocal_attention or args.decoder_nonlocal_attention)
     autoencoder = AutoencoderKL(
         spatial_dims=3,
         in_channels=1,
@@ -105,9 +112,10 @@ def build_models(args: argparse.Namespace, device: torch.device) -> tuple[torch.
         num_res_blocks=args.num_res_blocks,
         norm_num_groups=8,
         attention_levels=tuple(bool(args.attention) and i == len(channels) - 1 for i in range(len(channels))),
-        with_encoder_nonlocal_attn=bool(args.nonlocal_attention),
-        with_decoder_nonlocal_attn=bool(args.nonlocal_attention),
+        with_encoder_nonlocal_attn=encoder_nonlocal,
+        with_decoder_nonlocal_attn=decoder_nonlocal,
         use_flash_attention=bool(args.use_flash_attention),
+        use_checkpointing=bool(args.gradient_checkpointing),
     ).to(device)
     discriminator = PatchDiscriminator(
         spatial_dims=3,
@@ -122,6 +130,23 @@ def build_models(args: argparse.Namespace, device: torch.device) -> tuple[torch.
         padding=1,
     ).to(device)
     return autoencoder, discriminator
+
+
+def amp_dtype(args: argparse.Namespace) -> torch.dtype:
+    return torch.bfloat16 if args.amp_dtype == "bf16" else torch.float16
+
+
+def cuda_memory_summary(device: torch.device) -> str:
+    if device.type != "cuda":
+        return "cuda_mem=NA"
+    allocated = torch.cuda.memory_allocated(device) / (1024**3)
+    reserved = torch.cuda.memory_reserved(device) / (1024**3)
+    max_allocated = torch.cuda.max_memory_allocated(device) / (1024**3)
+    max_reserved = torch.cuda.max_memory_reserved(device) / (1024**3)
+    return (
+        f"cuda_mem_alloc_gb={allocated:.2f} cuda_mem_reserved_gb={reserved:.2f} "
+        f"cuda_mem_peak_alloc_gb={max_allocated:.2f} cuda_mem_peak_reserved_gb={max_reserved:.2f}"
+    )
 
 
 def save_checkpoint(
@@ -153,17 +178,43 @@ def save_checkpoint(
 
 
 @torch.no_grad()
-def validate(model: torch.nn.Module, loader: DataLoader, device: torch.device, max_batches: int = 8) -> float:
+def validate(
+    model: torch.nn.Module,
+    loader: DataLoader,
+    device: torch.device,
+    dtype: torch.dtype,
+    max_batches: int = 8,
+) -> float:
     model.eval()
     losses = []
     for idx, batch in enumerate(loader):
         if idx >= max_batches:
             break
         images = batch["image"].to(device, non_blocking=True).float()
-        reconstruction, _z_mu, _z_sigma = model(images)
+        with autocast(device_type=device.type, dtype=dtype, enabled=(device.type == "cuda")):
+            reconstruction, _z_mu, _z_sigma = model(images)
         losses.append(float(F.l1_loss(reconstruction.float(), images.float()).detach().cpu()))
     model.train()
     return float(np.mean(losses)) if losses else float("nan")
+
+
+@torch.no_grad()
+def export_reconstructions(
+    out_dir: Path,
+    step: int,
+    images: torch.Tensor,
+    reconstruction: torch.Tensor,
+    batch: dict[str, Any],
+) -> None:
+    recon_dir = out_dir / "reconstructions"
+    recon_dir.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(
+        recon_dir / f"recon_step_{step:06d}.npz",
+        raw=images.detach().float().cpu().numpy(),
+        recon=reconstruction.detach().float().cpu().numpy(),
+        fn=np.asarray(batch["fn"]),
+        site=batch["site"].detach().cpu().numpy(),
+    )
 
 
 def main() -> None:
@@ -173,6 +224,8 @@ def main() -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if device.type != "cuda":
         print("Warning: CUDA is not available; HCLD AE training is intended for GPU.", flush=True)
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
 
     train_ds = HcldVolumeDataset(args.data_dir, args.train_labels)
     val_ds = HcldVolumeDataset(args.data_dir, args.val_labels)
@@ -200,8 +253,10 @@ def main() -> None:
     adv_loss = PatchAdversarialLoss(criterion="least_squares")
     optimizer_g = torch.optim.Adam(model.parameters(), lr=args.lr)
     optimizer_d = torch.optim.Adam(discriminator.parameters(), lr=args.adv_lr)
-    scaler_g = GradScaler(enabled=(device.type == "cuda"))
-    scaler_d = GradScaler(enabled=(device.type == "cuda"))
+    dtype = amp_dtype(args)
+    scaler_enabled = device.type == "cuda" and args.amp_dtype == "fp16"
+    scaler_g = GradScaler(device.type, enabled=scaler_enabled)
+    scaler_d = GradScaler(device.type, enabled=scaler_enabled)
 
     start_step = 0
     start_epoch = 0
@@ -223,10 +278,14 @@ def main() -> None:
     ckpt_dir = out_dir / "checkpoints"
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     config = vars(args).copy()
+    config["effective_encoder_nonlocal_attention"] = bool(args.nonlocal_attention or args.encoder_nonlocal_attention)
+    config["effective_decoder_nonlocal_attention"] = bool(args.nonlocal_attention or args.decoder_nonlocal_attention)
     config["train_size"] = len(train_ds)
     config["val_size"] = len(val_ds)
     config["device"] = str(device)
+    config["amp_torch_dtype"] = str(dtype)
     (out_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
+    print(json.dumps(config, sort_keys=True), flush=True)
 
     step = start_step
     started = time.time()
@@ -238,7 +297,7 @@ def main() -> None:
             images = batch["image"].to(device, non_blocking=True).float()
 
             optimizer_g.zero_grad(set_to_none=True)
-            with autocast(enabled=(device.type == "cuda")):
+            with autocast(device_type=device.type, dtype=dtype, enabled=(device.type == "cuda")):
                 reconstruction, z_mu, z_sigma = model(images)
                 logits_fake = discriminator(reconstruction.contiguous().float())[-1]
                 recons_loss = F.l1_loss(reconstruction.float(), images.float())
@@ -254,7 +313,7 @@ def main() -> None:
             scaler_g.update()
 
             optimizer_d.zero_grad(set_to_none=True)
-            with autocast(enabled=(device.type == "cuda")):
+            with autocast(device_type=device.type, dtype=dtype, enabled=(device.type == "cuda")):
                 logits_fake = discriminator(reconstruction.contiguous().detach())[-1]
                 logits_real = discriminator(images.contiguous().detach())[-1]
                 loss_d_fake = adv_loss(logits_fake, target_is_real=False, for_discriminator=True)
@@ -264,17 +323,24 @@ def main() -> None:
             scaler_d.step(optimizer_d)
             scaler_d.update()
 
+            if not torch.isfinite(loss_g.detach()) or not torch.isfinite(loss_d.detach()):
+                raise RuntimeError(f"Non-finite loss at step={step}: loss_g={loss_g.item()} loss_d={loss_d.item()}")
+
             if step == 1 or step % 25 == 0:
                 elapsed = (time.time() - started) / 60.0
                 print(
                     f"step={step} epoch={epoch} recon={float(recons_loss.detach().cpu()):.6f} "
                     f"kl={float(kl_loss.detach().cpu()):.6f} g_adv={float(generator_loss.detach().cpu()):.6f} "
-                    f"d={float(loss_d.detach().cpu()):.6f} elapsed_min={elapsed:.1f}",
+                    f"d={float(loss_d.detach().cpu()):.6f} elapsed_min={elapsed:.1f} "
+                    f"{cuda_memory_summary(device)}",
                     flush=True,
                 )
             if step % args.val_every_steps == 0:
-                val_l1 = validate(model, val_loader, device)
-                print(f"validation step={step} val_l1={val_l1:.6f}", flush=True)
+                val_l1 = validate(model, val_loader, device, dtype)
+                print(f"validation step={step} val_l1={val_l1:.6f} {cuda_memory_summary(device)}", flush=True)
+            if args.export_recon_every_steps > 0 and step % args.export_recon_every_steps == 0:
+                export_reconstructions(out_dir, step, images, reconstruction, batch)
+                print(f"exported_recon={out_dir / 'reconstructions' / f'recon_step_{step:06d}.npz'}", flush=True)
             if step % args.save_every_steps == 0:
                 save_checkpoint(
                     ckpt_dir / f"model_step_{step:06d}.pt",
@@ -314,7 +380,10 @@ def main() -> None:
                     step,
                     epoch,
                 )
+                del images, reconstruction, z_mu, z_sigma, logits_fake, logits_real
                 return
+
+            del images, reconstruction, z_mu, z_sigma, logits_fake, logits_real
 
     save_checkpoint(
         ckpt_dir / "model_latest.pt",

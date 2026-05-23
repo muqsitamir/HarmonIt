@@ -44,5 +44,24 @@ We will evaluate harmonization using a mix of:
 - Logged metrics + qualitative samples
 - Environment captured via `requirements.txt` or `environment.yml`
 
+## Repository Guide
+
+Core documentation:
+
+- [Installation](documentation/INSTALLATION.md): local and GPU environment setup.
+- [Preprocessing](documentation/PREPROCESSING.md): ABIDE T1 to fixed 2D slice pipeline.
+- [Metrics](documentation/METRICS.md): preservation, distribution, and site-probe metrics.
+- [Baselines](documentation/BASELINES.md): NeuroCombat, DLEST, diffusion, and adapted HCLD benchmark context.
+- [Reproducibility](documentation/REPRODUCIBILITY.md): commands for reproducing artifacts, metrics, and figures.
+
+Main entry points:
+
+- `scripts/eval_harmonized_npz.py`: validates and evaluates exported harmonized NPZ artifacts.
+- `scripts/visualize_harmonization_panel.py`: builds paper-ready method comparison panels.
+- `scripts/visualize_preprocessing_stages.py`: builds preprocessing-stage figures for representative T1 slices.
+- `slurm/`: GPU/cluster launchers for diffusion and HCLD experiments.
+
 ## Status
-Early stage — setting up dataset, baselines, and evaluation protocol.
+Active benchmark stage — ABIDE preprocessing, site-probe evaluation,
+NeuroCombat/statistical baselines, GAN/disentanglement baselines, diffusion
+img2img, and adapted HCLD are implemented or under evaluation.

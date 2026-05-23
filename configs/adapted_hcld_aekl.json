@@ -1,0 +1,35 @@
+{
+  "name": "adapted_hcld_aekl",
+  "method_family": "HCLD",
+  "adaptation_reason": "Faithful decoder nonlocal attention and encoder-only nonlocal attention exceeded available 40GB A100 memory during smoke tests.",
+  "data_dir": "outputs/hcld_abide",
+  "output_dir": "outputs/hcld_abide/adapted_hcld/aekl",
+  "input_shape": [1, 192, 192, 64],
+  "benchmark_slice_size": 256,
+  "autoencoder": {
+    "base_channels": [32, 64, 64],
+    "latent_channels": 6,
+    "num_res_blocks": 2,
+    "deepest_attention": true,
+    "encoder_nonlocal_attention": false,
+    "decoder_nonlocal_attention": false,
+    "gradient_checkpointing": true,
+    "amp_dtype": "bf16"
+  },
+  "training": {
+    "batch_size": 1,
+    "epochs": 30,
+    "lr": 0.0001,
+    "adv_lr": 0.0005,
+    "adv_weight": 0.01,
+    "kl_weight": 0.000001,
+    "save_every_steps": 1000,
+    "val_every_steps": 1000,
+    "export_recon_every_steps": 1000
+  },
+  "faithful_hcld_diff": {
+    "disabled": ["encoder_nonlocal_attention", "decoder_nonlocal_attention"],
+    "enabled_memory_optimizations": ["encoder_decoder_gradient_checkpointing", "a100_bf16_autocast"],
+    "unchanged": ["conditioning_data_pipeline", "deepest_attention", "channels", "latent_channels", "num_res_blocks"]
+  }
+}
