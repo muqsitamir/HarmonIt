@@ -11,7 +11,7 @@ producing consistent volumes that remain useful for downstream analysis.
 
 **1,112 subjects | 17 acquisition sites | ABIDE I T1-weighted MRI**
 
-[Research roadmap](documentation/TRDP2_PLAN.md) |
+[Research roadmap](#from-benchmark-to-25d-diffusion) |
 [Evaluation definitions](documentation/METRICS.md) |
 [Installation](documentation/INSTALLATION.md) |
 [Baseline implementations](https://github.com/muqsitamir/HarmonIt/tree/codex/add-stargan-baseline/scripts/methods)
@@ -86,7 +86,7 @@ figure scripts, and Slurm launchers are on
 [`codex/add-stargan-baseline`](https://github.com/muqsitamir/HarmonIt/tree/codex/add-stargan-baseline).
 See its [baseline notes](https://github.com/muqsitamir/HarmonIt/blob/codex/add-stargan-baseline/documentation/BASELINES.md)
 and [reproduction commands](https://github.com/muqsitamir/HarmonIt/blob/codex/add-stargan-baseline/documentation/REPRODUCIBILITY.md).
-Those historical notes should be read alongside the current evaluation audit;
+Those historical notes should be read alongside the current metric definitions;
 implementation adaptations and run provenance still need consolidation.
 
 ## What Counts as Progress?
@@ -107,8 +107,8 @@ The audit identified output-dependent PSNR scaling, inconsistent historical KL
 histogram coordinates, and target identities mixed into pooled preservation
 scores. The local corrected evaluator is not yet a validated benchmark release.
 We will publish versioned results rather than silently replace old numbers.
-Read the [metric definitions](documentation/METRICS.md) and
-[audit](documentation/SUBMISSION_GAP_REPORT.md) for exact scope and limitations.
+Read the [metric definitions](documentation/METRICS.md) for exact scope and
+limitations.
 
 ## Get Started
 
@@ -153,8 +153,7 @@ python scripts/eval_harmonized_npz.py --help
 
 | Resource | Contents |
 | --- | --- |
-| [Roadmap](documentation/TRDP2_PLAN.md) | 2.5D milestones, first experiment, and success criteria |
-| [Evaluation audit](documentation/SUBMISSION_GAP_REPORT.md) | Evidence gaps and checks needed before publication |
+| [Research direction](#from-benchmark-to-25d-diffusion) | Completed benchmark work and planned 2.5D comparison |
 | [Metrics](documentation/METRICS.md) | Implemented quantities, interpretation, and planned corrections |
 | [Preprocessing](documentation/PREPROCESSING.md) | ABIDE-to-slice pipeline |
 | [Installation](documentation/INSTALLATION.md) | Local and GPU setup |

@@ -86,5 +86,6 @@ from the same subject are not independent test subjects.
 - Retrained site probes and selected downstream/unseen-site evaluation.
 
 Segmentation agreement is not ground-truth accuracy, and distribution matching
-does not prove biological preservation. Consult the [roadmap](TRDP2_PLAN.md)
-and [submission audit](SUBMISSION_GAP_REPORT.md) for the current research scope.
+does not prove biological preservation. Consult the
+[project overview](../README.md#from-benchmark-to-25d-diffusion) for the current
+research direction.
