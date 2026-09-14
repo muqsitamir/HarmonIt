@@ -77,6 +77,49 @@ This set spans intensity, adversarial and diffusion families and is chosen befor
 the corrected table. Requires train/validation exports from fixed generators;
 no use of test data to train or tune probes. The raw/shuffle pair is mandatory.
 
+## Amendment 2, 2026-09-14 (written before any of these results were seen)
+
+Seen at this point: frozen-probe nine-method table; seed-42 raw and shuffle probes
+and their nine-method test evaluation (retrained raw test BA 0.822 vs frozen 0.951;
+retrained probe rated diffusion, CycleGAN and aggressive StarGAN as retaining more site
+information). The following were added in response and are therefore post hoc to that
+observation; they are fixed before their own outcomes exist.
+
+Probe seed variability. Raw probes with the same recipe for seeds 1-4 (plus 42). Each
+seed's best-validation and final-epoch checkpoints are evaluated once on the nine test
+artifacts. Report per-method spread of harmonized source BA across seeds and the
+rank agreement of method orderings (Kendall tau between seeds). No seed is selected
+using test results; all are reported.
+
+Harmonized-probe (adversary) design. For histogram matching, tuned CycleGAN and
+diffusion 20k (the pre-selected set), export fixed-slice train/val outputs with the
+settings of the historical test artifacts (`scripts/vpulab_isbi2027_exports.sh`).
+Before use, each method's test re-export must reproduce its historical test artifact,
+and embedded raw slices must be identical across methods. `scripts/train_slice_probe.py`
+trains ResNet-18 on one fixed slice per subject with the production optimizer, budget
+and affine augmentation; sources are raw slices (matched baseline) or one method's
+outputs; seeds 1-3 per source; one raw subject-level shuffle control (seed 1). Select on
+validation BA from the same source; evaluate best and final checkpoints once on raw
+test and all nine test artifacts. Primary quantity: source (non-NYU) BA of the
+method-trained probe on that method's own test outputs, compared with the raw-trained
+slice probe on the same outputs and on raw test slices. A method is said to hide rather
+than remove site information when the method-trained probe recovers substantially more
+site signal than the raw-trained probe; report intervals rather than a threshold.
+NYU training subjects are passed through unchanged by CycleGAN and diffusion but
+transformed by histogram matching; note this asymmetry.
+
+Target alignment. Separate from raw-to-harmonized change. Reference: foreground pixels
+of NYU training subjects' fixed raw slices, each subject weighted equally. Foreground is
+defined from the raw slice (> 0.02), never from a method's output, and applied to both
+raw and harmonized images. Per non-NYU test subject: Wasserstein-1 and directional KL
+(harmonized || reference; 50 fixed [0,1] bins plus under/overflow, 1e-8 smoothing) for
+the harmonized and the raw image; report both and their paired difference with the
+subject bootstrap. Intensity alignment is not evidence of anatomical correctness.
+
+Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
+histogram matching uses a pooled 17-site training reference, not NYU; describe both
+accordingly and keep NeuroCombat in a separately labeled transductive row.
+
 ## Execution and release
 
 `scripts/eval_isbi2027.py` writes to a new directory and rejects overwriting.
