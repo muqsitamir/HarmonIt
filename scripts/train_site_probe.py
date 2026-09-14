@@ -367,6 +367,8 @@ def main():
                 best_val_bal = bal
                 torch.save(model.state_dict(), out_dir / "model_best.pt")
 
+        # Final-epoch weights, to compare against noisy best-validation selection.
+        torch.save(model.state_dict(), out_dir / "model_last.pt")
         best_path = out_dir / "model_best.pt"
         if best_path.exists():
             mlflow.log_artifact(str(best_path))
