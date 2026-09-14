@@ -143,6 +143,19 @@ of the same fixed slices. It bounds how much site recognition is available witho
 intensity or texture; it does not separate scanner effects from demographic or
 anatomical cohort differences, which remain a stated limitation.
 
+Amendment 5, 2026-09-14 17:25 (post hoc; written after the first silhouette probe's
+validation BA of 0.79 and before any histogram-probe result). Head geometry alone
+identifies sites, so site recovery by image probes does not show that intensity
+(scanner appearance) information survives harmonization. An intensity-only probe is
+added: features are the 50-bin [0,1] probability histogram (plus under/overflow bins,
+1e-8 smoothing) of foreground pixels, foreground defined on the raw slice (> 0.02);
+classifier is standardized multinomial logistic regression, inverse regularization C
+chosen from {0.01, 0.1, 1, 10} by validation BA from the same training source;
+deterministic, so no seeds. Trained on raw training slices (evaluated on raw and all
+test outputs) and on each of the three exported methods' training outputs (evaluated
+on that method's test outputs). Source BA with the evaluation run's stratified
+bootstrap indices; paired difference own-trained minus raw-trained on the same outputs.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
