@@ -30,7 +30,8 @@ eight vpulab-exported artifacts reproduce. The historical cl HCLD export picked 
 68 for SBL_51570 (map: 69), so HCLD is re-exported on cl with the frozen map, same
 checkpoints, seed, GPU type and settings; its other 108 subjects are compared with the
 historical export as a reproducibility check. The evaluator rejects any reference that
-does not reproduce the map.
+does not reproduce the map. Result (cl job 206377, A100): the other 108 subjects are
+bit-identical to the historical export; only SBL_51570 changed (slice 68 -> 69).
 
 ## Metrics
 
@@ -61,6 +62,14 @@ budget; select checkpoints on full validation BA and evaluate test once after
 selection. Shuffled labels are permuted between subjects separately within each
 split, remain fixed across slices/epochs, and preserve class counts. Record the
 subject-to-label mapping. Never interpret class-ID relabeling as a shuffle control.
+
+The recipe is the frozen checkpoint's run (20260417_164204): batch 64, 10 epochs x 50
+steps sampled with replacement, AdamW 3e-4, affine augmentation p=0.9, rotation 12 deg,
+translation 32 px, scale jitter 0.2, random valid training slices, fixed validation
+slices; launched by `scripts/vpulab_isbi2027_probe.sh`. Its validation BA fluctuated
+0.47-0.93 across epochs, so best-epoch selection is noisy. Known inherited quirk, kept
+for fidelity: the dataset's RandomState is copied into each DataLoader worker without
+reseeding, so the 4 workers repeat the same slice/augmentation draw sequence.
 
 Train-on-harmonized probes, if artifact exports fit the time budget, are restricted
 to a predefined set: histogram matching, tuned CycleGAN, and diffusion img2img 20k.
