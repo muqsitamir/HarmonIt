@@ -25,6 +25,7 @@ import pandas as pd  # noqa: E402
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#d9d8d4"
 CHANCE_SOURCE = 1 / 16  # 16 source (non-NYU) sites
+DX = .35  # horizontal offset (dB) separating retrained-probe ranges from frozen intervals
 LABELS = {
     "neurocombat": "NeuroCombat$^\\dagger$", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
     "stargan_aggressive": "StarGAN-A", "stargan_conservative": "StarGAN-C", "dlest_1000": "DLEST-1000",
@@ -32,9 +33,10 @@ LABELS = {
     "adapted_hcld": "HCLD",
 }
 # Label offsets in points, chosen to avoid collisions at column width.
-OFFSETS = {"dlest_1000": (4, 3), "dlest_1500": (-4, -9), "stargan_conservative": (-40, 3),
-           "diffusion_20k_redraw": (4, -8), "diffusion_20k": (4, 3), "cyclegan_tuned": (-36, 4),
-           "neurocombat": (-18, -13)}
+OFFSETS = {"dlest_1000": (10, -3), "dlest_1500": (-4, -9), "stargan_conservative": (-40, 3),
+           "diffusion_20k_redraw": (13, -8), "diffusion_20k": (13, 3), "cyclegan_tuned": (-36, 4),
+           "neurocombat": (-18, -13), "histogram_matching": (11, 3), "adapted_hcld": (9, 3),
+           "stargan_aggressive": (9, -12)}
 ADVERSARY = {"histogram_matching": "histogram_matching", "cyclegan_tuned": "cyclegan_tuned",
              "diffusion_20k": "diffusion_20k_redraw"}  # slice-probe source -> matched test artifact
 
@@ -65,8 +67,8 @@ def panel_tradeoff(ax, df):
     for method in f_ba.index:
         x = psnr[method]
         if method in r_ba.index:
-            ax.plot([x, x], [f_ba.estimate[method], r_ba["mean"][method]], color=GRID, lw=1, zorder=1)
-            ax.plot([x, x], [r_ba["min"][method], r_ba["max"][method]], color=ORANGE, lw=1.2, zorder=2,
+            ax.plot([x, x + DX], [f_ba.estimate[method], r_ba["mean"][method]], color=GRID, lw=1, zorder=1)
+            ax.plot([x + DX, x + DX], [r_ba["min"][method], r_ba["max"][method]], color=ORANGE, lw=1.2, zorder=2,
                     solid_capstyle="round")
         ax.errorbar(x, f_ba.estimate[method], yerr=[[f_ba.estimate[method] - f_ba.ci_low[method]],
                     [f_ba.ci_high[method] - f_ba.estimate[method]]], fmt="none", ecolor=BLUE, elinewidth=.8, zorder=2)
@@ -77,7 +79,7 @@ def panel_tradeoff(ax, df):
                label="Frozen probe (95% CI)")
     if len(r_ba):
         n = int(r_ba["count"].max())
-        ax.scatter(psnr[r_ba.index], r_ba["mean"], s=20, marker="s", color=ORANGE, edgecolor="white", lw=.6, zorder=2.5,
+        ax.scatter(psnr[r_ba.index] + DX, r_ba["mean"], s=20, marker="s", color=ORANGE, edgecolor="white", lw=.6, zorder=2.5,
                    label=f"Retrained probes (mean, range; {n} seed{'s' if n > 1 else ''})")
     raw_frozen = value(frozen, metric="raw_site_ba").estimate.iloc[0]
     ax.axhline(raw_frozen, color=MUTED, lw=.6, ls="--", zorder=0)
