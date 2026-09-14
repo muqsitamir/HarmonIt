@@ -31,10 +31,17 @@ def seeds(values, digits=2):
     return f"{values.mean():.{digits}f} [{values.min():.{digits}f}, {values.max():.{digits}f}]"
 
 
+def arrow(raw_trained, own_trained):
+    if raw_trained is None or raw_trained != raw_trained:
+        return "--"
+    return f"{raw_trained:.2f}" + (f" $\\rightarrow$ {own_trained:.2f}" if own_trained is not None else "")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--csv", required=True)
     p.add_argument("--alignment", required=True, help="target_alignment_summary.json")
+    p.add_argument("--histogram-probe", required=True, help="analysis/histogram_probe.json")
     p.add_argument("--out", required=True)
     args = p.parse_args()
     df = pd.read_csv(args.csv)
@@ -43,18 +50,20 @@ def main():
     retrained = src[(src.family == "retrained_site_probe") & (src.source == "raw") & (src.ckpt == "best")]
     slice_best = src[(src.family == "slice_probe") & (src.ckpt == "best")]
     align = json.loads(Path(args.alignment).read_text())["methods"]
+    hist = json.loads(Path(args.histogram_probe).read_text())
+    own_hist = {v["test_artifact"]: v["source_ba"]["estimate"] for v in hist["own_trained"].values()}
 
     lines = [
         "\\begin{tabular}{@{}lccccccc@{}}", "\\toprule",
-        " & \\multicolumn{3}{c}{Change and target alignment} & \\multicolumn{4}{c}{Source-site balanced accuracy} \\\\",
+        " & \\multicolumn{3}{c}{Change and target alignment} & \\multicolumn{4}{c}{Source-site balanced accuracy (probe trained on raw $\\rightarrow$ on outputs)} \\\\",
         "\\cmidrule(lr){2-4}\\cmidrule(l){5-8}",
-        "Method & PSNR & XCorr & $\\Delta W_{\\mathrm{NYU}}$ & Frozen & Retrained & Slice (raw) & Slice (own) \\\\",
+        "Method & PSNR & XCorr & $\\Delta W_{\\mathrm{NYU}}$ & Frozen & Retrained & Image probe & Intensity probe \\\\",
         "\\midrule",
     ]
     raw_row = ["Raw input", "--", "--", "0", f"{frozen.loc[('neurocombat', 'raw_site_ba'), 'estimate']:.2f}",
                seeds(retrained[(retrained.method == 'neurocombat') & (retrained.metric == 'raw_site_ba')].estimate),
-               seeds(slice_best[(slice_best.source == 'raw') & (slice_best.method == 'neurocombat')
-                                & (slice_best.metric == 'raw_site_ba')].estimate), "--"]
+               f"{slice_best[(slice_best.source == 'raw') & (slice_best.method == 'neurocombat') & (slice_best.metric == 'raw_site_ba')].estimate.mean():.2f}",
+               f"{hist['raw_trained']['raw']['estimate']:.2f}"]
     lines.append(" & ".join(raw_row) + " \\\\")
     for method in ORDER:
         if (method, "psnr") not in frozen.index:
@@ -68,10 +77,11 @@ def main():
             f"{dw['estimate']:+.3f}" if dw else "--",
             f"{ba.estimate:.2f} [{ba.ci_low:.2f}, {ba.ci_high:.2f}]",
             seeds(retrained[(retrained.method == method) & (retrained.metric == "harmonized_site_ba")].estimate),
-            seeds(slice_best[(slice_best.source == "raw") & (slice_best.method == method)
-                             & (slice_best.metric == "harmonized_site_ba")].estimate) if own else "--",
-            seeds(slice_best[(slice_best.source == own) & (slice_best.method == method)
-                             & (slice_best.metric == "harmonized_site_ba")].estimate) if own else "--",
+            arrow(slice_best[(slice_best.source == "raw") & (slice_best.method == method)
+                             & (slice_best.metric == "harmonized_site_ba")].estimate.mean(),
+                  slice_best[(slice_best.source == own) & (slice_best.method == method)
+                             & (slice_best.metric == "harmonized_site_ba")].estimate.mean() if own else None),
+            arrow(hist["raw_trained"][method]["estimate"], own_hist.get(method)),
         ]
         lines.append(" & ".join(row) + " \\\\")
     lines += ["\\bottomrule", "\\end{tabular}"]
