@@ -38,12 +38,19 @@ def main():
     p.add_argument("--runs", required=True)
     p.add_argument("--out", required=True)
     args = p.parse_args()
-    rows = []
+    # Keep one run per probe identity: the one with the most outputs, then the latest.
+    chosen = {}
     for run in sorted(Path(args.runs).iterdir()):
         info = parse(run.name)
         if info is None or not (run / "COMPLETE.json").is_file():
             continue
-        for method in json.loads((run / "COMPLETE.json").read_text())["methods"]:
+        methods = json.loads((run / "COMPLETE.json").read_text())["methods"]
+        key = tuple(info.values())
+        if key not in chosen or len(methods) >= len(chosen[key][2]):
+            chosen[key] = (run, info, methods)
+    rows = []
+    for run, info, methods in chosen.values():
+        for method in methods:
             summary = json.loads((run / f"{method}_summary.json").read_text())
             for group, entry in summary["groups"].items():
                 for metric, value in entry["metrics"].items():
