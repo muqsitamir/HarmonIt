@@ -58,6 +58,19 @@ class SubjectEvaluationTests(unittest.TestCase):
         self.assertEqual(point, .5)
         np.testing.assert_allclose(draws, .5)
 
+    def test_target_alignment_uses_raw_foreground_and_detects_shift(self):
+        from harmonit.metrics.subject_evaluation import target_alignment, target_reference
+        rng = np.random.default_rng(0)
+        reference = target_reference([np.clip(rng.normal(.5, .05, (32, 32)), 0, 1) for _ in range(4)])
+        raw = np.zeros((32, 32))
+        raw[8:24, 8:24] = np.clip(rng.normal(.3, .05, (16, 16)), .03, 1)
+        harmonized = raw + (raw > 0) * .2  # shift foreground toward the reference
+        harmonized[0, 0] = .9  # output-only background change is ignored by the raw mask
+        result = target_alignment(raw, harmonized, reference)
+        self.assertAlmostEqual(result["target_wasserstein_raw"], .2, delta=.01)
+        self.assertLess(result["target_wasserstein_harmonized"], .01)
+        self.assertLess(result["target_kl_harmonized"], result["target_kl_raw"])
+
     def test_split_overlap_rejected(self):
         manifest = pd.DataFrame({"subject_id": ["a", "b", "c"]})
         with self.assertRaisesRegex(ValueError, "overlap"):

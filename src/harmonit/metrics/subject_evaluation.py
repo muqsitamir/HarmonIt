@@ -47,6 +47,38 @@ def pixel_metrics(raw, harmonized):
     }
 
 
+def target_reference(raw_slices, threshold=0.02, fine_bins=4096):
+    """Equal-subject-weight foreground intensity reference from raw target-site slices."""
+    edges = np.linspace(0.0, 1.0, fine_bins + 1)
+    fine = np.zeros(fine_bins)
+    coarse = np.zeros(len(HISTOGRAM_EDGES) - 1)
+    for raw in raw_slices:
+        values = np.asarray(raw, dtype=np.float64)
+        values = values[values > threshold]
+        if not values.size or values.min() < 0 or values.max() > 1:
+            raise ValueError("Reference slices need nonempty foreground within [0, 1]")
+        fine += np.histogram(values, bins=edges)[0] / values.size
+        coarse += probability_histogram(values)
+    return {"centers": (edges[:-1] + edges[1:]) / 2, "weights": fine / fine.sum(),
+            "histogram": coarse / coarse.sum(), "n_subjects": len(raw_slices), "threshold": threshold}
+
+
+def target_alignment(raw, harmonized, reference):
+    """Distances to the target reference inside the raw-defined foreground, for raw and output."""
+    raw = np.asarray(raw, dtype=np.float64)
+    harmonized = np.asarray(harmonized, dtype=np.float64)
+    mask = raw > reference["threshold"]
+    if raw.shape != harmonized.shape or not mask.any():
+        raise ValueError("Need shape-matched images with raw foreground")
+    result = {}
+    for name, image in (("raw", raw), ("harmonized", harmonized)):
+        values = image[mask]
+        result[f"target_wasserstein_{name}"] = float(wasserstein_distance(
+            values, reference["centers"], v_weights=reference["weights"]))
+        result[f"target_kl_{name}"] = float(entropy(probability_histogram(values), reference["histogram"]))
+    return result
+
+
 def stratified_indices(site_ids, replicates=2000, seed=20260913):
     """Each replicate samples subjects within site and retains every site's N."""
     site_ids = np.asarray(site_ids)
