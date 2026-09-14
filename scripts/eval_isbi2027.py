@@ -206,7 +206,7 @@ def main():
                 **interval(point, ba_draws[a, group] - ba_draws[b, group])))
     (out / "paired_source_differences.json").write_text(json.dumps(differences, indent=2, allow_nan=False) + "\n")
     pd.DataFrame(flat).to_csv(out / "metrics_long.csv", index=False)
-    lines = ["# ISBI evaluation: existing frozen probe", "",
+    lines = [f"# ISBI evaluation: probe {args.site_probe_ckpt}", "",
         f"Reference: {args.reference}. Whole-image metrics; NYU excluded from this table.",
         "95% paired site-stratified subject bootstrap intervals, conditional on the saved checkpoints.",
         "Wasserstein/KL below are mean per-subject raw-to-harmonized distances, not historical pooled distances or NYU alignment.", "",

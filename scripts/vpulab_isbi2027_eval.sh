@@ -17,7 +17,7 @@ cd "$ISBI_CODE"
 "$PY" scripts/eval_isbi2027.py \
   --manifest-path "$DATA_REPO/data/abide_manifest.csv" \
   --splits-path "$DATA_REPO/data/splits.json" \
-  --site-probe-ckpt "$ISBI_INPUTS/checkpoints/site_probe_v0.3_aug_ramp15/model_best.pt" \
+  --site-probe-ckpt "${SITE_PROBE:-$ISBI_INPUTS/checkpoints/site_probe_v0.3_aug_ramp15/model_best.pt}" \
   --slice-map "$ISBI_CODE/configs/isbi2027/test_slice_indices.json" \
   --out-dir "$ISBI_OUTPUT" --num-workers "${NUM_WORKERS:-4}" \
   --artifact "neurocombat=$ISBI_INPUTS/outputs/harmonized/neurocombat/test/neurocombat_slices.npz" \
