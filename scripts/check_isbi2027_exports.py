@@ -17,6 +17,7 @@ import numpy as np
 
 NPZ = {"histogram_matching": "histogram_matching_slices.npz", "cyclegan_tuned": "cyclegan_nyu_slices.npz",
        "diffusion_20k": "diffusion_img2img_nyu_slices.npz"}
+STOCHASTIC = {"diffusion_20k"}
 
 
 def load(path):
@@ -30,7 +31,8 @@ def main():
     p.add_argument("--historical", action="append", required=True, help="method=historical test NPZ")
     p.add_argument("--splits-path", required=True)
     p.add_argument("--report", required=True)
-    p.add_argument("--atol", type=float, default=1e-5)
+    p.add_argument("--atol", type=float, default=1e-5, help="Raw-slice identity tolerance")
+    p.add_argument("--deterministic-tol", type=float, default=1e-2)
     args = p.parse_args()
     exports, splits = Path(args.exports), json.loads(Path(args.splits_path).read_text())
     report, ok = {"test_reproduction": {}, "train_val": {}}, True
@@ -40,10 +42,20 @@ def main():
         old, new = load(path), load(exports / name / "test" / NPZ[name])
         diff = np.abs(old["images"] - new["images"]).reshape(len(old["images"]), -1).max(1)
         same_ids = all(np.array_equal(old[k], new[k]) for k in ("subject_ids", "site_ids", "slice_indices"))
-        passed = bool(same_ids and diff.max() <= args.atol)
-        report["test_reproduction"][name] = dict(passed=passed, ids_match=same_ids, max_abs_diff=float(diff.max()),
-                                                 subjects_over_atol=int((diff > args.atol).sum()))
-        ok &= passed
+        psnr = lambda x: float(np.mean(-10 * np.log10(np.maximum(
+            ((x["images"] - x["raw_images"]) ** 2).mean(axis=(1, 2, 3)), 1e-12))[x["site_ids"] != 5]))
+        entry = dict(ids_match=same_ids, max_abs_diff=float(diff.max()), subjects_over_atol=int((diff > args.atol).sum()),
+                     source_psnr_historical=psnr(old), source_psnr_reexport=psnr(new))
+        if name in STOCHASTIC:
+            # Start noise is not reproducible across GPUs; require the same inputs and aggregate fidelity.
+            entry.update(criterion="stochastic: ids match, |delta source PSNR| <= 0.1 dB",
+                         passed=bool(same_ids and abs(entry["source_psnr_historical"] - entry["source_psnr_reexport"]) <= .1))
+        else:
+            # CPU rank tie-breaking and GPU kernels leave small differences (amendment 3).
+            entry.update(criterion=f"deterministic: ids match, max abs diff <= {args.deterministic_tol}",
+                         passed=bool(same_ids and diff.max() <= args.deterministic_tol))
+        report["test_reproduction"][name] = entry
+        ok &= entry["passed"]
 
     for split in ("val", "train"):
         first = None

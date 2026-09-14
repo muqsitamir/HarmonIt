@@ -10,6 +10,10 @@ ISBI_INPUTS="${ISBI_INPUTS:-$DATA_REPO}"
 # tie-broke SBL_51570 to slice 68. HCLD_ARTIFACT= (empty) omits adapted_hcld.
 HCLD="${HCLD_ARTIFACT-/mnt/rhome/mmi/projects/isbi2027/inputs/adapted_hcld_isbi2027_canonical/test/adapted_hcld_slices.npz}"
 PY="${HARMONIT_PYTHON:-/home/mmi/envs/harmonit-isbi/bin/python}"
+# Second sampling draw of diffusion 20k (vpulab re-export); added when present. REDRAW= omits it.
+REDRAW_DEFAULT=/mnt/rhome/mmi/projects/isbi2027/exports/diffusion_20k/test/diffusion_img2img_nyu_slices.npz
+[ -f "$REDRAW_DEFAULT" ] || REDRAW_DEFAULT=
+REDRAW="${REDRAW-$REDRAW_DEFAULT}"
 export PYTHONPATH="${ISBI_CODE}/src:${ISBI_CODE}/scripts"
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
 cd "$ISBI_CODE"
@@ -28,4 +32,5 @@ cd "$ISBI_CODE"
   --artifact "dlest_1500=$ISBI_INPUTS/outputs/harmonized/dlest_nyu/test/dlest_nyu_slices.npz" \
   --artifact "dlest_1000=$ISBI_INPUTS/outputs/harmonized/dlest_nyu_step1000/test/dlest_nyu_slices.npz" \
   --artifact "diffusion_20k=$ISBI_INPUTS/outputs/harmonized/diffusion_img2img_nyu_s20000_strength035/test/diffusion_img2img_nyu_slices.npz" \
-  ${HCLD:+--artifact "adapted_hcld=$HCLD"}
+  ${HCLD:+--artifact "adapted_hcld=$HCLD"} \
+  ${REDRAW:+--artifact "diffusion_20k_redraw=$REDRAW"}

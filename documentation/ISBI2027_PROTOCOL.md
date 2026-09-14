@@ -116,6 +116,23 @@ raw and harmonized images. Per non-NYU test subject: Wasserstein-1 and direction
 the harmonized and the raw image; report both and their paired difference with the
 subject bootstrap. Intensity alignment is not evidence of anatomical correctness.
 
+Amendment 3, 2026-09-14 (after the test re-exports, before any train/val use). The
+exact-reproduction gate (1e-5) failed and was revised as follows; the observations are
+recorded here. Histogram matching: 108/109 identical, one NYU subject differs in 906
+pixels (max 0.0064) from rank tie-breaking with identical raw input and reference
+quantiles. CycleGAN: all 90 translated subjects differ by at most 5.8e-4 (GPU kernels).
+Diffusion 20k: same checkpoint file (written 2 min before the historical export),
+batch size, DDIM steps and strength, yet outputs differ substantially: median
+foreground mean |historical - re-export| 0.085 versus 0.075 between output and raw,
+median correlation 0.87, while mean source PSNR is unchanged (21.71 vs 21.73 dB).
+The img2img start noise is not reproducible across GPUs, so pixel outputs are a
+sampling draw. Revised gate: deterministic methods require identical subjects/slices
+and max abs difference <= 0.01; diffusion requires identical subjects/slices and
+source PSNR within 0.1 dB. The vpulab re-export is evaluated as an additional test
+artifact, `diffusion_20k_redraw`, sampled like the diffusion train/val exports; the
+diffusion-trained probe's primary test set is the redraw. Differences between the two
+draws under the same probe quantify sampling variability and are reported.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
