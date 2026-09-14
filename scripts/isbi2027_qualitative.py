@@ -21,9 +21,9 @@ from matplotlib.colors import LinearSegmentedColormap  # noqa: E402
 
 ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggressive", "stargan_conservative",
          "dlest_1000", "diffusion_20k", "diffusion_20k_redraw", "adapted_hcld"]
-TITLES = {"neurocombat": "NeuroCombat", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
+TITLES = {"neurocombat": "NeuroComb.", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
           "stargan_aggressive": "StarGAN-A", "stargan_conservative": "StarGAN-C", "dlest_1000": "DLEST-1000",
-          "diffusion_20k": "Diffusion", "diffusion_20k_redraw": "Diffusion\n(2nd draw)", "adapted_hcld": "HCLD"}
+          "diffusion_20k": "Diffusion", "diffusion_20k_redraw": "Diff. draw 2", "adapted_hcld": "HCLD"}
 DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#184f95", "#f0efec", "#a8322f"])
 
 
@@ -55,10 +55,10 @@ def main():
 
     plt.rcParams.update({"font.size": 6, "font.family": "DejaVu Sans", "pdf.fonttype": 42})
     cols = len(methods) + 1
-    fig, axes = plt.subplots(2, cols, figsize=(7.0, 1.75), gridspec_kw=dict(wspace=.04, hspace=.06))
+    fig, axes = plt.subplots(2, cols, figsize=(7.0, 1.6), gridspec_kw=dict(wspace=.04, hspace=.06))
     axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=1)
     axes[0, 0].set_title("Input", fontsize=6, pad=2)
-    axes[1, 0].text(.5, .5, "output $-$ input", ha="center", va="center", fontsize=6, color="#52514e",
+    axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=6, color="#52514e",
                     transform=axes[1, 0].transAxes)
     psnr = table[table.subject_id == subject].set_index("method").psnr
     for j, m in enumerate(methods, start=1):

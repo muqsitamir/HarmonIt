@@ -155,7 +155,7 @@ def main():
     df = pd.read_csv(args.csv)
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    fig, axes = plt.subplots(2, 1, figsize=(3.39, 4.6), gridspec_kw=dict(height_ratios=[1.45, 1]))
+    fig, axes = plt.subplots(2, 1, figsize=(3.39, 4.2), gridspec_kw=dict(height_ratios=[1.45, 1]))
     panel_tradeoff(axes[0], df)
     import json
     panel_adversary(axes[1], df, json.loads(Path(args.histogram_probe).read_text()))
