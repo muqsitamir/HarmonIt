@@ -92,40 +92,61 @@ def panel_tradeoff(ax, df):
     ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), frameon=False, handletextpad=.3, borderaxespad=.1)
 
 
-def panel_adversary(ax, df):
+def panel_adversary(ax, df, hist):
     src = df[(df.group == "source_non_nyu") & (df.family == "slice_probe") & (df.ckpt == "best")]
     if src.empty:
         ax.text(.5, .5, "harmonized-probe runs pending", ha="center", va="center", color=MUTED, transform=ax.transAxes)
         ax.set_axis_off()
         return
     rng = np.random.default_rng(0)
-    for i, (source, artifact) in enumerate(ADVERSARY.items()):
-        raw_probe = value(src, source="raw", method=artifact, metric="harmonized_site_ba").estimate.to_numpy()
-        own_probe = value(src, source=source, method=artifact, metric="harmonized_site_ba").estimate.to_numpy()
-        for offset, values, color, marker in ((-.12, raw_probe, BLUE, "o"), (.12, own_probe, AQUA, "^")):
-            if len(values):
-                ax.scatter(i + offset + rng.uniform(-.03, .03, len(values)), values, s=14, marker=marker,
-                           color=color, edgecolor="white", lw=.5, zorder=3)
-                ax.plot([i + offset - .08, i + offset + .08], [values.mean()] * 2, color=INK, lw=1, zorder=4)
-    raw_on_raw = value(src, source="raw", method="neurocombat", metric="raw_site_ba").estimate
-    if len(raw_on_raw):
-        ax.axhline(raw_on_raw.mean(), color=MUTED, lw=.6, ls="--", zorder=0)
-        ax.text(-.45, raw_on_raw.mean() + .02, "raw-trained probe on raw slices", fontsize=5.5, color=MUTED)
+    sil = value(src, source="silhouette", method="silhouette", metric="harmonized_site_ba").estimate
+    if len(sil):
+        ax.axhspan(sil.min(), sil.max(), color=GRID, alpha=.6, lw=0, zorder=0)
+        ax.text(.45, sil.min() + .07, "head silhouette only", fontsize=5.5, color=MUTED,
+                ha="center", va="center")
+    raw_img = value(src, source="raw", method="neurocombat", metric="raw_site_ba").estimate.mean()
+    ax.axhline(raw_img, color=MUTED, lw=.6, ls="--", zorder=0)
     ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
-    ax.text(len(ADVERSARY) - .5, CHANCE_SOURCE + .02, "chance", fontsize=5.5, color=MUTED, ha="right")
-    ax.scatter([], [], s=14, marker="o", color=BLUE, label="Probe trained on raw slices")
-    ax.scatter([], [], s=14, marker="^", color=AQUA, label="Probe trained on method outputs")
+    ax.text(len(ADVERSARY) - .52, CHANCE_SOURCE + .015, "chance", fontsize=5.5, color=MUTED, ha="right")
+    own_hist = {v["test_artifact"]: v["source_ba"] for v in hist["own_trained"].values()}
+    for i, (source, artifact) in enumerate(ADVERSARY.items()):
+        # Image probes: one marker per seed, filled.
+        for offset, train_src, color, marker in ((-.27, "raw", BLUE, "o"), (-.09, source, AQUA, "^")):
+            values = value(src, source=train_src, method=artifact, metric="harmonized_site_ba").estimate.to_numpy()
+            if len(values):
+                ax.scatter(i + offset + rng.uniform(-.025, .025, len(values)), values, s=13, marker=marker,
+                           color=color, edgecolor="white", lw=.4, zorder=3)
+                ax.plot([i + offset - .07, i + offset + .07], [values.mean()] * 2, color=INK, lw=.9, zorder=4)
+        # Intensity-only probes: deterministic, hollow markers with 95% interval.
+        for offset, entry, color, marker in ((.09, hist["raw_trained"][artifact], BLUE, "o"),
+                                             (.27, own_hist.get(artifact), AQUA, "^")):
+            if entry:
+                est, (lo, hi) = entry["estimate"], entry["ci95"]
+                ax.errorbar(i + offset, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=4, mfc="white",
+                            mec=color, mew=1, ecolor=color, elinewidth=.8, zorder=3)
+    raw_int = hist["raw_trained"]["raw"]["estimate"]
+    ax.plot([-.5, len(ADVERSARY) - .5], [raw_int] * 2, color=MUTED, lw=.6, ls="-.", zorder=0)
+    ax.text(-.48, raw_img + .015, "raw slices: image probe", fontsize=5.5, color=MUTED)
+    ax.text(-.48, raw_int - .075, "raw slices: intensity probe", fontsize=5.5, color=MUTED)
+    handles = [
+        plt.Line2D([], [], ls="", marker="o", ms=4, color=BLUE, label="trained on raw"),
+        plt.Line2D([], [], ls="", marker="^", ms=4, color=AQUA, label="trained on outputs"),
+        plt.Line2D([], [], ls="", marker="o", ms=4, color=MUTED, label="image probe (per seed)"),
+        plt.Line2D([], [], ls="", marker="o", ms=4, mfc="white", mec=MUTED, label="intensity probe (95% CI)"),
+    ]
+    ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, frameon=False,
+              handletextpad=.2, columnspacing=.8, borderaxespad=.1)
     ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diffusion\n(2nd draw)"])
     ax.set_xlim(-.5, len(ADVERSARY) - .5)
     ax.set_ylabel("Source site BA on outputs")
     ax.set_ylim(0, 1.02)
     ax.grid(axis="y", color=GRID, lw=.4)
-    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), frameon=False, handletextpad=.3, borderaxespad=.1)
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--csv", required=True)
+    p.add_argument("--histogram-probe", required=True)
     p.add_argument("--out-dir", required=True)
     args = p.parse_args()
     style()
@@ -134,7 +155,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(2, 1, figsize=(3.39, 4.6), gridspec_kw=dict(height_ratios=[1.45, 1]))
     panel_tradeoff(axes[0], df)
-    panel_adversary(axes[1], df)
+    import json
+    panel_adversary(axes[1], df, json.loads(Path(args.histogram_probe).read_text()))
     for ax, tag in zip(axes, "ab"):
         ax.text(-.26, 1.2, f"({tag})", transform=ax.transAxes, fontsize=7.5, fontweight="bold", va="top")
     fig.tight_layout(h_pad=.8)
