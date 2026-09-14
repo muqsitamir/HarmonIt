@@ -15,6 +15,7 @@ import argparse
 from pathlib import Path
 
 import matplotlib
+import matplotlib.ticker
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
@@ -83,6 +84,7 @@ def panel_tradeoff(ax, df):
     ax.text(psnr.max() + .3, raw_frozen - .05, "raw images (frozen probe)", fontsize=5.5, color=MUTED, ha="right")
     ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
     ax.text(psnr.max() - 1.5, CHANCE_SOURCE + .015, "chance", fontsize=5.5, color=MUTED)
+    ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(2))
     ax.set_xlabel("Source PSNR vs. raw (dB)  [higher = less changed]")
     ax.set_ylabel("Source site balanced accuracy")
     ax.set_ylim(0, 1.02)
@@ -108,11 +110,14 @@ def panel_adversary(ax, df):
     raw_on_raw = value(src, source="raw", method="neurocombat", metric="raw_site_ba").estimate
     if len(raw_on_raw):
         ax.axhline(raw_on_raw.mean(), color=MUTED, lw=.6, ls="--", zorder=0)
+        ax.text(-.45, raw_on_raw.mean() + .02, "raw-trained probe on raw slices", fontsize=5.5, color=MUTED)
     ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
+    ax.text(len(ADVERSARY) - .5, CHANCE_SOURCE + .02, "chance", fontsize=5.5, color=MUTED, ha="right")
     ax.scatter([], [], s=14, marker="o", color=BLUE, label="Probe trained on raw slices")
     ax.scatter([], [], s=14, marker="^", color=AQUA, label="Probe trained on method outputs")
-    ax.set_xticks(range(len(ADVERSARY)), [LABELS[a] for a in ADVERSARY])
-    ax.set_ylabel("Source site BA on method outputs")
+    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diffusion\n(2nd draw)"])
+    ax.set_xlim(-.5, len(ADVERSARY) - .5)
+    ax.set_ylabel("Source site BA on outputs")
     ax.set_ylim(0, 1.02)
     ax.grid(axis="y", color=GRID, lw=.4)
     ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), frameon=False, handletextpad=.3, borderaxespad=.1)
@@ -131,7 +136,7 @@ def main():
     panel_tradeoff(axes[0], df)
     panel_adversary(axes[1], df)
     for ax, tag in zip(axes, "ab"):
-        ax.text(-.2, 1.0, f"({tag})", transform=ax.transAxes, fontsize=7.5, fontweight="bold", va="top")
+        ax.text(-.26, 1.2, f"({tag})", transform=ax.transAxes, fontsize=7.5, fontweight="bold", va="top")
     fig.tight_layout(h_pad=.8)
     fig.savefig(out / "fig_probe_verdicts.pdf")
     fig.savefig(out / "fig_probe_verdicts.png", dpi=300)
