@@ -324,6 +324,7 @@ class AbideSlicesDataset(Dataset):
 
         self.mask_mode = mask_mode
         self._label_perm = label_permutation
+        self._shuffled_labels = None
 
         self.bg_suppress = bg_suppress
         self.head_mask_thr = head_mask_thr
@@ -345,8 +346,19 @@ class AbideSlicesDataset(Dataset):
         return len(self.samples)
 
     def set_label_permutation(self, perm: list) -> None:
-        """Apply a permutation to site_id labels (used for label-shuffle sanity checks)."""
+        """Rename class IDs; this is not a random-label negative control."""
+        self._shuffled_labels = None
         self._label_perm = perm
+
+    def shuffle_subject_labels(self, seed: int = 12345) -> list[int]:
+        """Assign a fixed shuffled label to each subject, shared across slices."""
+        from harmonit.data.label_controls import shuffled_subject_labels
+        ids = [sample.subject_id for sample in self.samples]
+        if len(set(ids)) != len(ids):
+            raise ValueError("Shuffle control requires one dataset row per subject")
+        self._label_perm = None
+        self._shuffled_labels = shuffled_subject_labels([s.site_id for s in self.samples], seed)
+        return self._shuffled_labels.tolist()
 
     def _load_volume(self, sample: AbideSample) -> np.ndarray:
         sid = sample.subject_id
@@ -513,7 +525,7 @@ class AbideSlicesDataset(Dataset):
             img_t = torch.from_numpy(m).float().unsqueeze(0)
             img_t = self._maybe_apply_affine(img_t)
 
-            site_id = sample.site_id
+            site_id = sample.site_id if self._shuffled_labels is None else int(self._shuffled_labels[idx])
             if self._label_perm is not None:
                 site_id = int(self._label_perm[int(site_id)])
             return img_t, site_id, sample.subject_id, k
@@ -544,7 +556,7 @@ class AbideSlicesDataset(Dataset):
         img_t = torch.from_numpy(sl).float().unsqueeze(0)
         img_t = self._maybe_apply_affine(img_t)
 
-        site_id = sample.site_id
+        site_id = sample.site_id if self._shuffled_labels is None else int(self._shuffled_labels[idx])
         if self._label_perm is not None:
             site_id = int(self._label_perm[int(site_id)])
 

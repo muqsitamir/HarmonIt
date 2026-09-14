@@ -38,7 +38,7 @@ def main():
     epochs = int(os.getenv("EPOCHS", "10"))
     lr = float(os.getenv("LR", "3e-4"))
     steps_per_epoch = int(os.getenv("STEPS_PER_EPOCH", "50"))  # batches per epoch (sampling w/ replacement)
-    val_batches = int(os.getenv("VAL_BATCHES", "30"))
+    val_batches = int(os.getenv("VAL_BATCHES", "0"))  # 0 evaluates the complete split
     print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} val_batches={val_batches}")
 
     seed = int(os.getenv("SEED", "42"))
@@ -191,12 +191,13 @@ def main():
 
 
         if preproc_cfg["label_shuffle"]:
-            rng = np.random.RandomState(12345)
-            perm = rng.permutation(num_classes)
-            perm_list = perm.tolist()
-            train_ds.set_label_permutation(perm_list)
-            val_ds.set_label_permutation(perm_list)
-            mlflow.set_tag("label_shuffle_perm", ",".join(map(str, perm_list)))
+            train_labels = train_ds.shuffle_subject_labels(12345)
+            val_labels = val_ds.shuffle_subject_labels(12346)
+            mapping = {name: {s.subject_id: int(label) for s, label in zip(ds.samples, labels)}
+                       for name, ds, labels in (("train", train_ds, train_labels), ("val", val_ds, val_labels))}
+            (out_dir / "shuffled_subject_labels.json").write_text(json.dumps(mapping, indent=2))
+            mlflow.set_tag("label_shuffle_protocol", "subject_permutation_v2")
+            mlflow.log_artifact(str(out_dir / "shuffled_subject_labels.json"))
 
         with open(out_dir / "config.json", "w") as f:
             json.dump(
@@ -338,7 +339,7 @@ def main():
                     y_true.append(y.numpy())
                     y_pred.append(pred)
 
-                    if i >= val_batches:
+                    if val_batches > 0 and i >= val_batches:
                         break
 
             y_true = np.concatenate(y_true)

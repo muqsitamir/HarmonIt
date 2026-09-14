@@ -407,6 +407,7 @@ def evaluate_site_probe(
     site_ids: np.ndarray,
     ckpt_path: Path,
     batch_size: int,
+    include_predictions: bool = False,
 ) -> dict[str, Any]:
     import torch
 
@@ -447,7 +448,7 @@ def evaluate_site_probe(
         site_ids, harmonized_pred, num_classes
     )
 
-    return {
+    result = {
         "status": "computed",
         "checkpoint": str(ckpt_path),
         "device": str(device),
@@ -461,6 +462,9 @@ def evaluate_site_probe(
         "raw_confusion_matrix": raw_cm,
         "harmonized_confusion_matrix": harmonized_cm,
     }
+    if include_predictions:
+        result.update(raw_predictions=raw_pred, harmonized_predictions=harmonized_pred)
+    return result
 
 
 def write_key_value_csv(path: Path, values: dict[str, Any]) -> None:

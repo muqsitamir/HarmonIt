@@ -1,15 +1,15 @@
+"""Pixel preservation on a fixed intensity scale."""
 import numpy as np
 
-try:
-    from skimage.metrics import peak_signal_noise_ratio as psnr
-except ImportError:  # pragma: no cover - exercised on lean remote envs
-    psnr = None
 
-def compute_psnr(img1, img2):
-    data_range = float(np.max(img2) - np.min(img2))
-    if psnr is not None:
-        return psnr(img1, img2, data_range=data_range)
-    mse = float(np.mean((np.asarray(img1) - np.asarray(img2)) ** 2))
-    if mse <= 0.0:
-        return float("inf")
-    return 20.0 * np.log10(max(data_range, 1e-8)) - 10.0 * np.log10(mse)
+def compute_psnr(img1, img2, data_range=1.0):
+    """PSNR for normalized MRI; never infer scale from model output."""
+    a, b = np.asarray(img1, dtype=float), np.asarray(img2, dtype=float)
+    if a.shape != b.shape or not a.size:
+        raise ValueError("Images must be nonempty and have the same shape")
+    if not np.isfinite(a).all() or not np.isfinite(b).all():
+        raise ValueError("Images must be finite")
+    if not np.isfinite(data_range) or data_range <= 0:
+        raise ValueError("data_range must be finite and positive")
+    mse = np.mean((a - b) ** 2)
+    return float('inf') if mse == 0 else float(10 * np.log10(data_range ** 2 / mse))

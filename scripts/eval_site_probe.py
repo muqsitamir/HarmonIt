@@ -76,10 +76,9 @@ def main():
             input_mode=input_mode,
         )
         if label_shuffle:
-            rng = np.random.RandomState(12345)
-            perm = rng.permutation(num_classes).tolist()
-            ds.set_label_permutation(perm)
-            print("Label shuffle permutation:", perm)
+            shuffle_seed = {"train": 12345, "val": 12346, "test": 12347}[eval_split]
+            ds.shuffle_subject_labels(shuffle_seed)
+            print("Subject label shuffle v2, seed:", shuffle_seed)
         return ds
 
     # Load checkpoint once (support plain and DataParallel keys)
