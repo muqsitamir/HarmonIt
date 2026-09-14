@@ -15,7 +15,7 @@ mkdir -p "$WORK" "$HOME/mlflow_local"
 [ -e "$WORK/data" ] || ln -s "$DATA_REPO/data" "$WORK/data"
 cd "$WORK"  # train_site_probe.py resolves data/ and runs/ relative to cwd
 
-export PYTHONPATH="$ISBI_CODE/src"
+export PYTHONPATH="$ISBI_CODE/src" PYTHONUNBUFFERED=1
 export ABLATION_NAME="isbi2027__${KIND}_seed${SEED}"
 export MLFLOW_TRACKING_URI="sqlite:///$HOME/mlflow_local/isbi2027.db"
 export MLFLOW_ARTIFACT_ROOT="file://$WORK/mlruns"
