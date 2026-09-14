@@ -1,0 +1,162 @@
+\documentclass{article}
+\usepackage{spconf,amsmath,graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+
+\def\x{{\mathbf x}}
+
+\title{HarmonIt: Benchmarking Anatomy-Preserving MR Image Harmonization Across Sites}
+
+\name{
+\parbox{\textwidth}{\centering
+Muhammad Muqsit Islam$^{1,2,\star,\dagger}$\thanks{$^\star$Corresponding author}\thanks{$^\dagger$ Equal contribution}
+\qquad
+Gloria García Cuenco$^{1,2,\dagger}$ \\
+\qquad José M. Martínez Sánchez$^{1}$ \qquad
+Pierrick Coupé$^{2}$ \qquad \\
+}}
+
+\address{$^{1}$ Universidad Autónoma de Madrid, Spain \\
+$^{2}$ University of Bordeaux, France}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Multi-site magnetic resonance imaging (MRI) studies are limited by scanner-, protocol-, and site-dependent domain shift. We present \textbf{HarmonIt}, a reproducible benchmark for evaluating MR image harmonization under anatomy-preservation constraints. HarmonIt uses raw ABIDE~I T1-weighted MRI, subject-level site splits, a 2D axial-slice pipeline, a frozen site-classification probe, and complementary structural and distributional metrics. We compare statistical, intensity-standardization, GAN-based, disentanglement-based, and diffusion-based baselines under a shared NYU-reference protocol. Results show a clear site-removal/preservation trade-off: adapted HCLD removes the most site signal but visibly degrades anatomy, diffusion image-to-image translation gives the best distributional matching, and tuned CycleGAN offers the strongest overall compromise between site-signal reduction and structural fidelity. These findings support evaluating harmonization as a multi-objective problem rather than optimizing site confusion alone.
+\end{abstract}
+
+\begin{keywords}
+MRI harmonization, multi-site learning, domain shift, medical image translation, anatomy preservation
+\end{keywords}
+
+\section{Introduction}
+Multi-site MRI datasets are essential for robust biomedical imaging, but acquisition variability remains a major obstacle. Scanner manufacturer, field strength, coil configuration, protocol design, and local site practice can introduce non-biological intensity and appearance differences that degrade model transfer across institutions~\cite{fortin2018harmonization,pomponio2020harmonization}. Harmonization aims to suppress this acquisition-dependent variation while preserving the anatomical and clinical content of each scan.
+
+This requirement is especially strict in medical image translation. A method that makes the acquisition site difficult to recognize is not necessarily a good harmonizer: it may also blur tissue boundaries, alter contrast relationships, or hallucinate anatomy. Existing approaches span feature-level statistical correction, such as ComBat and NeuroCombat~\cite{johnson2007combat,fortin2018harmonization,pomponio2020harmonization}, intensity standardization~\cite{nyul2000standardization}, unpaired GAN translation~\cite{zhu2017cyclegan,choi2018stargan}, disentangled style-transfer models~\cite{wu2025dlest}, and diffusion-based image translation~\cite{ho2020ddpm,saharia2022palette,meng2022sdedit}. However, comparing these families is difficult without a shared protocol that measures both site-signal removal and anatomy preservation.
+
+This paper focuses on the evaluation problem: how can harmonization methods be compared when paired cross-site scans are unavailable and site removal alone can reward destructive image changes? \textbf{HarmonIt} refers to the benchmark framework rather than a new generator. The contribution is threefold: (i) a raw-ABIDE curation and 2D evaluation pipeline with subject-level splits, (ii) a frozen site-classification probe for quantifying residual scanner/site information, and (iii) a head-to-head comparison of representative harmonization baselines using structural and distributional preservation metrics.
+
+\section{Benchmark}
+\subsection{Dataset and Preprocessing}
+HarmonIt is built on raw ABIDE~I structural MRI~\cite{dimartino2014abide}. We use raw T1-weighted scans rather than preprocessed derivatives because skull stripping, registration, bias-field correction, and prior intensity standardization can remove part of the scanner signal that harmonization methods should learn to suppress. The final manifest contains 1112 subjects from 17 acquisition sites, with subject ID, site label, scan path, and integer site ID. Train, validation, and test partitions are stratified by site at the subject level to prevent slice leakage.
+
+Each volume is reoriented to a canonical axis convention, clipped over foreground voxels to the $[p_1,p_{99}]$ range, and min--max normalized to $[0,1]$ while keeping true background at zero. We extract axial slices from the central scan region, filter near-empty slices, crop around a conservative head mask, and resize to $256\times256$. The mask is computed by thresholding foreground voxels, retaining the largest connected component, filling holes, and applying a small dilation before cropping. This reduces padding and field-of-view shortcuts while preserving the head boundary. During probe training, mild affine augmentation reduces geometry shortcuts. NYU is used as the target reference domain for many-to-one harmonization because it is the largest site in ABIDE~I ($n=184$) and provides broad age and diagnostic coverage. This choice also reduces the risk of treating a small reference cohort as the desired acquisition appearance.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\linewidth]{figures/preprocessing_stages.png}
+  \caption{Representative preprocessing stages from raw T1 input to the cropped and resized slice used by the probe and harmonization baselines.}
+  \label{fig:preproc}
+\end{figure}
+
+\subsection{Evaluation Protocol}
+For an input slice $x$ from source site $s$ and target site $t$, a method produces $\hat{x}_t=G(x,t)$. Because ABIDE does not provide paired traveling-subject scans across all sites, HarmonIt evaluates harmonization by whether $\hat{x}_t$ reduces recoverable site information while preserving the structure of $x$.
+
+Site information is measured with a frozen ResNet18 site-classification probe modified for single-channel input~\cite{he2016resnet}. The probe is trained independently on raw preprocessed slices and then reused without updating its weights. Balanced accuracy is the main site metric because site frequencies are imbalanced; chance for the 17-way task is approximately 5.9\%. A good harmonizer should reduce source-site balanced accuracy, but this reduction is interpreted only together with preservation metrics. We additionally test label-shuffle, background-only, and mask-only controls to check that the probe is not driven by label leakage, image borders, or head silhouette alone.
+
+Anatomy preservation is measured with masked PSNR, feature similarity, and normalized cross-correlation within the brain region. For a foreground mask $M$, cross-correlation is
+\[
+\mathrm{XCorr}(x,\hat{x}) =
+\frac{\sum_{i\in M}(x_i-\bar{x}_M)(\hat{x}_i-\bar{\hat{x}}_M)}
+{\sqrt{\sum_{i\in M}(x_i-\bar{x}_M)^2\sum_{i\in M}(\hat{x}_i-\bar{\hat{x}}_M)^2}} .
+\]
+Feature similarity is the cosine similarity between VGG-16 pool3 embeddings~\cite{johnson2016perceptual}. Distributional distortion is measured with foreground-intensity Wasserstein distance and symmetrized KL divergence over normalized intensity histograms. Lower site balanced accuracy, Wasserstein distance, and KL divergence are better; higher balanced-accuracy drop, PSNR, feature similarity, and cross-correlation are better.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\linewidth]{figures/pipeline.png}
+  \caption{HarmonIt evaluation pipeline. Raw ABIDE T1 scans are preprocessed, harmonized toward the NYU reference domain, and evaluated with a frozen site probe plus preservation metrics.}
+  \label{fig:pipeline}
+\end{figure}
+
+\section{Experiments}
+\subsection{Frozen Site Probe}
+The frozen probe establishes whether site identity is recoverable from raw ABIDE slices. The production probe is trained on randomly sampled training slices and evaluated with deterministic validation/test slices; we also run a 10-pass multi-slice protocol to reduce dependence on a single axial level. Table~\ref{tab:probe_sanity} summarizes the key controls. Label shuffling collapses to chance, and background-only or mask-only diagnostic inputs are near chance under the production preprocessing configuration. These controls indicate that the probe measures meaningful acquisition/site signal rather than trivial label leakage or pure silhouette cues.
+
+\begin{table}[tb]
+\centering
+\caption{Frozen site-probe sanity checks on ABIDE~I validation data. Chance balanced accuracy is $1/17=0.059$.}
+\label{tab:probe_sanity}
+\scriptsize
+\begin{tabular}{lcc}
+\toprule
+Input / condition & Acc. & Bal. Acc. \\
+\midrule
+Image, deterministic slice & 0.9817 & 0.9510 \\
+Image, 10-pass multi-slice & 0.9716 & 0.9361 \\
+Background-only & 0.0350 & 0.0390 \\
+Label shuffle & 0.0080 & 0.0050 \\
+Mask-only, binary & 0.0530 & 0.0590 \\
+Mask-only, distance & 0.0970 & 0.0590 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The controls are designed to isolate common shortcut explanations. Background suppression sets pixels outside the conservative head mask to zero before interpolation, reducing scanner- or site-specific borders. The background-only diagnostic keeps only the complement of this mask, while mask-only diagnostics replace the image with either the binary silhouette or a smoothed distance-transform representation. We also verified that shuffled site labels collapse below chance. Together with subject-level splitting, these controls support using the frozen probe as an evaluator of acquisition signal rather than an artifact detector.
+
+Figure~\ref{fig:probe_confmat} shows the corresponding confusion matrix. The strong diagonal confirms that most acquisition sites have visually recoverable signatures even after normalization and cropping. The remaining errors are structured rather than random, suggesting that some site pairs share acquisition characteristics. This behavior is desirable for evaluation: the probe is sensitive enough to detect scanner/site information, but its output must still be interpreted alongside preservation metrics to avoid rewarding destructive obfuscation.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\linewidth]{figures/site_probe_confusion_matrix.png}
+  \caption{Confusion matrix for the frozen 17-site probe on ABIDE~I T1 MRI. Strong site separability motivates probe-based harmonization evaluation.}
+  \label{fig:probe_confmat}
+\end{figure}
+
+\subsection{Compared Harmonization Methods}
+We evaluate NeuroCombat, foreground histogram matching, tuned CycleGAN, diffusion image-to-image translation, StarGAN variants, DLEST variants, and adapted HCLD. Learning-based methods are trained or fine-tuned on the ABIDE training split and export harmonized outputs in a common artifact format. Statistical and intensity baselines are applied directly. For non-NYU test images, methods translate toward NYU; NYU images use identity-target handling.
+
+The compared baselines intentionally span different assumptions. NeuroCombat represents feature-level empirical-Bayes correction, while histogram matching tests how much can be achieved by a simple foreground intensity transform. CycleGAN and StarGAN test unpaired adversarial image translation, DLEST tests explicit anatomy/style separation, and diffusion img2img tests conditional denoising as a more stable translation mechanism. Adapted HCLD is included as a strong volumetric diffusion reference, initialized from published weights and fine-tuned for the ABIDE setting. All methods are evaluated on the same held-out test split using the same frozen probe and metric code.
+
+\begin{table}[tb]
+\centering
+\caption{Held-out ABIDE test results. Lower site balanced accuracy (BA), Wasserstein distance, and KL are better; higher BA drop, PSNR, feature similarity (FeatSim), and cross-correlation (XCorr) are better.}
+\label{tab:results}
+\scriptsize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccccccc}
+\toprule
+Method & Site BA$\downarrow$ & Drop$\uparrow$ & PSNR$\uparrow$ & FeatSim$\uparrow$ & XCorr$\uparrow$ & Wass.$\downarrow$ & KL$\downarrow$ \\
+\midrule
+Raw input & 0.9510 & -- & -- & -- & -- & -- & -- \\
+StarGAN aggressive & 0.2550 & 0.6960 & 15.918 & 0.955 & 0.914 & 0.0566 & 0.0638 \\
+NeuroCombat & 0.3068 & 0.6442 & 20.257 & 0.972 & 0.948 & 0.0302 & 4.5841 \\
+CycleGAN tuned & 0.3480 & 0.6030 & 21.192 & 0.990 & 0.981 & 0.0323 & 0.0306 \\
+Diffusion img2img & 0.4078 & 0.5431 & 21.688 & 0.977 & 0.957 & \textbf{0.0025} & 0.0052 \\
+Histogram matching & 0.4739 & 0.4771 & 23.301 & 0.990 & 0.984 & 0.0081 & \textbf{0.0021} \\
+DLEST 1500 & 0.6860 & 0.2650 & 26.558 & \textbf{0.997} & \textbf{0.994} & 0.0181 & 0.0124 \\
+DLEST 1000 & 0.7250 & 0.2250 & 28.205 & \textbf{0.997} & \textbf{0.994} & 0.0043 & 0.0164 \\
+StarGAN conservative & 0.8390 & 0.1120 & 26.859 & 0.996 & 0.993 & 0.0122 & 0.0089 \\
+Adapted HCLD & \textbf{0.1230} & \textbf{0.8280} & 36.992 & 0.857 & 0.757 & 0.0842 & 0.0899 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\linewidth]{figures/harmonization_panel.png}
+  \caption{Qualitative comparison for a held-out USM subject translated toward NYU. Strong site obfuscation can coincide with visible anatomical degradation, motivating joint evaluation.}
+  \label{fig:qualitative}
+\end{figure}
+
+\section{Results and Discussion}
+Table~\ref{tab:results} shows that harmonization is inherently multi-objective. Adapted HCLD gives the largest reduction in residual site predictability, lowering site balanced accuracy from 0.9510 to 0.1230. Although it obtains the highest PSNR, its low feature similarity and cross-correlation, high distribution distances, and visible degradation in Fig.~\ref{fig:qualitative} indicate over-harmonization rather than reliable anatomy-preserving translation. This discrepancy highlights why pixel-level preservation metrics are insufficient on their own: a method can retain coarse intensity agreement while damaging contrast relationships and local anatomical structure. StarGAN-aggressive follows a similar pattern, though less severely.
+
+Tuned CycleGAN provides the strongest overall compromise among the completed baselines. It reduces site balanced accuracy to 0.3480 while maintaining high feature similarity (0.990) and cross-correlation (0.981). Diffusion image-to-image translation is complementary: it does not remove as much site signal as CycleGAN or NeuroCombat, but it achieves the lowest Wasserstein distance and low KL divergence, suggesting effective target-domain intensity matching. DLEST and conservative StarGAN preserve structure well but leave more residual site information. Histogram matching is a strong lightweight baseline for distributional alignment, but its remaining site balanced accuracy indicates that matching foreground intensity histograms alone does not remove all acquisition signatures.
+
+These results argue against ranking harmonization methods by site confusion alone. In clinical and neuroimaging applications, loss of anatomical fidelity is not an acceptable price for scanner obfuscation. HarmonIt therefore reports site-signal reduction jointly with structural and distributional fidelity, making failure modes visible even when a method appears strong on a single metric.
+
+The current benchmark has limitations. It is based on 2D axial slices, so through-plane artifacts and volumetric inconsistency are not fully measured. The learning-based baselines are also sensitive to training schedules and target-domain handling, and repeated-seed estimates remain future work. Nevertheless, the benchmark provides a compact and reproducible testbed for comparing harmonization methods under clinically motivated preservation constraints.
+
+\section{Compliance}
+ABIDE~I is a publicly released, anonymized retrospective dataset. This study uses no newly collected human-subject data. The authors report no conflicts of interest.
+
+\section{Conclusion}
+HarmonIt benchmarks MR image harmonization as a trade-off between site-signal removal and anatomy preservation. Across representative baselines, no method dominates all criteria: HCLD removes the most site signal but degrades structure, diffusion best matches target intensity distributions, and tuned CycleGAN provides the strongest overall balance. The benchmark supports more reliable development and comparison of anatomy-preserving harmonization methods for multi-site MRI.
+
+\bibliographystyle{IEEEbib}
+\bibliography{strings,refs}
+
+\end{document}
