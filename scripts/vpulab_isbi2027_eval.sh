@@ -33,4 +33,5 @@ cd "$ISBI_CODE"
   --artifact "dlest_1000=$ISBI_INPUTS/outputs/harmonized/dlest_nyu_step1000/test/dlest_nyu_slices.npz" \
   --artifact "diffusion_20k=$ISBI_INPUTS/outputs/harmonized/diffusion_img2img_nyu_s20000_strength035/test/diffusion_img2img_nyu_slices.npz" \
   ${HCLD:+--artifact "adapted_hcld=$HCLD"} \
-  ${REDRAW:+--artifact "diffusion_20k_redraw=$REDRAW"}
+  ${REDRAW:+--artifact "diffusion_20k_redraw=$REDRAW"} \
+  ${EXTRA_ARTIFACT:+--artifact "$EXTRA_ARTIFACT"}

@@ -133,6 +133,16 @@ artifact, `diffusion_20k_redraw`, sampled like the diffusion train/val exports; 
 diffusion-trained probe's primary test set is the redraw. Differences between the two
 draws under the same probe quantify sampling variability and are reported.
 
+Amendment 4, 2026-09-14 17:10 (post hoc; written after the harmonized-probe results
+and before this control's result). Observed: probes trained on method outputs reached
+source BA 0.85-0.97 on those methods' test outputs versus 0.09-0.49 for raw-trained
+slice probes. Because site labels can also be predicted from head geometry, crop and
+field of view, a silhouette control is added: slice probes (seeds 1-3, same recipe)
+trained and evaluated on filled binary head silhouettes (raw slice > 0.02, holes filled)
+of the same fixed slices. It bounds how much site recognition is available without
+intensity or texture; it does not separate scanner effects from demographic or
+anatomical cohort differences, which remain a stated limitation.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
