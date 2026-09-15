@@ -16,6 +16,7 @@ REDRAW_DEFAULT=/mnt/rhome/mmi/projects/isbi2027/exports/diffusion_20k/test/diffu
 REDRAW="${REDRAW-$REDRAW_DEFAULT}"
 export PYTHONPATH="${ISBI_CODE}/src:${ISBI_CODE}/scripts"
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
+unset VOLUME_CACHE_DIR  # the fresh reference always reads the original volumes
 cd "$ISBI_CODE"
 "$PY" -m unittest discover -s tests -v
 "$PY" scripts/eval_isbi2027.py \
