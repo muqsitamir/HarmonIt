@@ -6,8 +6,8 @@ Audit date: 2026-09-12. Status: local evidence reviewed; historical rankings pro
 > development with a bounded evaluation repair in parallel. See
 > [TRDP2_PLAN.md](TRDP2_PLAN.md), which supersedes this report's original
 > evaluation-first schedule. Git inspection also located the additional baseline
-> code on `codex/add-stargan-baseline`, including the 2D diffusion implementation.
-> It is absent from the current main checkout, not missing from the repository.
+> code, including the 2D diffusion implementation, on a research branch; it has
+> since been merged into `main`.
 > Checkpoint and historical run provenance still require verification. The
 > scientific findings below remain applicable. Local evaluator corrections
 > described here are not included in the documentation-only publication commit.
@@ -169,17 +169,11 @@ Required manuscript package:
 - Reproducible commands/configurations, environment, artifact hashes, data access
   instructions, and a clean-checkout reproduction of a small evaluation.
 
-## Division of work and next action
-
-Codex executes implementation, artifact checks, experiments within authorized
-compute access, analysis, figures, and draft writing. Muqsit and the supervisor
-steer the scientific question, assess anatomy/clinical interpretation, settle
-external-data access and publication budget, and approve the final claims.
+## Next action
 
 The immediate next implementation is the versioned evaluator and artifact
 provenance inventory above. Remote availability need not block local evaluator
-work. A model-setting change is not required for this stage; escalate effort
-only if a specific design/review task warrants it, not for long-running jobs.
+work.
 
 Verification in this audit: all five existing tests pass using
 `/Users/apple/anaconda3/envs/harmonit311/bin/python -m unittest discover -s tests -v`.

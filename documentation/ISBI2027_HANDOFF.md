@@ -28,9 +28,10 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   methods are test cases, not a leaderboard. Not a corrected benchmark.
 - Authors: June list and order (Muhammad Muqsit Islam and Gloria García Cuenco equal
   contribution; José M. Martínez Sánchez; Pierrick Coupé; UAM and University of Bordeaux).
-- Code, protocol and per-subject results are released on GitHub; the paper footnote links
-  `https://github.com/muqsitamir/HarmonIt`. The repository must be public, with this
-  branch's content reachable, before submission.
+- Code, protocol and per-subject results are released on GitHub (public, `main`); the paper
+  footnote links `https://github.com/muqsitamir/HarmonIt`.
+- Repository hygiene (decided 2026-09-15): no assistant instruction files, AI co-author
+  trailers or tool-named branches on GitHub. The paper keeps its named AI-use disclosure.
 - Compute: prefer vpulab (RTX A5000, near dedicated). Use the shared cl cluster only when
   needed (it was used for the HCLD re-export).
 - No paid fifth page (decided 2026-09-15): the whole paper, including references, ethics and
@@ -62,7 +63,7 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 
 | What | Location |
 | --- | --- |
-| Code, paper, results | branch `codex/isbi2027-evaluation`; local worktree `outputs/development/isbi2027` of `~/PycharmProjects/HarmonIt` |
+| Code, paper, results | branch `main` of `github.com/muqsitamir/HarmonIt` (ISBI work merged 2026-09-15; commit IDs cited in older run logs map to current ones in `ISBI2027_COMMIT_MAP.tsv`) |
 | Experiment root (vpulab) | `/mnt/rhome/mmi/projects/isbi2027`: `code/` (rsync snapshot, `COMMIT` file), `runs/`, `exports/`, `slice_probes/`, `probe_work/`, `inputs/`, `analysis/` |
 | Data, historical artifacts, frozen probe (vpulab) | `/mnt/rhome/mmi/projects/HarmonIt` (`data/`, `outputs/harmonized/`, `checkpoints/`) |
 | Python env (vpulab) | `/home/mmi/envs/harmonit-isbi` (torch 2.5.1+cu121, numpy 1.26.4); installer `/mnt/rhome/mmi/envs/install_harmonit_isbi.sh` |
@@ -111,8 +112,7 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 1. Author read the revised `main.pdf` on 2026-09-15 and approved it; supervisor review and
    funding text (the author will add it) remain.
 2. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
-   but its default branch `main` has none of the ISBI work, so the paper's repository link must
-   point at a tag or this branch, or the work must be merged to `main` (author's choice). The
+   and the ISBI work is merged into `main`, so the paper's repository link is correct. The
    template kit matches the official one; no paid fifth page.
 3. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
    use the benchmark recipe, noted as a limitation).

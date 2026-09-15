@@ -18,7 +18,7 @@ not a prerequisite.
 ## Starting point
 
 The 2D implementation is already versioned at
-[`scripts/methods/diffusion_img2img.py` on the research branch](https://github.com/muqsitamir/HarmonIt/blob/codex/add-stargan-baseline/scripts/methods/diffusion_img2img.py).
+[`scripts/methods/diffusion_img2img.py`](https://github.com/muqsitamir/HarmonIt/blob/main/scripts/methods/diffusion_img2img.py).
 This was confirmed from Git during the documentation update. Recovery of its
 source no longer depends on remote-server availability; checkpoints and exact
 training/export provenance still require verification.
