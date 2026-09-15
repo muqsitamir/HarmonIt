@@ -24,6 +24,7 @@ ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggress
 TITLES = {"neurocombat": "NeuroComb.", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
           "stargan_aggressive": "StarGAN-A", "stargan_conservative": "StarGAN-C", "dlest_1000": "DLEST-1000",
           "diffusion_20k": "Diffusion", "diffusion_20k_redraw": "Diff. draw 2", "adapted_hcld": "HCLD"}
+SHORT = {"histogram_matching": "Hist. match.", "diffusion_20k": "Diff. draw 1", "diffusion_20k_redraw": "Diff. draw 2"}
 DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#184f95", "#f0efec", "#a8322f"])
 
 
@@ -32,6 +33,9 @@ def main():
     p.add_argument("--eval-run", required=True, help="Complete evaluation run with raw_reference.npz")
     p.add_argument("--out", required=True)
     p.add_argument("--limit", type=float, default=0.3, help="Difference colour limit")
+    p.add_argument("--show", nargs="+", help="Outputs to display (default all); selection still uses all")
+    p.add_argument("--width", type=float, default=7.0, help="Figure width in inches")
+    p.add_argument("--height", type=float, help="Figure height in inches (default from width)")
     args = p.parse_args()
     run = Path(args.eval_run)
     protocol = json.loads((run / "protocol.json").read_text())
@@ -54,18 +58,21 @@ def main():
             images[m] = data["images"][row, 0]
 
     plt.rcParams.update({"font.size": 6, "font.family": "DejaVu Sans", "pdf.fonttype": 42})
-    cols = len(methods) + 1
-    fig, axes = plt.subplots(2, cols, figsize=(7.0, 1.6), gridspec_kw=dict(wspace=.04, hspace=.06))
+    shown = [m for m in methods if not args.show or m in args.show]
+    cols = len(shown) + 1
+    size = 5 if args.show else 6
+    fig, axes = plt.subplots(2, cols, figsize=(args.width, args.height or args.width * 2 / cols * 1.12),
+                             gridspec_kw=dict(wspace=.04, hspace=.06))
     axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=1)
-    axes[0, 0].set_title("Input", fontsize=6, pad=2)
-    axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=6, color="#52514e",
+    axes[0, 0].set_title("Input", fontsize=size, pad=2)
+    axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=size, color="#52514e",
                     transform=axes[1, 0].transAxes)
     psnr = table[table.subject_id == subject].set_index("method").psnr
-    for j, m in enumerate(methods, start=1):
+    for j, m in enumerate(shown, start=1):
         axes[0, j].imshow(np.clip(images[m], 0, 1), cmap="gray", vmin=0, vmax=1)
-        axes[0, j].set_title(TITLES[m], fontsize=6, pad=2)
+        axes[0, j].set_title((SHORT if args.show else {}).get(m, TITLES[m]), fontsize=size, pad=2)
         diff = axes[1, j].imshow(images[m] - raw, cmap=DIVERGING, vmin=-args.limit, vmax=args.limit)
-        axes[1, j].text(.03, .04, f"{psnr[m]:.1f} dB", color="#0b0b0b", fontsize=5, transform=axes[1, j].transAxes)
+        axes[1, j].text(.03, .04, f"{psnr[m]:.1f} dB", color="#0b0b0b", fontsize=size - 0.5, transform=axes[1, j].transAxes)
     for ax in axes.ravel():
         ax.set_xticks([]), ax.set_yticks([])
         for spine in ax.spines.values():
