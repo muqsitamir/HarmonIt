@@ -1,68 +1,166 @@
 # HarmonIt
 
-Unified system to harmonize MR images across sites, scanners, and protocols while preserving anatomy and pathology.
+### MRI harmonization, with anatomy as the constraint.
 
-## Overview
-Multi-site MRI datasets often suffer from **domain shift** (scanner/vendor/protocol/site differences). HarmonIt aims to learn an **image-level harmonization** mapping that reduces these non-biological variations while keeping clinically meaningful information intact.
+**How much scanner variation can we remove before we change the patient?**
 
-## Objectives
-- **Harmonize** MR images to reduce site/scanner/protocol variability
-- **Preserve anatomy** (structures, boundaries, geometry)
-- **Preserve pathology** (lesions/tumors/abnormalities should not be removed or hallucinated)
-- **Improve downstream robustness** (segmentation/classification should not degrade)
+HarmonIt investigates this question through a multi-site brain MRI benchmark
+and the development of diffusion-based harmonization. We study the trade-off
+between reducing site predictability, preserving individual anatomy, and
+producing consistent volumes that remain useful for downstream analysis.
 
-## Scope (initial)
-- Start with **structural brain MRI** (e.g., T1/T2/FLAIR) and a **2D slice** pipeline for rapid iteration
-- Support **unpaired multi-site** training (paired/traveling-subject data is optional when available)
-- Establish baselines, then move toward a **domain-general, diffusion-based** harmonization model
+**1,112 subjects | 17 acquisition sites | ABIDE I T1-weighted MRI**
 
-## Planned Method Families
-HarmonIt will compare and/or build on:
-- **Statistical harmonization** (feature-level baselines such as ComBat-family methods)
-- **GAN-based** image-to-image harmonization (e.g., CycleGAN-style)
-- **Disentanglement / anatomy–contrast separation** approaches
-- **Diffusion-based** multi-domain harmonization (current SOTA direction)
+[Research roadmap](#from-benchmark-to-25d-diffusion) |
+[Evaluation definitions](documentation/METRICS.md) |
+[Installation](documentation/INSTALLATION.md) |
+[Baseline implementations](scripts/methods) |
+[ISBI 2027 evaluation audit](documentation/ISBI2027_HANDOFF.md)
 
-## Evaluation (what “good” means)
-We will evaluate harmonization using a mix of:
-- **Domain confusion:** site/scanner classifier accuracy should drop after harmonization
-- **Anatomy preservation:** segmentation/registration consistency (or boundary/structure metrics)
-- **Downstream performance:** classification/segmentation should remain stable or improve
-- **Image similarity metrics:** (SSIM/PSNR) when paired or synthetic ground truth exists
-- **Qualitative checks:** side-by-side visual grids + failure case analysis
+> **Research status:** first-phase baseline experiments are complete, and an
+> evaluation-audit manuscript for ISBI 2027 is in preparation (protocol, code and
+> versioned results in this repository). The next contribution is a planned **2.5D
+> diffusion model**. No 2.5D training results or clinical benefit are claimed yet.
 
-## Milestones (high-level)
-1) **Baseline setup:** data pipeline + no-harmonization reference
-2) **Classic baseline:** CycleGAN / U-Net restoration baseline (depending on pairing)
-3) **Modern baseline:** diffusion-based harmonization
-4) **Anatomy-preserving constraints:** segmentation/registration consistency
-5) **Paper-ready results:** ablations + evaluation protocol + figures/tables
+## Why This Matters
 
-## Reproducibility
-- Fixed seeds, saved configs for every run
-- Versioned splits
-- Logged metrics + qualitative samples
-- Environment captured via `requirements.txt` or `environment.yml`
+MRI scans carry signatures of the scanner, acquisition protocol, and site.
+Models can exploit those signatures and struggle when applied elsewhere.
+Harmonization aims to reduce acquisition variation while preserving the
+biological information that matters.
 
-## Repository Guide
+The difficult part is deciding whether it worked. A blurred or distorted image
+can fool a site classifier. An unchanged image can achieve excellent similarity
+scores. Matching an intensity histogram does not establish anatomical fidelity.
+HarmonIt evaluates these questions together and makes the limitations explicit.
 
-Core documentation:
+## From Benchmark to 2.5D Diffusion
 
-- [Installation](documentation/INSTALLATION.md): local and GPU environment setup.
-- [Preprocessing](documentation/PREPROCESSING.md): ABIDE T1 to fixed 2D slice pipeline.
-- [Metrics](documentation/METRICS.md): preservation, distribution, and site-probe metrics.
-- [Baselines](documentation/BASELINES.md): NeuroCombat, DLEST, diffusion, and adapted HCLD benchmark context.
-- [Reproducibility](documentation/REPRODUCIBILITY.md): commands for reproducing artifacts, metrics, and figures.
-- [ISBI 2027 audit](documentation/ISBI2027_HANDOFF.md): status, protocol, results and manuscript for the evaluation-audit paper.
+| Phase | Contribution | Status |
+| --- | --- | --- |
+| TRDP1: establish the comparison | Common slice pipeline, subject splits, site probe, baseline exports and qualitative comparisons | Experiments completed; historical metrics under review |
+| Evaluation repair | Correct metric semantics, separate translated subjects from target identities, trace generating code and artifacts | Local corrections and audit in progress |
+| TRDP2: use neighbouring anatomy | Site-conditioned diffusion with adjacent slices as context and a harmonized centre-slice output | Planned; initial design defined |
+| Volumetric validation | Full-volume export, slice continuity, segmentation consistency and regional-volume analysis | Planned |
 
-Main entry points:
+The first 2.5D experiment will compare **one-slice input against three-slice
+context** (`z-1`, `z`, `z+1`) using the same diffusion backbone as far as possible.
+Five-slice context and anatomy constraints follow only when the initial
+comparison motivates them. Stacking slice predictions into a volume does not
+guarantee 3D consistency: that is an outcome we will measure.
 
-- `scripts/eval_harmonized_npz.py`: validates and evaluates exported harmonized NPZ artifacts.
-- `scripts/visualize_harmonization_panel.py`: builds paper-ready method comparison panels.
-- `scripts/visualize_preprocessing_stages.py`: builds preprocessing-stage figures for representative T1 slices.
-- `slurm/`: GPU/cluster launchers for diffusion and HCLD experiments.
+## Benchmark Design
 
-## Status
-Active benchmark stage — ABIDE preprocessing, site-probe evaluation,
-NeuroCombat/statistical baselines, GAN/disentanglement baselines, diffusion
-img2img, and adapted HCLD are implemented or under evaluation.
+| Component | Current benchmark |
+| --- | --- |
+| Data | Raw ABIDE I structural T1 MRI; 1,112 subjects from 17 sites |
+| Subject splits | 890 training / 113 validation / 109 test |
+| Slice representation | Canonical RAS orientation, robust normalization, axial selection, conservative head-mask cropping, background handling, 256 x 256 resize |
+| Reference domain | NYU (`site_id=5`, 184 subjects) for target-conditioned methods |
+| Site probe | Single-channel ResNet-18, frozen for raw/harmonized comparison |
+| Evaluation unit | Deterministic subject slices; volumetric validation is planned |
+
+NYU was chosen as the largest site in this cohort. It is a reference acquisition
+domain, not an anatomical ground truth. The head mask is not a brain tissue
+segmentation. Method-specific fitting and target handling must be recorded:
+the existing NeuroCombat implementation performs cohort-level correction
+without an explicit NYU reference, so it is not the same protocol as learned
+NYU translation.
+
+## Baseline Coverage
+
+The first phase explored the following families. Historical rankings are
+provisional until evaluated with the corrected, documented protocol.
+
+| Baseline | Role in the comparison |
+| --- | --- |
+| NeuroCombat | Statistical correction of slice-pixel features |
+| Histogram matching | Lightweight intensity-distribution baseline |
+| CycleGAN | Unpaired translation from pooled non-NYU sites to NYU |
+| StarGAN | Multi-domain translation with conservative/aggressive settings |
+| DLEST-style model | Disentangled content/style baseline; 1,000- and 1,500-step variants |
+| Diffusion img2img | Site-conditioned 2D diffusion; completed 20,000-step experiment |
+| Adapted HCLD | Volumetric latent diffusion adapted to available 40 GB A100 memory |
+
+**Where is the code?** `main` contains the core pipeline, evaluators, all baseline
+implementations (`scripts/methods/`), HCLD configurations, figure scripts and Slurm
+launchers. See the [baseline notes](documentation/BASELINES.md) and
+[reproduction commands](documentation/REPRODUCIBILITY.md). Those historical notes
+should be read alongside the current metric definitions and the ISBI 2027 protocol.
+
+## What Counts as Progress?
+
+We ask three separate questions:
+
+1. **Does site information remain recoverable?** Frozen-probe balanced accuracy
+   measures one classifier's response. The ISBI 2027 audit adds retrained and
+   converged probes, probes trained on harmonized outputs, and geometry-, intensity-
+   and brain-only controls.
+2. **What changed in the image?** PSNR, pixel cosine similarity, cross-correlation,
+   and intensity-distribution changes describe preservation proxies. They do
+   not establish anatomical accuracy or closeness to NYU.
+3. **Does the result remain useful as a volume?** Planned tests assess slice
+   continuity, segmentation agreement, regional volumes, and selected downstream
+   or unseen-site outcomes.
+
+The audit identified output-dependent PSNR scaling, inconsistent historical KL
+histogram coordinates, and target identities mixed into pooled preservation
+scores. The corrected subject-level evaluator (`scripts/eval_isbi2027.py`) and its
+versioned results are in [`results/isbi2027`](results/isbi2027/README.md), under the
+[written protocol](documentation/ISBI2027_PROTOCOL.md); old numbers are not silently replaced.
+Read the [metric definitions](documentation/METRICS.md) for exact scope and
+limitations.
+
+## Get Started
+
+```bash
+git clone https://github.com/muqsitamir/HarmonIt.git
+cd HarmonIt
+conda create -n harmonit311 python=3.11 -y
+conda activate harmonit311
+```
+
+Install the CPU or CUDA PyTorch build appropriate for your machine using the
+[installation guide](documentation/INSTALLATION.md), then:
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+python scripts/check_env.py
+```
+
+Obtain ABIDE data separately under its access terms. The manifest builder
+expects the directory layout described in the
+[preprocessing guide](documentation/PREPROCESSING.md). Published experiment
+reproduction also requires matching split files, checkpoints, and export
+settings; installing the package alone does not reproduce the result table.
+
+An exported fixed-slice artifact carries `images`, `subject_ids`, `site_ids`,
+and `slice_indices`, with `raw_images`, `split`, and `method` metadata where
+available. Images have shape `[N, 1, 256, 256]`. Inspect the evaluator interface:
+
+```bash
+python scripts/eval_harmonized_npz.py --help
+```
+
+## Explore the Project
+
+| Resource | Contents |
+| --- | --- |
+| [Research direction](#from-benchmark-to-25d-diffusion) | Completed benchmark work and planned 2.5D comparison |
+| [Metrics](documentation/METRICS.md) | Implemented quantities, interpretation, and planned corrections |
+| [ISBI 2027 audit](documentation/ISBI2027_HANDOFF.md) | Status, [protocol](documentation/ISBI2027_PROTOCOL.md), [results](results/isbi2027/README.md) and [manuscript](paper/isbi2027/main.tex) |
+| [Baselines](documentation/BASELINES.md) and [reproducibility](documentation/REPRODUCIBILITY.md) | Method notes and reproduction commands |
+| [Preprocessing](documentation/PREPROCESSING.md) | ABIDE-to-slice pipeline |
+| [Installation](documentation/INSTALLATION.md) | Local and GPU setup |
+| [Containers](documentation/CONTAINERS.md) | Container configuration |
+
+## Research Use and License
+
+HarmonIt is research software. Preservation of pathology, downstream benefit,
+and unseen-scanner generalization have not yet been established. There is no
+claimed journal acceptance or validated clinical deployment.
+
+Repository code is provided under [Apache 2.0](LICENSE). Datasets, upstream
+implementations, and pretrained weights retain their own licenses and access
+conditions.
