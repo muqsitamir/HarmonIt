@@ -330,6 +330,8 @@ class AbideSlicesDataset(Dataset):
         self.head_mask_thr = head_mask_thr
         self.head_mask_dilate = head_mask_dilate
         self.input_mode = str(input_mode)
+        # Optional directory of normalized volumes from scripts/cache_normalized_volumes.py.
+        self.volume_cache_dir = os.getenv("VOLUME_CACHE_DIR") or None
 
         # For mask-only diagnostics, optionally use a smooth distance-transform instead of a hard binary mask.
         # Values: "binary" (default) or "dist".
@@ -367,6 +369,14 @@ class AbideSlicesDataset(Dataset):
         if sid in self._vol_cache:
             vol_n = self._vol_cache.pop(sid)
             self._vol_cache[sid] = vol_n
+            return vol_n
+
+        if self.volume_cache_dir is not None:
+            # Stored as [D, H, W] so an axial slice is one contiguous block; same values.
+            vol_n = np.load(Path(self.volume_cache_dir) / f"{sid}.npy", mmap_mode="r").transpose(1, 2, 0)
+            self._vol_cache[sid] = vol_n
+            if len(self._vol_cache) > self.volume_cache_size:
+                self._vol_cache.popitem(last=False)
             return vol_n
 
         # Cache miss: load and normalize

@@ -3,6 +3,7 @@
 Probe identity is parsed from the run directory name:
   frozen_probe_v1_9methods_*                      -> frozen production probe
   retrained_{raw|shuffle}_seed{S}[_{ckpt}]_*      -> site probe retrained on raw volumes
+  converged_{raw|shuffle}_seed{S}_{ckpt}_*        -> site probe with the converged recipe (amendment 6)
   sliceprobe_{source}_seed{S}_{ckpt}_*            -> fixed-slice probe trained on raw or method outputs
 """
 
@@ -20,6 +21,8 @@ PATTERNS = [
     (re.compile(r"^retrained_(raw|shuffle)_seed(\d+)(?:_(model_best|model_last))?_9methods_"),
      lambda m: dict(family="retrained_site_probe", source=m[1], seed=int(m[2]),
                     ckpt=(m[3] or "model_best").replace("model_", ""))),
+    (re.compile(r"^converged_(raw|shuffle)_seed(\d+)_(model_best|model_last)_9methods_"),
+     lambda m: dict(family="converged_site_probe", source=m[1], seed=int(m[2]), ckpt=m[3].replace("model_", ""))),
     (re.compile(r"^sliceprobe_(.+)_seed(\d+)_(model_best|model_last)_9methods"),
      lambda m: dict(family="slice_probe", source=m[1], seed=int(m[2]), ckpt=m[3].replace("model_", ""))),
 ]

@@ -1,6 +1,8 @@
 #!/bin/bash
 # ISBI 2027 site-probe retraining on vpulab with the production v0.3_aug_ramp15 recipe
 # (checkpoint run 20260417_164204). LABEL_SHUFFLE=1 trains the subject-level shuffle control.
+# RECIPE=converged applies protocol amendment 6 (4x steps, cosine decay, reseeded workers,
+# local volume cache in VOLUME_CACHE_DIR).
 # Usage: SEED=42 LABEL_SHUFFLE=0 nohup bash scripts/vpulab_isbi2027_probe.sh > probe.log 2>&1 &
 set -euo pipefail
 : "${SEED:?Set SEED}"
@@ -10,6 +12,7 @@ DATA_REPO="${DATA_REPO:-/mnt/rhome/mmi/projects/HarmonIt}"
 WORK="${PROBE_WORK:-/mnt/rhome/mmi/projects/isbi2027/probe_work}"
 PY="${HARMONIT_PYTHON:-/home/mmi/envs/harmonit-isbi/bin/python}"
 KIND=$([ "$LABEL_SHUFFLE" = 1 ] && echo shuffle || echo raw)
+RECIPE="${RECIPE:-production}"
 
 mkdir -p "$WORK" "$HOME/mlflow_local"
 [ -e "$WORK/data" ] || ln -s "$DATA_REPO/data" "$WORK/data"
@@ -23,6 +26,14 @@ export BATCH_SIZE=64 EPOCHS=10 LR=3e-4 STEPS_PER_EPOCH=50 VAL_BATCHES=0
 export MASK_MODE=none BG_SUPPRESS=1 INPUT_MODE=image MASK_ONLY_REPR=binary
 export FG_THR=0.02 FG_BBOX_THR=0.02 HEAD_MASK_THR=0.02 HEAD_MASK_DILATE=3
 export AUG_AFFINE=1 AUG_PROB=0.9 AUG_ROT_DEG=12 AUG_TRANS_PX=32 AUG_SCALE_JITTER=0.2
+case "$RECIPE" in
+  production) unset VOLUME_CACHE_DIR ;;
+  converged)
+    export ABLATION_NAME="isbi2027__converged_${KIND}_seed${SEED}"
+    export EPOCHS=40 LR_SCHEDULE=cosine WARMUP_STEPS=50 WORKER_RESEED=1
+    export VOLUME_CACHE_DIR="${VOLUME_CACHE_DIR:?Set VOLUME_CACHE_DIR for the converged recipe}" ;;
+  *) echo "Unknown RECIPE=$RECIPE" >&2; exit 2 ;;
+esac
 
 echo "code_commit=$(cat "$ISBI_CODE/COMMIT" 2>/dev/null || echo unknown)"
 sha256sum "$ISBI_CODE/scripts/train_site_probe.py" "$ISBI_CODE/src/harmonit/data/abide_slices_dataset.py" \

@@ -8,20 +8,23 @@ KIND_SHUFFLE="${LABEL_SHUFFLE:-0}"
 ISBI_CODE="$(cd "$(dirname "$0")/.." && pwd)"
 ROOT="${ISBI_ROOT:-/mnt/rhome/mmi/projects/isbi2027}"
 KIND=$([ "$KIND_SHUFFLE" = 1 ] && echo shuffle || echo raw)
+RECIPE="${RECIPE:-production}"  # converged: protocol amendment 6
+PREFIX=$([ "$RECIPE" = converged ] && echo converged || echo retrained)
+TAG=$([ "$RECIPE" = converged ] && echo "converged_${KIND}" || echo "$KIND")
 mkdir -p "$ROOT/probe_logs" "$ROOT/runs"
 
 train() {
-  SEED="$1" LABEL_SHUFFLE="$KIND_SHUFFLE" bash "$ISBI_CODE/scripts/vpulab_isbi2027_probe.sh" \
-    > "$ROOT/probe_logs/${KIND}_seed$1.log" 2>&1
+  SEED="$1" LABEL_SHUFFLE="$KIND_SHUFFLE" RECIPE="$RECIPE" bash "$ISBI_CODE/scripts/vpulab_isbi2027_probe.sh" \
+    > "$ROOT/probe_logs/${TAG}_seed$1.log" 2>&1
 }
 
 evaluate() {
   local seed="$1" ckpt
   for ckpt in model_best model_last; do
     local pt run
-    pt=$(ls "$ROOT"/probe_work/runs/site_probe/isbi2027__${KIND}_seed${seed}/*/${ckpt}.pt 2>/dev/null | tail -1)
+    pt=$(ls "$ROOT"/probe_work/runs/site_probe/isbi2027__${TAG}_seed${seed}/*/${ckpt}.pt 2>/dev/null | tail -1)
     [ -n "$pt" ] || { echo "missing $ckpt for seed $seed"; continue; }
-    run="$ROOT/runs/retrained_${KIND}_seed${seed}_${ckpt}_9methods_$(date +%Y%m%d_%H%M%S)"
+    run="$ROOT/runs/${PREFIX}_${KIND}_seed${seed}_${ckpt}_9methods_$(date +%Y%m%d_%H%M%S)"
     SITE_PROBE="$pt" ISBI_OUTPUT="$run" bash "$ISBI_CODE/scripts/vpulab_isbi2027_eval.sh" > "$run.log" 2>&1 \
       && echo "evaluated seed $seed $ckpt: $run" || echo "EVAL FAILED seed $seed $ckpt: $run.log"
   done

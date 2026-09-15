@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import math
 import os
 from dotenv import load_dotenv
 import mlflow
@@ -39,7 +40,14 @@ def main():
     lr = float(os.getenv("LR", "3e-4"))
     steps_per_epoch = int(os.getenv("STEPS_PER_EPOCH", "50"))  # batches per epoch (sampling w/ replacement)
     val_batches = int(os.getenv("VAL_BATCHES", "0"))  # 0 evaluates the complete split
-    print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} val_batches={val_batches}")
+    # Converged recipe (protocol amendment 6); defaults reproduce the production recipe.
+    lr_schedule = os.getenv("LR_SCHEDULE", "constant")  # constant | cosine
+    warmup_steps = int(os.getenv("WARMUP_STEPS", "0"))
+    worker_reseed = os.getenv("WORKER_RESEED", "0") == "1"
+    if lr_schedule not in ("constant", "cosine"):
+        raise ValueError(f"Unknown LR_SCHEDULE={lr_schedule}")
+    print(f"Run hparams: batch_size={batch_size} epochs={epochs} lr={lr} steps_per_epoch={steps_per_epoch} "
+          f"val_batches={val_batches} lr_schedule={lr_schedule} warmup_steps={warmup_steps} worker_reseed={worker_reseed}")
 
     seed = int(os.getenv("SEED", "42"))
     np.random.seed(seed)
@@ -104,6 +112,9 @@ def main():
             "lr": lr,
             "steps_per_epoch": steps_per_epoch,
             "val_batches": val_batches,
+            "lr_schedule": lr_schedule,
+            "warmup_steps": warmup_steps,
+            "worker_reseed": worker_reseed,
             "out_hw": "256x256",
             "slice_mode_train": "random",
             "slice_mode_val": "fixed",
@@ -207,6 +218,10 @@ def main():
                     "lr": lr,
                     "steps_per_epoch": steps_per_epoch,
                     "val_batches": val_batches,
+                    "lr_schedule": lr_schedule,
+                    "warmup_steps": warmup_steps,
+                    "worker_reseed": worker_reseed,
+                    "volume_cache_dir": os.getenv("VOLUME_CACHE_DIR"),
                     "num_classes": num_classes,
                     "class_names": class_names,
                     "seed": seed,
@@ -240,6 +255,9 @@ def main():
                 "lr": lr,
                 "steps_per_epoch": steps_per_epoch,
                 "val_batches": val_batches,
+                "lr_schedule": lr_schedule,
+                "warmup_steps": warmup_steps,
+                "worker_reseed": worker_reseed,
             },
             "preprocessing": preproc_cfg,
             "class_names": class_names,
@@ -266,6 +284,10 @@ def main():
 
         pin = (device.type == "cuda")
 
+        def reseed_worker(worker_id):
+            # Without this, every worker inherits the same RandomState and repeats its draws.
+            torch.utils.data.get_worker_info().dataset.rng = np.random.RandomState(seed * 1000 + worker_id)
+
         # Sampler with replacement lets us train longer than dataset length
         train_loader = DataLoader(
             train_ds,
@@ -274,6 +296,7 @@ def main():
             num_workers=4,
             pin_memory=pin,
             persistent_workers=(4 > 0),
+            worker_init_fn=reseed_worker if worker_reseed else None,
         )
         val_loader = DataLoader(
             val_ds,
@@ -294,6 +317,16 @@ def main():
 
         optim = torch.optim.AdamW(model.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss()
+        scheduler = None
+        if lr_schedule == "cosine":
+            total_steps = epochs * steps_per_epoch
+
+            def lr_factor(step):
+                if step < warmup_steps:
+                    return (step + 1) / warmup_steps
+                return 0.5 * (1 + math.cos(math.pi * (step - warmup_steps) / max(1, total_steps - warmup_steps)))
+
+            scheduler = torch.optim.lr_scheduler.LambdaLR(optim, lr_factor)
 
         best_val_bal = -1.0
 
@@ -313,6 +346,8 @@ def main():
                 loss = criterion(logits, y)
                 loss.backward()
                 optim.step()
+                if scheduler is not None:
+                    scheduler.step()
 
                 running_loss += float(loss.item())
 
@@ -325,6 +360,7 @@ def main():
 
             avg_train_loss = running_loss / max(1, steps_per_epoch)
             mlflow.log_metric("train_loss", avg_train_loss, step=epoch)
+            mlflow.log_metric("lr", optim.param_groups[0]["lr"], step=epoch)
 
             # ---- Validation ----
             model.eval()
