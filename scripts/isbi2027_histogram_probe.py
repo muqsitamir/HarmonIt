@@ -24,14 +24,27 @@ OWN_TEST = {"histogram_matching": "histogram_matching", "cyclegan_tuned": "cycle
             "diffusion_20k": "diffusion_20k_redraw"}
 
 
-def features(images, raw, threshold=0.02):
-    return np.stack([probability_histogram(img[0][r[0] > threshold]) for img, r in zip(images, raw)])
+def features(images, raw, masks=None, threshold=0.02):
+    """Histogram of foreground pixels: raw slice > threshold, or a given mask (amendment 7)."""
+    if masks is None:
+        masks = raw > threshold
+    return np.stack([probability_histogram(img[0][m[0].astype(bool)]) for img, m in zip(images, masks)])
 
 
-def load(path, key):
+def load_masks(mask_dir, split, subjects):
+    if mask_dir is None:
+        return None
+    with np.load(Path(mask_dir) / split / "brain_masks.npz", allow_pickle=False) as data:
+        if not np.array_equal(data["subject_ids"].astype(str), subjects):
+            raise ValueError(f"{split}: brain mask subject order differs")
+        return data["masks"]
+
+
+def load(path, key, split, mask_dir=None):
     with np.load(path, allow_pickle=False) as data:
-        return features(data[key], data["raw_images"]), data["site_ids"].astype(np.int64), \
-            data["subject_ids"].astype(str)
+        subjects = data["subject_ids"].astype(str)
+        masks = load_masks(mask_dir, split, subjects)
+        return features(data[key], data["raw_images"], masks), data["site_ids"].astype(np.int64), subjects
 
 
 def fit(x_train, y_train, x_val, y_val):
@@ -52,6 +65,7 @@ def main():
     p.add_argument("--eval-run", required=True, help="Complete run with raw_reference.npz and bootstrap indices")
     p.add_argument("--out", required=True)
     p.add_argument("--target-site-id", type=int, default=5)
+    p.add_argument("--brain-masks", help="Directory with <split>/brain_masks.npz; foreground = brain mask")
     args = p.parse_args()
     exports, run = Path(args.exports), Path(args.eval_run)
     protocol = json.loads((run / "protocol.json").read_text())
@@ -60,9 +74,10 @@ def main():
     with np.load(run / "raw_reference.npz", allow_pickle=False) as data:
         raw_test, test_sites, test_subjects = data["raw_images"], data["site_ids"], data["subject_ids"].astype(str)
     source = test_sites != args.target_site_id
+    test_masks = load_masks(args.brain_masks, "test", test_subjects)
 
     def evaluate(model, images):
-        pred = model.predict(features(images, raw_test))
+        pred = model.predict(features(images, raw_test, test_masks))
         estimate, draws = balanced_accuracy_draws(test_sites[source], pred[source], indices)
         return estimate, draws
 
@@ -73,10 +88,11 @@ def main():
                 raise ValueError(f"{name}: subject order differs")
             test_images[name] = data["images"]
 
-    report = {"raw_trained": {}, "own_trained": {}}
+    report = {"foreground": "brain mask" if args.brain_masks else "raw slice > 0.02",
+              "raw_trained": {}, "own_trained": {}}
     ref = "histogram_matching"  # any export carries the same raw slices (integrity report)
-    x_tr, y_tr, _ = load(exports / ref / "train" / NPZ[ref], "raw_images")
-    x_va, y_va, _ = load(exports / ref / "val" / NPZ[ref], "raw_images")
+    x_tr, y_tr, _ = load(exports / ref / "train" / NPZ[ref], "raw_images", "train", args.brain_masks)
+    x_va, y_va, _ = load(exports / ref / "val" / NPZ[ref], "raw_images", "val", args.brain_masks)
     val_ba, c, raw_model = fit(x_tr, y_tr, x_va, y_va)
     report["raw_trained"]["validation"] = {"ba": val_ba, "C": c}
     raw_draws = {}
@@ -86,8 +102,8 @@ def main():
         report["raw_trained"][name] = interval(estimate, draws)
 
     for method, test_name in OWN_TEST.items():
-        x_tr, y_tr, _ = load(exports / method / "train" / NPZ[method], "images")
-        x_va, y_va, _ = load(exports / method / "val" / NPZ[method], "images")
+        x_tr, y_tr, _ = load(exports / method / "train" / NPZ[method], "images", "train", args.brain_masks)
+        x_va, y_va, _ = load(exports / method / "val" / NPZ[method], "images", "val", args.brain_masks)
         val_ba, c, model = fit(x_tr, y_tr, x_va, y_va)
         estimate, draws = evaluate(model, test_images[test_name])
         base_estimate, base_draws = raw_draws[test_name]

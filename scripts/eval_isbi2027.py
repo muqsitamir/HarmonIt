@@ -74,6 +74,8 @@ def main():
     p.add_argument("--slice-map", help="Frozen subject->slice JSON the reference must reproduce")
     p.add_argument("--reference", choices=("fresh", "embedded"), default="fresh",
                    help="Embedded is a diagnostic only, not a verified benchmark")
+    p.add_argument("--probe-input-mask", help="NPZ of per-subject masks multiplied into raw and harmonized probe "
+                   "inputs only (brain-only control, amendment 7); pixel metrics are unchanged")
     args = p.parse_args()
     torch.set_num_threads(4)
     legacy.set_seed(42)
@@ -116,6 +118,17 @@ def main():
     if target_names != ["NYU"]:
         raise ValueError(f"Protocol requires NYU target; got {target_names}")
 
+    probe_mask = None
+    if args.probe_input_mask:
+        with np.load(args.probe_input_mask, allow_pickle=False) as data:
+            order = {s: i for i, s in enumerate(data["subject_ids"].astype(str))}
+            if set(order) != set(subjects):
+                raise ValueError("Probe input mask subjects differ from the evaluation cohort")
+            rows = [order[s] for s in subjects]
+            if not np.array_equal(data["slice_indices"][rows], slices):
+                raise ValueError("Probe input mask slices differ from the reference")
+            probe_mask = data["masks"][rows].astype(np.float32)
+
     out.mkdir(parents=True)
     np.savez_compressed(out / "raw_reference.npz", images=raw, raw_images=raw,
                         subject_ids=subjects, site_ids=sites, slice_indices=slices,
@@ -136,7 +149,8 @@ def main():
         "source_sha256": {str(s.relative_to(repo)): sha256(s) for s in sources},
         "inputs": {"manifest": sha256(args.manifest_path), "splits": sha256(args.splits_path),
                    "probe": sha256(args.site_probe_ckpt), "raw_reference": sha256(out / "raw_reference.npz"),
-                   "slice_map": sha256(args.slice_map) if args.slice_map else None},
+                   "slice_map": sha256(args.slice_map) if args.slice_map else None,
+                   "probe_input_mask": sha256(args.probe_input_mask) if args.probe_input_mask else None},
     }
     (out / "protocol.json").write_text(json.dumps(provenance, indent=2) + "\n")
     masks = {"all": np.ones(len(sites), dtype=bool), "source_non_nyu": sites != args.target_site_id,
@@ -153,7 +167,10 @@ def main():
         if artifact["split"] != args.split:
             raise ValueError(f"{name}: missing or mismatched split metadata")
         legacy.assert_artifact_matches_raw(artifact, raw, subjects, sites, slices, (256, 256))
-        preds = legacy.evaluate_site_probe(raw, artifact["images"], sites, Path(args.site_probe_ckpt),
+        probe_raw, probe_harm = raw, artifact["images"]
+        if probe_mask is not None:
+            probe_raw, probe_harm = raw * probe_mask, artifact["images"] * probe_mask
+        preds = legacy.evaluate_site_probe(probe_raw, probe_harm, sites, Path(args.site_probe_ckpt),
                                            args.batch_size, include_predictions=True)
         if raw_predictions is not None and not np.array_equal(raw_predictions, preds["raw_predictions"]):
             raise ValueError("Raw probe predictions changed across methods")

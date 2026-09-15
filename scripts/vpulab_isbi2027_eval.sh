@@ -34,4 +34,5 @@ cd "$ISBI_CODE"
   --artifact "diffusion_20k=$ISBI_INPUTS/outputs/harmonized/diffusion_img2img_nyu_s20000_strength035/test/diffusion_img2img_nyu_slices.npz" \
   ${HCLD:+--artifact "adapted_hcld=$HCLD"} \
   ${REDRAW:+--artifact "diffusion_20k_redraw=$REDRAW"} \
-  ${EXTRA_ARTIFACT:+--artifact "$EXTRA_ARTIFACT"}
+  ${EXTRA_ARTIFACT:+--artifact "$EXTRA_ARTIFACT"} \
+  ${PROBE_INPUT_MASK:+--probe-input-mask "$PROBE_INPUT_MASK"}
