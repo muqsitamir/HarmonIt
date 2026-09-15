@@ -108,9 +108,11 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 
 ## Next steps
 
-1. Author read of `main.pdf` for story and framing (finding 1 changed on 2026-09-15: it is now
-   about probe training, not seed-to-seed disagreement); supervisor review; funding text.
-2. Before submission: make the repository public (or confirm access) and fill the submission
-   form. The template kit matches the official one; no paid fifth page.
+1. Author read the revised `main.pdf` on 2026-09-15 and approved it; supervisor review and
+   funding text (the author will add it) remain.
+2. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
+   but its default branch `main` has none of the ISBI work, so the paper's repository link must
+   point at a tag or this branch, or the work must be merged to `main` (author's choice). The
+   template kit matches the official one; no paid fifth page.
 3. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
    use the benchmark recipe, noted as a limitation).
