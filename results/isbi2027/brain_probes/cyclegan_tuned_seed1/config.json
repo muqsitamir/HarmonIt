@@ -1,0 +1,25 @@
+{
+  "train_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/brain/cyclegan_tuned/train/cyclegan_nyu_slices.npz",
+  "val_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/brain/cyclegan_tuned/val/cyclegan_nyu_slices.npz",
+  "image_key": "images",
+  "splits_path": "/mnt/rhome/mmi/projects/HarmonIt/data/splits.json",
+  "out_dir": "/mnt/rhome/mmi/projects/isbi2027/brain_probes/cyclegan_tuned_seed1",
+  "seed": 1,
+  "label_shuffle": false,
+  "batch_size": 64,
+  "epochs": 10,
+  "steps_per_epoch": 50,
+  "lr": 0.0003,
+  "device": "cuda",
+  "n_train": 890,
+  "n_val": 113,
+  "train_npz_sha256": "1faa81b3370100c789b5829178bf1486a4f783450260820dfc12a985bba08a9f",
+  "val_npz_sha256": "0dbf286d852bb2960eafdc120e9c06f372c5781251369d12affdda10933d878e",
+  "augmentation": {
+    "prob": 0.9,
+    "rot_deg": 12.0,
+    "trans_px": 32,
+    "scale_jitter": 0.2
+  },
+  "sampling": "uniform with replacement over subjects, one fixed slice each"
+}

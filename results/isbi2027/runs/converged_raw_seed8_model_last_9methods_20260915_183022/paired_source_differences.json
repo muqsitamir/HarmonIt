@@ -1,0 +1,4322 @@
+[
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "psnr",
+    "estimate": -2.974271534664509,
+    "ci95": [
+      -3.6681631743683125,
+      -2.353929495686172
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "mse",
+    "estimate": 0.003870671817225312,
+    "ci95": [
+      0.002959569929841131,
+      0.004811097701232395
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "mae",
+    "estimate": 0.019170579429099978,
+    "ci95": [
+      0.015433742822499224,
+      0.023320370951552517
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.02097246523159313,
+    "ci95": [
+      -0.022835167552087695,
+      -0.019041590179054584
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "cross_correlation",
+    "estimate": -0.04237222878484123,
+    "ci95": [
+      -0.045758823226940325,
+      -0.03901527351102816
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.0003576562016306183,
+    "ci95": [
+      -0.0030672588283139216,
+      0.004002979885038597
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.32449254940428235,
+    "ci95": [
+      0.2974725345597297,
+      0.35192942728151816
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "histogram_matching",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.21791125541125544,
+    "ci95": [
+      -0.2842627164502165,
+      -0.1443844696969697
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "psnr",
+    "estimate": -1.2505917835260179,
+    "ci95": [
+      -1.5981878352318708,
+      -0.9142811553736003
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "mse",
+    "estimate": 0.0021127970728627384,
+    "ci95": [
+      0.0013683397742096828,
+      0.0028564693204384465
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "mae",
+    "estimate": 0.014654271506436455,
+    "ci95": [
+      0.011981727933419992,
+      0.01734681676657912
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.020323270598528616,
+    "ci95": [
+      -0.02159923120075892,
+      -0.019163029034676243
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "cross_correlation",
+    "estimate": -0.03738865342093504,
+    "ci95": [
+      -0.03973953093454857,
+      -0.03524939284111675
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.00629377898423908,
+    "ci95": [
+      0.0030617850938740527,
+      0.009422911973416596
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.3151526524994032,
+    "ci95": [
+      0.2869924157908034,
+      0.34117869242024945
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "cyclegan_tuned",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.1029085497835498,
+    "ci95": [
+      -0.18729843073593083,
+      -0.015379802489177476
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "psnr",
+    "estimate": 3.9580347475753097,
+    "ci95": [
+      3.702861995656675,
+      4.216247514239488
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "mse",
+    "estimate": -0.0155994649658407,
+    "ci95": [
+      -0.017005751786753703,
+      -0.01413674540594923
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "mae",
+    "estimate": -0.028389370047898217,
+    "ci95": [
+      -0.03163152280252204,
+      -0.025037793501861742
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.022592654119340347,
+    "ci95": [
+      0.020521282317152823,
+      0.024699112773042164
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "cross_correlation",
+    "estimate": 0.043923009393889045,
+    "ci95": [
+      0.04025955902151186,
+      0.04763325495989048
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.016641533999762557,
+    "ci95": [
+      -0.0212134002491048,
+      -0.01244185332717667
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.27260652701382715,
+    "ci95": [
+      0.23849005746593493,
+      0.3060841189100341
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_aggressive",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.4396239177489176,
+    "ci95": [
+      -0.5262391774891775,
+      -0.3516954139610392
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "psnr",
+    "estimate": -6.887845343299537,
+    "ci95": [
+      -7.327684368349707,
+      -6.426192184149637
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "mse",
+    "estimate": 0.008842762443245835,
+    "ci95": [
+      0.008339413329378691,
+      0.009306930945941996
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "mae",
+    "estimate": 0.0448026152081116,
+    "ci95": [
+      0.0426340762022479,
+      0.04679969763836449
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.027455387601230966,
+    "ci95": [
+      -0.029184267148214354,
+      -0.02583575129882689
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "cross_correlation",
+    "estimate": -0.05121901384235509,
+    "ci95": [
+      -0.054556702283227364,
+      -0.048076358329530895
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.033536156268984985,
+    "ci95": [
+      0.031035651034494554,
+      0.036013073954995874
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.42874898665885575,
+    "ci95": [
+      0.39125801418264716,
+      0.46463190340279675
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "stargan_conservative",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.6026515151515152,
+    "ci95": [
+      -0.6568181818181817,
+      -0.5469696969696971
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "psnr",
+    "estimate": -6.63206429015459,
+    "ci95": [
+      -7.061930988149367,
+      -6.167938812910873
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "mse",
+    "estimate": 0.008570010666587958,
+    "ci95": [
+      0.008041946985683496,
+      0.00905863319446262
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "mae",
+    "estimate": 0.04348285978335316,
+    "ci95": [
+      0.04120866896199909,
+      0.04557635756297078
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.028291315482146088,
+    "ci95": [
+      -0.029991573747149947,
+      -0.02670932023927352
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "cross_correlation",
+    "estimate": -0.05268057424795787,
+    "ci95": [
+      -0.05594335014484682,
+      -0.04959822909808853
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.030307348729299122,
+    "ci95": [
+      0.027563232954763196,
+      0.032792734885351886
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.38564064881947613,
+    "ci95": [
+      0.3580890195719776,
+      0.4117915465662382
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1500",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.6052083333333333,
+    "ci95": [
+      -0.6541666666666667,
+      -0.55625
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "psnr",
+    "estimate": -8.405033863371516,
+    "ci95": [
+      -8.80104777849847,
+      -7.982682402556079
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "mse",
+    "estimate": 0.009585031736089156,
+    "ci95": [
+      0.009240398796700643,
+      0.009929417447646922
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "mae",
+    "estimate": 0.048375500208916074,
+    "ci95": [
+      0.04667628139735078,
+      0.04994437652792792
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.02838994473346352,
+    "ci95": [
+      -0.03006368178288347,
+      -0.026835622208402136
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "cross_correlation",
+    "estimate": -0.052796732009224454,
+    "ci95": [
+      -0.056051892466896854,
+      -0.04974473110341098
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.03741276525379442,
+    "ci95": [
+      0.03545524036608293,
+      0.03938358210324682
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.33797039715815563,
+    "ci95": [
+      0.31277554900389737,
+      0.3631187567157419
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "dlest_1000",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.6333333333333333,
+    "ci95": [
+      -0.6666666666666666,
+      -0.6
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": -1.7122107864953222,
+    "ci95": [
+      -1.8585880839772793,
+      -1.5803624199651782
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": 0.004407839124087749,
+    "ci95": [
+      0.0041586756239092495,
+      0.004680350687569147
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": 0.024554676181918658,
+    "ci95": [
+      0.023779731656302167,
+      0.025341175654907643
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.004942361070013743,
+    "ci95": [
+      -0.006566599031718085,
+      -0.0034507491998948597
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": -0.00822186678071636,
+    "ci95": [
+      -0.01139148659712373,
+      -0.005333992285132463
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.04703653186371655,
+    "ci95": [
+      0.046113421522965305,
+      0.047966798437761346
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.4463269321188158,
+    "ci95": [
+      0.4098859045948406,
+      0.480826346208319
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.224526515151515,
+    "ci95": [
+      -0.2984848484848485,
+      -0.1489583333333333
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 6.058942352462387,
+    "ci95": [
+      5.702326035331354,
+      6.394047618134839
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.03470027464164623,
+    "ci95": [
+      -0.037601324883608025,
+      -0.0317624877907203
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.05681078816838238,
+    "ci95": [
+      -0.061466541837337026,
+      -0.05194371832499687
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.14041728194786568,
+    "ci95": [
+      0.1275198041214084,
+      0.1540105302519795
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.23429781392680965,
+    "ci95": [
+      0.21370920220959466,
+      0.255610465059719
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.04976718506050223,
+    "ci95": [
+      -0.055240932752294046,
+      -0.04428604839242584
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.3673354016564658,
+    "ci95": [
+      -0.43072350662322084,
+      -0.3077613057742944
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.29280303030303034,
+    "ci95": [
+      0.25113636363636366,
+      0.33181818181818185
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": -1.725577748133492,
+    "ci95": [
+      -1.8763730848609588,
+      -1.594024360619652
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": 0.004426282519655992,
+    "ci95": [
+      0.004171721554516587,
+      0.00470955807666136
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": 0.02461299353694137,
+    "ci95": [
+      0.023823003627807607,
+      0.025434570413049334
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.004983463584484322,
+    "ci95": [
+      -0.006582732120085601,
+      -0.0035365750004777365
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": -0.008275271178375508,
+    "ci95": [
+      -0.011330103544345372,
+      -0.005517434214203725
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.047005427261132285,
+    "ci95": [
+      0.0460755937878868,
+      0.04792917718725859
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.44791390370687134,
+    "ci95": [
+      0.41192110824864864,
+      0.48261395829510534
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "neurocombat",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.20160984848484842,
+    "ci95": [
+      -0.2745525568181818,
+      -0.12394886363636375
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "psnr",
+    "estimate": 1.7236797511384914,
+    "ci95": [
+      1.1636106154261057,
+      2.336636534199292
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "mse",
+    "estimate": -0.0017578747443625742,
+    "ci95": [
+      -0.0026226472093219878,
+      -0.0008823541740413031
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "mae",
+    "estimate": -0.004516307922663524,
+    "ci95": [
+      -0.00808397040603953,
+      -0.0009502426808400511
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.0006491946330645105,
+    "ci95": [
+      -0.0006464412878239917,
+      0.0018422148726639394
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "cross_correlation",
+    "estimate": 0.004983575363906197,
+    "ci95": [
+      0.0029744879371085154,
+      0.006804654640386019
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.005936122782608461,
+    "ci95": [
+      0.0022697759406363517,
+      0.009528623276863327
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.009339896904879057,
+    "ci95": [
+      -0.02516326866043919,
+      0.00551811016763756
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "cyclegan_tuned",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.11500270562770565,
+    "ci95": [
+      0.011223281926406897,
+      0.2159239718614718
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "psnr",
+    "estimate": 6.93230628223982,
+    "ci95": [
+      6.357263140180103,
+      7.586251344701387
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "mse",
+    "estimate": -0.019470136783066007,
+    "ci95": [
+      -0.020760141602287636,
+      -0.01822652846647582
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "mae",
+    "estimate": -0.0475599494769982,
+    "ci95": [
+      -0.0514815266915541,
+      -0.0436401225879277
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.043565119350933476,
+    "ci95": [
+      0.04059413074885729,
+      0.04650247194348027
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "cross_correlation",
+    "estimate": 0.08629523817873028,
+    "ci95": [
+      0.08148777637572677,
+      0.09120092281174424
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.016999190201393174,
+    "ci95": [
+      -0.022051930543489716,
+      -0.012200138893946593
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.05188602239045513,
+    "ci95": [
+      -0.07776415519984935,
+      -0.026101800779950907
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_aggressive",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.22171266233766218,
+    "ci95": [
+      -0.3106520562770564,
+      -0.13411728896103897
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "psnr",
+    "estimate": -3.9135738086350274,
+    "ci95": [
+      -4.712405279850512,
+      -3.0829099989868523
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "mse",
+    "estimate": 0.004972090626020522,
+    "ci95": [
+      0.003918282233081988,
+      0.006040197239173863
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "mae",
+    "estimate": 0.02563203577901163,
+    "ci95": [
+      0.021004629720289675,
+      0.030095250689708943
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.006482922369637846,
+    "ci95": [
+      -0.00787220818830623,
+      -0.00518219832599559
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "cross_correlation",
+    "estimate": -0.008846785057513849,
+    "ci95": [
+      -0.01120386039043855,
+      -0.006681590626340215
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.03317850006735436,
+    "ci95": [
+      0.028453828643709097,
+      0.0376885846101009
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.10425643725457344,
+    "ci95": [
+      0.07310582125371683,
+      0.13668780811893141
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "stargan_conservative",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.3847402597402597,
+    "ci95": [
+      -0.4491125541125542,
+      -0.3243147997835498
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "psnr",
+    "estimate": -3.657792755490081,
+    "ci95": [
+      -4.408080068399119,
+      -2.8358216704259345
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "mse",
+    "estimate": 0.004699338849362646,
+    "ci95": [
+      0.003642400696791869,
+      0.005768381908202016
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "mae",
+    "estimate": 0.024312280354253188,
+    "ci95": [
+      0.01960121501020647,
+      0.02868964003425199
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.007318850250552963,
+    "ci95": [
+      -0.00876733625639438,
+      -0.005977008119560761
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "cross_correlation",
+    "estimate": -0.010308345463116634,
+    "ci95": [
+      -0.012687031524015312,
+      -0.008080965002783061
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.029949692527668503,
+    "ci95": [
+      0.025145306679341485,
+      0.034345633371694106
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.06114809941519385,
+    "ci95": [
+      0.04180238109974871,
+      0.08019579461057753
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1500",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.3872970779220779,
+    "ci95": [
+      -0.44783617424242433,
+      -0.33092464826839824
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "psnr",
+    "estimate": -5.430762328707006,
+    "ci95": [
+      -6.1037591412808325,
+      -4.665242182563098
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "mse",
+    "estimate": 0.005714359918863844,
+    "ci95": [
+      0.004736862668962956,
+      0.006681623161464668
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "mae",
+    "estimate": 0.029204920779816096,
+    "ci95": [
+      0.0250732139676726,
+      0.03306388408582807
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.007417479501870391,
+    "ci95": [
+      -0.008859740205072686,
+      -0.00608482040240796
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "cross_correlation",
+    "estimate": -0.01042450322438322,
+    "ci95": [
+      -0.012789687301246319,
+      -0.008225953479091054
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.0370551090521638,
+    "ci95": [
+      0.03299617331468848,
+      0.04091771202984977
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.013477847753873326,
+    "ci95": [
+      -0.005283716630217325,
+      0.031454166557951274
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "dlest_1000",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.41542207792207786,
+    "ci95": [
+      -0.47224093614718626,
+      -0.3642843614718615
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": 1.262060748169187,
+    "ci95": [
+      0.6180859721079014,
+      2.0260735605339226
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": 0.0005371673068624365,
+    "ci95": [
+      -0.0005029199927718463,
+      0.001554240155999652
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": 0.005384096752818677,
+    "ci95": [
+      0.0009282889089998583,
+      0.009376559785098782
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.016030104161579385,
+    "ci95": [
+      0.014166776827146788,
+      0.017850085804702192
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": 0.03415036200412487,
+    "ci95": [
+      0.030925945803296124,
+      0.03709725278839075
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.04667887566208593,
+    "ci95": [
+      0.0424817844494228,
+      0.050476664191697065
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.12183438271453362,
+    "ci95": [
+      0.09011445406442159,
+      0.15464979176650787
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.00661525974025956,
+    "ci95": [
+      -0.08926170183982679,
+      0.07309320887445885
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 9.033213887126898,
+    "ci95": [
+      8.21230379924363,
+      9.938618455701754
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.038570946458871554,
+    "ci95": [
+      -0.042087272769874715,
+      -0.03506396831664996
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.07598136759748235,
+    "ci95": [
+      -0.08320765613838442,
+      -0.06875496041915541
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.1613897471794588,
+    "ci95": [
+      0.14811925242736343,
+      0.17484525473501253
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.27667004271165085,
+    "ci95": [
+      0.2555803129403252,
+      0.2981341028918821
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.05012484126213286,
+    "ci95": [
+      -0.057682428984806175,
+      -0.042450985389009134
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.6918279510607482,
+    "ci95": [
+      -0.7583122320989878,
+      -0.6247494579924626
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.5107142857142858,
+    "ci95": [
+      0.4478354978354979,
+      0.5649350649350651
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": 1.248693786531017,
+    "ci95": [
+      0.599275969401816,
+      2.0107509634885052
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": 0.0005556107024306807,
+    "ci95": [
+      -0.00047845763920846833,
+      0.001555647308722529
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": 0.0054424141078413864,
+    "ci95": [
+      0.0009655178306709742,
+      0.009436120071175785
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.015989001647108807,
+    "ci95": [
+      0.01413520618518661,
+      0.01778772162994234
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": 0.03409695760646573,
+    "ci95": [
+      0.030951477373682375,
+      0.037049279415534826
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.046647771059501665,
+    "ci95": [
+      0.04256071551019878,
+      0.050378219718884724
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.12342135430258902,
+    "ci95": [
+      0.09149477632821111,
+      0.15628723313458526
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "histogram_matching",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.016301406926407025,
+    "ci95": [
+      -0.07422957251082245,
+      0.10178639069264066
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "psnr",
+    "estimate": 5.208626531101328,
+    "ci95": [
+      4.973450462833582,
+      5.461846196837546
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "mse",
+    "estimate": -0.017712262038703432,
+    "ci95": [
+      -0.018738898098480807,
+      -0.016732171270593527
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "mae",
+    "estimate": -0.043043641554334676,
+    "ci95": [
+      -0.045110734713330186,
+      -0.04104148928557185
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.04291592471786897,
+    "ci95": [
+      0.04041368135980637,
+      0.04541309086053442
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "cross_correlation",
+    "estimate": 0.08131166281482408,
+    "ci95": [
+      0.07715311053294954,
+      0.0855585021902097
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.022935312984001636,
+    "ci95": [
+      -0.026259391687796063,
+      -0.019945360944528433
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.04254612548557606,
+    "ci95": [
+      -0.06049719489331358,
+      -0.02406075685524628
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_aggressive",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.33671536796536783,
+    "ci95": [
+      -0.43691118777056287,
+      -0.2335592532467533
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "psnr",
+    "estimate": -5.637253559773518,
+    "ci95": [
+      -6.11021774654069,
+      -5.1025669907097475
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "mse",
+    "estimate": 0.006729965370383097,
+    "ci95": [
+      0.0059657976982557025,
+      0.007447933941572139
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "mae",
+    "estimate": 0.030148343701675153,
+    "ci95": [
+      0.027172908053052728,
+      0.03289898247476873
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.007132117002702356,
+    "ci95": [
+      -0.007955474726586654,
+      -0.006370038719832773
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "cross_correlation",
+    "estimate": -0.013830360421420046,
+    "ci95": [
+      -0.0154050248459554,
+      -0.012355423777994572
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.0272423772847459,
+    "ci95": [
+      0.02381265559761786,
+      0.03038341573017188
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.11359633415945249,
+    "ci95": [
+      0.09067060115764784,
+      0.13873101293521367
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "stargan_conservative",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.49974296536796536,
+    "ci95": [
+      -0.594981737012987,
+      -0.40993675595238105
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "psnr",
+    "estimate": -5.381472506628572,
+    "ci95": [
+      -5.789038530637089,
+      -4.942279293470701
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "mse",
+    "estimate": 0.006457213593725222,
+    "ci95": [
+      0.005762811580114631,
+      0.007107048543073162
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "mae",
+    "estimate": 0.028828588276916714,
+    "ci95": [
+      0.0261564062248965,
+      0.03127702979104147
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.007968044883617473,
+    "ci95": [
+      -0.008784468248234001,
+      -0.0072451165977152135
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "cross_correlation",
+    "estimate": -0.015291920827022833,
+    "ci95": [
+      -0.016816360052942837,
+      -0.013856156544716254
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.024013569745060043,
+    "ci95": [
+      0.020991055406165724,
+      0.026894756043855824
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.07048799632007288,
+    "ci95": [
+      0.05956094320040982,
+      0.08145884479209996
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1500",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.5022997835497836,
+    "ci95": [
+      -0.6000977408008658,
+      -0.40969764610389625
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "psnr",
+    "estimate": -7.154442079845499,
+    "ci95": [
+      -7.527770208759336,
+      -6.749233472147229
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "mse",
+    "estimate": 0.007472234663226416,
+    "ci95": [
+      0.006829552535359977,
+      0.008117579265895394
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "mae",
+    "estimate": 0.03372122870247962,
+    "ci95": [
+      0.03136835209254457,
+      0.03598759441275763
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.008066674134934901,
+    "ci95": [
+      -0.00883912077291524,
+      -0.007388764360030814
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "cross_correlation",
+    "estimate": -0.015408078588289416,
+    "ci95": [
+      -0.016869072249692783,
+      -0.014057302466562215
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.031118986269555334,
+    "ci95": [
+      0.028232490064406035,
+      0.033969455948125234
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.022817744658752376,
+    "ci95": [
+      0.011442042327075972,
+      0.03376913120819555
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "dlest_1000",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.5304247835497835,
+    "ci95": [
+      -0.6250446428571428,
+      -0.4407907196969698
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": -0.4616190029693046,
+    "ci95": [
+      -0.826522840086793,
+      -0.08011017728428792
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": 0.0022950420512250105,
+    "ci95": [
+      0.0015081599474321028,
+      0.0030765002096241234
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": 0.009900404675482201,
+    "ci95": [
+      0.007104057841974844,
+      0.012704558277905623
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.015380909528514872,
+    "ci95": [
+      0.014265472400470278,
+      0.016487020037834855
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": 0.029166786640218677,
+    "ci95": [
+      0.027062870241098505,
+      0.031120969553582064
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.04074275287947747,
+    "ci95": [
+      0.03755594780882206,
+      0.04407820288359233
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.13117427961941266,
+    "ci95": [
+      0.10619397510683266,
+      0.15674295563063137
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.12161796536796521,
+    "ci95": [
+      -0.22430465367965366,
+      -0.019628652597402606
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 7.309534135988405,
+    "ci95": [
+      6.798725480303272,
+      7.844513045654577
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.036813071714508976,
+    "ci95": [
+      -0.040114555081058226,
+      -0.03339748392477086
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.07146505967481882,
+    "ci95": [
+      -0.0777669774831172,
+      -0.06515020845199883
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.16074055254639433,
+    "ci95": [
+      0.14761678562883038,
+      0.1742558709703204
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.2716864673477447,
+    "ci95": [
+      0.2512110442305623,
+      0.2928022747576973
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.05606096404474132,
+    "ci95": [
+      -0.0633484304725434,
+      -0.048797278056796276
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.6824880541558691,
+    "ci95": [
+      -0.7519793181078259,
+      -0.6132336632454806
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.39571158008658014,
+    "ci95": [
+      0.3005390963203463,
+      0.4868513257575756
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": -0.4749859646074745,
+    "ci95": [
+      -0.8442221001564539,
+      -0.08918165858215475
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": 0.002313485446793255,
+    "ci95": [
+      0.0015178755444333403,
+      0.003092048988526585
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": 0.00995872203050491,
+    "ci95": [
+      0.007153332344039506,
+      0.012716134197729441
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.015339807014044294,
+    "ci95": [
+      0.014232931164505755,
+      0.016376722442776114
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": 0.029113382242559528,
+    "ci95": [
+      0.027066948657694604,
+      0.031038896760740682
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.040711648276893206,
+    "ci95": [
+      0.03752965483931943,
+      0.043957193758807696
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.1327612512074681,
+    "ci95": [
+      0.1074381664708594,
+      0.15861010241652293
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "cyclegan_tuned",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.09870129870129862,
+    "ci95": [
+      -0.20447341720779222,
+      0.007362351190476103
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "psnr",
+    "estimate": -10.845880090874847,
+    "ci95": [
+      -11.258359839835101,
+      -10.390450882699911
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "mse",
+    "estimate": 0.02444222740908653,
+    "ci95": [
+      0.02307148656143391,
+      0.02571955790739419
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "mae",
+    "estimate": 0.07319198525600983,
+    "ci95": [
+      0.06984773453500452,
+      0.07637294393453944
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.05004804172057131,
+    "ci95": [
+      -0.0529207700604546,
+      -0.04723903261737059
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "cross_correlation",
+    "estimate": -0.09514202323624414,
+    "ci95": [
+      -0.10008753478948143,
+      -0.09019969701310454
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.050177690268747535,
+    "ci95": [
+      0.04646282833299226,
+      0.054094432137166686
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.15614245964502857,
+    "ci95": [
+      0.13924880167892467,
+      0.17366466775779915
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "stargan_conservative",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.16302759740259753,
+    "ci95": [
+      -0.23436316287878795,
+      -0.0952922077922077
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "psnr",
+    "estimate": -10.5900990377299,
+    "ci95": [
+      -10.926073248111923,
+      -10.217873316812154
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "mse",
+    "estimate": 0.024169475632428657,
+    "ci95": [
+      0.022891932723188336,
+      0.025389414146534815
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "mae",
+    "estimate": 0.07187222983125138,
+    "ci95": [
+      0.06894500008873643,
+      0.07462604163371332
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.05088396960148644,
+    "ci95": [
+      -0.05369880292434511,
+      -0.04809749627893094
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "cross_correlation",
+    "estimate": -0.0966035836418469,
+    "ci95": [
+      -0.10148549063654602,
+      -0.0917714582402723
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.046948882729061676,
+    "ci95": [
+      0.04358451047840532,
+      0.05037100233548527
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.11303412180564898,
+    "ci95": [
+      0.09404059323680426,
+      0.13180402994288945
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1500",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.16558441558441572,
+    "ci95": [
+      -0.24431040313852806,
+      -0.09162540584415575
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "psnr",
+    "estimate": -12.363068610946828,
+    "ci95": [
+      -12.725444184095641,
+      -11.975069876702706
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "mse",
+    "estimate": 0.025184496701929848,
+    "ci95": [
+      0.02385332853511377,
+      0.026452983541501482
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "mae",
+    "estimate": 0.07676487025681429,
+    "ci95": [
+      0.07375761595201792,
+      0.07978213751056362
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.05098259885280386,
+    "ci95": [
+      -0.053742719895041126,
+      -0.048167253193366615
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "cross_correlation",
+    "estimate": -0.09671974140311349,
+    "ci95": [
+      -0.10152933761419103,
+      -0.09188034830565343
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.05405429925355697,
+    "ci95": [
+      0.049908599983360016,
+      0.05814786907473426
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.06536387014432844,
+    "ci95": [
+      0.043298566376748476,
+      0.08591024904836692
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "dlest_1000",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.19370941558441568,
+    "ci95": [
+      -0.27421063311688315,
+      -0.1171665313852814
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": -5.670245534070632,
+    "ci95": [
+      -5.927114018377058,
+      -5.414707624839647
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": 0.020007304089928443,
+    "ci95": [
+      0.018549218443296798,
+      0.02143151596668629
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": 0.052944046229816875,
+    "ci95": [
+      0.04956180891833093,
+      0.05624998931532839
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.027535015189354087,
+    "ci95": [
+      -0.030123235439016353,
+      -0.024987033670312856
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": -0.052144876174605406,
+    "ci95": [
+      -0.05670437414047475,
+      -0.04755970914709269
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.0636780658634791,
+    "ci95": [
+      0.059260563329185646,
+      0.0683168704099665
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.17372040510498873,
+    "ci95": [
+      0.15538756966478356,
+      0.19210895613555684
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.21509740259740262,
+    "ci95": [
+      0.1303764204545454,
+      0.3003006628787878
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 2.1009076048870776,
+    "ci95": [
+      1.6217120558778255,
+      2.578489149211222
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.019100809675805536,
+    "ci95": [
+      -0.023124382906908093,
+      -0.015151674888750827
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.02842141812048415,
+    "ci95": [
+      -0.035583463726855044,
+      -0.02126123115039768
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.11782462782852533,
+    "ci95": [
+      0.10390581208479262,
+      0.1321009307623347
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.19037480453292058,
+    "ci95": [
+      0.16861497638890874,
+      0.21326510861703923
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.03312565106073968,
+    "ci95": [
+      -0.041139397933976314,
+      -0.024936844350178084
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.6399419286702929,
+    "ci95": [
+      -0.707655144854599,
+      -0.5707494239116324
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.732426948051948,
+    "ci95": [
+      0.6517694805194805,
+      0.8085081845238097
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": -5.683612495708802,
+    "ci95": [
+      -5.9384182945217985,
+      -5.429673240645619
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": 0.020025747485496688,
+    "ci95": [
+      0.018581034528967182,
+      0.021435420979111833
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": 0.05300236358483959,
+    "ci95": [
+      0.04964910215868754,
+      0.05634430558369267
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.02757611770382467,
+    "ci95": [
+      -0.030063720181552213,
+      -0.025053732553286547
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": -0.052198280572264555,
+    "ci95": [
+      -0.056757819487210946,
+      -0.047646532174939416
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.06364696126089484,
+    "ci95": [
+      0.05918575392507576,
+      0.06834721605914441
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.17530737669304414,
+    "ci95": [
+      0.1566600253016923,
+      0.19393894210818655
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_aggressive",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.2380140692640692,
+    "ci95": [
+      0.13744216720779226,
+      0.34050595238095227
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "psnr",
+    "estimate": 0.2557810531449463,
+    "ci95": [
+      0.014177454916976556,
+      0.5114033628172141
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "mse",
+    "estimate": -0.0002727517766578758,
+    "ci95": [
+      -0.00047236394590490714,
+      -9.596891347989722e-05
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "mae",
+    "estimate": -0.0013197554247584423,
+    "ci95": [
+      -0.002320934768818101,
+      -0.0004278713634369074
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.0008359278809151167,
+    "ci95": [
+      -0.0009553973004244847,
+      -0.0007199637200499886
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "cross_correlation",
+    "estimate": -0.001461560405602786,
+    "ci95": [
+      -0.001663352487597686,
+      -0.001262382928201242
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.0032288075396858557,
+    "ci95": [
+      -0.00444238554097549,
+      -0.002148713201028648
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.043108337839379604,
+    "ci95": [
+      -0.06261352042030371,
+      -0.025498954016995996
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1500",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.002556818181818188,
+    "ci95": [
+      -0.04734848484848497,
+      0.043749999999999956
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "psnr",
+    "estimate": -1.5171885200719792,
+    "ci95": [
+      -1.8743842767806642,
+      -1.1649217178669495
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "mse",
+    "estimate": 0.0007422692928433203,
+    "ci95": [
+      0.00047930997346938884,
+      0.001025226714516222
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "mae",
+    "estimate": 0.003572885000804465,
+    "ci95": [
+      0.002117155700531015,
+      0.005058464417862325
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.0009345571322325447,
+    "ci95": [
+      -0.0010647838958345202,
+      -0.000812848127134327
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "cross_correlation",
+    "estimate": -0.0015777181668693721,
+    "ci95": [
+      -0.0017962704729135896,
+      -0.0013748526448942781
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.003876608984809435,
+    "ci95": [
+      0.0019545854754835544,
+      0.005748175846758966
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.09077858950070011,
+    "ci95": [
+      -0.1179620167666287,
+      -0.06699329202513626
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "dlest_1000",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.030681818181818143,
+    "ci95": [
+      -0.070842803030303,
+      0.0
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": 5.175634556804214,
+    "ci95": [
+      4.762032312616638,
+      5.579927086967445
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": -0.004434923319158087,
+    "ci95": [
+      -0.004835044873718813,
+      -0.003993319572486165
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": -0.020247939026192954,
+    "ci95": [
+      -0.02213057669750509,
+      -0.018228251301238885
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.02251302653121723,
+    "ci95": [
+      0.021573548351362028,
+      0.023504912584690528
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": 0.04299714706163872,
+    "ci95": [
+      0.04123348487520277,
+      0.044759710329379504
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.013500375594731572,
+    "ci95": [
+      0.011246653607397248,
+      0.01585648153418791
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.017577945459960182,
+    "ci95": [
+      0.010598389715475479,
+      0.024437766653595733
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.37812500000000016,
+    "ci95": [
+      0.2957291666666666,
+      0.4567234848484849
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 12.946787695761925,
+    "ci95": [
+      12.427480633949543,
+      13.437451908611575
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.043543037084892065,
+    "ci95": [
+      -0.04656201918971659,
+      -0.04047725756568978
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.10161340337649401,
+    "ci95": [
+      -0.10686665939494797,
+      -0.09627824190754104
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.16787266954909666,
+    "ci95": [
+      0.15495734084219553,
+      0.18130227765118792
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.2855168277691647,
+    "ci95": [
+      0.26528335538247344,
+      0.3064850528863187
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.08330334132948722,
+    "ci95": [
+      -0.08916096498283341,
+      -0.07741120998796873
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.7960843883153216,
+    "ci95": [
+      -0.8644015267572646,
+      -0.7270945920911758
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.8954545454545455,
+    "ci95": [
+      0.8537878787878788,
+      0.9276515151515152
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": 5.162267595166044,
+    "ci95": [
+      4.739157017991951,
+      5.557598892026375
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": -0.004416479923589842,
+    "ci95": [
+      -0.004810237700067916,
+      -0.0039651037517998144
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": -0.020189621671170242,
+    "ci95": [
+      -0.02207476318104183,
+      -0.018171785202916943
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.02247192401674665,
+    "ci95": [
+      0.021529240320439437,
+      0.023430372868686836
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": 0.04294374266397957,
+    "ci95": [
+      0.041108035062077906,
+      0.044710480868846894
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.013469270992147307,
+    "ci95": [
+      0.011131637019977601,
+      0.015925281720914116
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.019164917048015595,
+    "ci95": [
+      0.011999132727384277,
+      0.02617997218202146
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "stargan_conservative",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.40104166666666674,
+    "ci95": [
+      0.3270833333333334,
+      0.4723484848484849
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "psnr",
+    "estimate": -1.7729695732169255,
+    "ci95": [
+      -2.112811905043051,
+      -1.4482750277649272
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "mse",
+    "estimate": 0.001015021069501196,
+    "ci95": [
+      0.0007889318691453152,
+      0.0012655633693484632
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "mae",
+    "estimate": 0.004892640425562907,
+    "ci95": [
+      0.0036430363053948,
+      0.006231108123409082
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -9.862925131742806e-05,
+    "ci95": [
+      -0.00018031996036711853,
+      -1.4908889214097883e-05
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "cross_correlation",
+    "estimate": -0.00011615776126658626,
+    "ci95": [
+      -0.0002630489596362713,
+      3.1228150160401955e-05
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.007105416524495291,
+    "ci95": [
+      0.0053003993599187674,
+      0.008941932571071773
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.047670251661320516,
+    "ci95": [
+      -0.05970517900592553,
+      -0.03652373813620507
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "dlest_1000",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.028124999999999956,
+    "ci95": [
+      -0.059374999999999956,
+      -0.004166666666666652
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": 4.919853503659268,
+    "ci95": [
+      4.473244515273064,
+      5.326465142205124
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": -0.00416217154250021,
+    "ci95": [
+      -0.004575169095984199,
+      -0.0036948119383610175
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": -0.01892818360143451,
+    "ci95": [
+      -0.020984520281903448,
+      -0.016728894172030585
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.023348954412132347,
+    "ci95": [
+      0.022475160165197454,
+      0.024298280383166483
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": 0.04445870746724151,
+    "ci95": [
+      0.0427596618126863,
+      0.04618538712853723
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.016729183134417427,
+    "ci95": [
+      0.014386134370592774,
+      0.019296108274953365
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.060686283299339776,
+    "ci95": [
+      0.04085206996721241,
+      0.0826240804335008
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.38068181818181834,
+    "ci95": [
+      0.30926846590909096,
+      0.45624999999999993
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 12.691006642616976,
+    "ci95": [
+      12.10938465496375,
+      13.22555119792472
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.04327028530823418,
+    "ci95": [
+      -0.0463247473583347,
+      -0.04019501930365664
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.10029364795173557,
+    "ci95": [
+      -0.10571600175046986,
+      -0.09466031944067256
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.1687085974300118,
+    "ci95": [
+      0.15585057059058377,
+      0.18216137072314917
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.2869783881747675,
+    "ci95": [
+      0.2667768542360116,
+      0.30794163843875755
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.08007453378980137,
+    "ci95": [
+      -0.0861621475115518,
+      -0.0737806534104706
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.7529760504759418,
+    "ci95": [
+      -0.8209920051133789,
+      -0.6863117126343691
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.8980113636363637,
+    "ci95": [
+      0.8638233901515152,
+      0.9276515151515152
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": 4.906486542021098,
+    "ci95": [
+      4.460390212576448,
+      5.3094450823574935
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": -0.004143728146931966,
+    "ci95": [
+      -0.004554492667998135,
+      -0.0036737986621092366
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": -0.0188698662464118,
+    "ci95": [
+      -0.020853954604438847,
+      -0.01667020719250003
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.023307851897661762,
+    "ci95": [
+      0.02241179105540471,
+      0.02423898237918145
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": 0.04440530306958236,
+    "ci95": [
+      0.04269567572941838,
+      0.046119105074457975
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.016698078531833162,
+    "ci95": [
+      0.014378740076620523,
+      0.019272893048866424
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.0622732548873952,
+    "ci95": [
+      0.042479081583718756,
+      0.08389762075390868
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1500",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.40359848484848493,
+    "ci95": [
+      0.3363636363636364,
+      0.47237452651515144
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "psnr",
+    "estimate": 6.692823076876194,
+    "ci95": [
+      6.300562148351357,
+      7.078152759183529
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "mse",
+    "estimate": -0.005177192612001405,
+    "ci95": [
+      -0.005435243526334002,
+      -0.00490562996656093
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "mae",
+    "estimate": -0.02382082402699742,
+    "ci95": [
+      -0.025404270479955627,
+      -0.02222581040953808
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.02344758366344977,
+    "ci95": [
+      0.022579550040157,
+      0.02439338218365127
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "cross_correlation",
+    "estimate": 0.0445748652285081,
+    "ci95": [
+      0.04291278475437624,
+      0.04626445921945846
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.009623766609922136,
+    "ci95": [
+      0.007814169042551163,
+      0.011573823201327462
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.10835653496066028,
+    "ci95": [
+      0.08319386619521454,
+      0.13528729481151963
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.4088068181818183,
+    "ci95": [
+      0.3400568181818182,
+      0.478125
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 14.463976215833906,
+    "ci95": [
+      13.933976088167544,
+      14.97702606470083
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.04428530637773539,
+    "ci95": [
+      -0.04728681383544305,
+      -0.04121248181463747
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.10518628837729847,
+    "ci95": [
+      -0.11045627737973542,
+      -0.10000007454543132
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.16880722668132922,
+    "ci95": [
+      0.15591592768265256,
+      0.18221915404386718
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.28709454593603406,
+    "ci95": [
+      0.2668200639071661,
+      0.3080105403854464
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.08717995031429665,
+    "ci95": [
+      -0.0931139176142272,
+      -0.08128581591138867
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.7053057988146214,
+    "ci95": [
+      -0.7717349656673174,
+      -0.639832802895501
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.9261363636363636,
+    "ci95": [
+      0.9090909090909091,
+      0.9375
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": 6.679456115238024,
+    "ci95": [
+      6.294530817102193,
+      7.060545537022597
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": -0.005158749216433162,
+    "ci95": [
+      -0.005422504783994193,
+      -0.004875462261522698
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": -0.023762506671974708,
+    "ci95": [
+      -0.0253419770006298,
+      -0.02215496229439877
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.023406481148979197,
+    "ci95": [
+      0.02253183716785288,
+      0.024314768730125513
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": 0.04452146083084895,
+    "ci95": [
+      0.042800379211355724,
+      0.04619353470898842
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.009592662007337872,
+    "ci95": [
+      0.007811945876491835,
+      0.011543043854421139
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.10994350654871574,
+    "ci95": [
+      0.08507032360475819,
+      0.13710623166294064
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "dlest_1000",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.4317234848484849,
+    "ci95": [
+      0.37279829545454546,
+      0.4942234848484849
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "psnr",
+    "estimate": 7.77115313895771,
+    "ci95": [
+      7.439540919591078,
+      8.089798258861796
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "mse",
+    "estimate": -0.039108113765733976,
+    "ci95": [
+      -0.042041796993868195,
+      -0.03613045676622141
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "mae",
+    "estimate": -0.08136546435030102,
+    "ci95": [
+      -0.08610336340773063,
+      -0.07655082695803504
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.14535964301787946,
+    "ci95": [
+      0.13274160932731421,
+      0.15853984604981572
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "cross_correlation",
+    "estimate": 0.24251968070752605,
+    "ci95": [
+      0.22282244703708246,
+      0.2629774427708061
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.09680371692421876,
+    "ci95": [
+      -0.10200791266152978,
+      -0.09145869518461203
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.8136623337752817,
+    "ci95": [
+      -0.8801840055905431,
+      -0.7470895306186434
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "adapted_hcld",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.5173295454545453,
+    "ci95": [
+      0.44601562499999997,
+      0.5876988636363637
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": -0.013366961638169923,
+    "ci95": [
+      -0.0625439156063058,
+      0.035741040425399356
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": 1.844339556824421e-05,
+    "ci95": [
+      -5.784564931485356e-05,
+      9.65747918395014e-05
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": 5.831735502271024e-05,
+    "ci95": [
+      -0.00022446394752898244,
+      0.0003359986500662316
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -4.1102514470578756e-05,
+    "ci95": [
+      -0.0003419703440624389,
+      0.0002614975841850551
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": -5.340439765914769e-05,
+    "ci95": [
+      -0.0006188758978158676,
+      0.0005068898653311303
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -3.1104602584264285e-05,
+    "ci95": [
+      -0.0003480728000170075,
+      0.00027806557632847743
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.0015869715880554107,
+    "ci95": [
+      -0.00017482758388883446,
+      0.0033764866068772452
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "diffusion_20k",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.022916666666666585,
+    "ci95": [
+      -0.06562500000000004,
+      0.109375
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "psnr",
+    "estimate": -7.784520100595881,
+    "ci95": [
+      -8.101387011602275,
+      -7.445330033759521
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mse",
+    "estimate": 0.03912655716130223,
+    "ci95": [
+      0.036129354858693966,
+      0.042049325812155265
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "mae",
+    "estimate": 0.08142378170532373,
+    "ci95": [
+      0.07655923328770738,
+      0.08605212352621992
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.14540074553235002,
+    "ci95": [
+      -0.15852707099219715,
+      -0.13278622797775533
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "cross_correlation",
+    "estimate": -0.24257308510518516,
+    "ci95": [
+      -0.2631461359485478,
+      -0.22286877786247827
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.09677261232163449,
+    "ci95": [
+      0.09137466361243364,
+      0.10206798275537572
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.8152493053633372,
+    "ci95": [
+      0.7479345388059188,
+      0.8825487299392747
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "adapted_hcld",
+    "method_b": "diffusion_20k_redraw",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.49441287878787876,
+    "ci95": [
+      -0.5570170454545453,
+      -0.4303953598484849
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  }
+]

@@ -1,0 +1,73 @@
+{
+  "run_id": "20260915_170822",
+  "timestamp": "2026-09-15T17:08:24.063997",
+  "hyperparams": {
+    "batch_size": 64,
+    "epochs": 40,
+    "lr": 0.0003,
+    "steps_per_epoch": 50,
+    "val_batches": 0,
+    "lr_schedule": "cosine",
+    "warmup_steps": 50,
+    "worker_reseed": true
+  },
+  "preprocessing": {
+    "preproc_version": "v0.3",
+    "canonical_orientation": true,
+    "intensity_norm": "clip_p1p99_minmax01_bg0",
+    "slice_plane": "axial",
+    "slice_range_frac": "0.15,0.85",
+    "slice_fg_thr": 0.02,
+    "valid_fg_frac": 0.02,
+    "fg_bbox_thr": 0.02,
+    "out_hw": "256x256",
+    "volume_cache_size": 12,
+    "mask_mode": "none",
+    "label_shuffle": false,
+    "bg_suppress": true,
+    "head_mask_thr": 0.02,
+    "head_mask_dilate": 3,
+    "seed": 7,
+    "input_mode": "image",
+    "mask_only_repr": "binary",
+    "aug_affine": true,
+    "aug_prob": 0.9,
+    "aug_rot_deg": 12.0,
+    "aug_trans_px": 32,
+    "aug_scale_jitter": 0.2
+  },
+  "class_names": [
+    "CMU",
+    "Caltech",
+    "KKI",
+    "Leuven",
+    "MaxMun",
+    "NYU",
+    "OHSU",
+    "Olin",
+    "Pitt",
+    "SBL",
+    "SDSU",
+    "Stanford",
+    "Trinity",
+    "UCLA",
+    "UM",
+    "USM",
+    "Yale"
+  ],
+  "paths": {
+    "manifest_path": "data/abide_manifest.csv",
+    "splits_path": "data/splits.json",
+    "project_root": "/mnt/rhome/mmi/projects/isbi2027/code",
+    "mlflow_tracking_uri": "sqlite:////home/mmi/mlflow_local/isbi2027.db",
+    "mlflow_artifact_root": "file:///mnt/rhome/mmi/projects/isbi2027/probe_work/mlruns"
+  },
+  "hashes": {
+    "abide_manifest_sha256": "8febbfab088765d0dd75f425c6e0d1aa5603218feab2d7fd93d50fda3b257a6e",
+    "splits_sha256": "5ded60646b5753a77a66445aac053c5717e1c175a07a4aa0a6930fc91b450d68"
+  },
+  "git": {
+    "git_commit": "unknown",
+    "git_dirty": "unknown"
+  }
+}

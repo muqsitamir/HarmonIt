@@ -1,0 +1,194 @@
+{
+  "foreground": "brain mask",
+  "raw_trained": {
+    "validation": {
+      "ba": 0.6965410406586878,
+      "C": 1
+    },
+    "raw": {
+      "estimate": 0.5609307359307358,
+      "ci95": [
+        0.47292884199134205,
+        0.6463487554112554
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "neurocombat": {
+      "estimate": 0.07547348484848485,
+      "ci95": [
+        0.04062263257575758,
+        0.11770833333333333
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "histogram_matching": {
+      "estimate": 0.13124999999999998,
+      "ci95": [
+        0.08333333333333333,
+        0.17916666666666667
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "cyclegan_tuned": {
+      "estimate": 0.1568452380952381,
+      "ci95": [
+        0.09375,
+        0.2247098214285714
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "stargan_aggressive": {
+      "estimate": 0.13452380952380952,
+      "ci95": [
+        0.08809523809523809,
+        0.18511904761904763
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "stargan_conservative": {
+      "estimate": 0.3991612554112554,
+      "ci95": [
+        0.2985579004329005,
+        0.4947037337662338
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "dlest_1500": {
+      "estimate": 0.3229707792207792,
+      "ci95": [
+        0.2297859172077922,
+        0.4162479707792208
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "dlest_1000": {
+      "estimate": 0.24278950216450218,
+      "ci95": [
+        0.16269920183982683,
+        0.3281672754329004
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "diffusion_20k": {
+      "estimate": 0.2519209956709957,
+      "ci95": [
+        0.1737905844155844,
+        0.32891199945887445
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "adapted_hcld": {
+      "estimate": 0.03901515151515152,
+      "ci95": [
+        0.020833333333333332,
+        0.05719696969696969
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "diffusion_20k_redraw": {
+      "estimate": 0.20823863636363638,
+      "ci95": [
+        0.1295217803030303,
+        0.28683948863636366
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "brain_shape": {
+      "estimate": 0.0625,
+      "ci95": [
+        0.0625,
+        0.0625
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    }
+  },
+  "own_trained": {
+    "histogram_matching": {
+      "validation": {
+        "ba": 0.5774212715389186,
+        "C": 0.1
+      },
+      "test_artifact": "histogram_matching",
+      "source_ba": {
+        "estimate": 0.5286661255411256,
+        "ci95": [
+          0.4370654085497836,
+          0.624602949134199
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      },
+      "own_minus_raw_trained": {
+        "estimate": 0.3974161255411256,
+        "ci95": [
+          0.2860788690476191,
+          0.5146780303030303
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      }
+    },
+    "cyclegan_tuned": {
+      "validation": {
+        "ba": 0.7118241235888295,
+        "C": 0.1
+      },
+      "test_artifact": "cyclegan_tuned",
+      "source_ba": {
+        "estimate": 0.5527191558441559,
+        "ci95": [
+          0.46458705357142854,
+          0.6385031114718615
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      },
+      "own_minus_raw_trained": {
+        "estimate": 0.3958739177489178,
+        "ci95": [
+          0.2982724567099567,
+          0.4923633658008655
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      }
+    },
+    "diffusion_20k": {
+      "validation": {
+        "ba": 0.5797258297258298,
+        "C": 1
+      },
+      "test_artifact": "diffusion_20k_redraw",
+      "source_ba": {
+        "estimate": 0.3828463203463204,
+        "ci95": [
+          0.291640625,
+          0.4736329816017315
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      },
+      "own_minus_raw_trained": {
+        "estimate": 0.174607683982684,
+        "ci95": [
+          0.08452989718614717,
+          0.269689191017316
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      }
+    }
+  }
+}

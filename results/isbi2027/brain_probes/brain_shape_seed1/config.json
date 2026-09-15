@@ -1,0 +1,25 @@
+{
+  "train_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/brain/brain_shape/train/brain_shape_slices.npz",
+  "val_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/brain/brain_shape/val/brain_shape_slices.npz",
+  "image_key": "images",
+  "splits_path": "/mnt/rhome/mmi/projects/HarmonIt/data/splits.json",
+  "out_dir": "/mnt/rhome/mmi/projects/isbi2027/brain_probes/brain_shape_seed1",
+  "seed": 1,
+  "label_shuffle": false,
+  "batch_size": 64,
+  "epochs": 10,
+  "steps_per_epoch": 50,
+  "lr": 0.0003,
+  "device": "cuda",
+  "n_train": 890,
+  "n_val": 113,
+  "train_npz_sha256": "ce90581116997c06f0c380cecc89dda4cc174a871ea08a9a6a615019a4be6473",
+  "val_npz_sha256": "d0de8ae7f26ac246f3513d4792aabb071b9c9cf9b50a394ca20fb4fc0d9c3993",
+  "augmentation": {
+    "prob": 0.9,
+    "rot_deg": 12.0,
+    "trans_px": 32,
+    "scale_jitter": 0.2
+  },
+  "sampling": "uniform with replacement over subjects, one fixed slice each"
+}

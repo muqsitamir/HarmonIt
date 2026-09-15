@@ -1,0 +1,1 @@
+{"methods": ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggressive", "stargan_conservative", "dlest_1500", "dlest_1000", "diffusion_20k", "adapted_hcld", "diffusion_20k_redraw", "brain_shape"], "subjects": 109}

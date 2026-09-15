@@ -1,0 +1,362 @@
+{
+  "converged_last": {
+    "seeds": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "kendall_tau": {
+      "min": 0.8222222222222221,
+      "max": 0.9555555555555554,
+      "mean": 0.8933333333333332,
+      "n_pairs": 10
+    },
+    "widest_single_probe_ci": 0.18425392316017308,
+    "raw_ba": {
+      "5": 1.0,
+      "6": 1.0,
+      "7": 1.0,
+      "8": 1.0,
+      "9": 1.0
+    },
+    "per_output": {
+      "adapted_hcld": {
+        "mean": 0.0761,
+        "min": 0.0625,
+        "max": 0.0966,
+        "range": 0.0341
+      },
+      "cyclegan_tuned": {
+        "mean": 0.4891,
+        "min": 0.4351,
+        "max": 0.542,
+        "range": 0.1069
+      },
+      "diffusion_20k": {
+        "mean": 0.5675,
+        "min": 0.522,
+        "max": 0.5912,
+        "range": 0.0692
+      },
+      "diffusion_20k_redraw": {
+        "mean": 0.5573,
+        "min": 0.5032,
+        "max": 0.5897,
+        "range": 0.0865
+      },
+      "dlest_1000": {
+        "mean": 0.9879,
+        "min": 0.9646,
+        "max": 1.0,
+        "range": 0.0354
+      },
+      "dlest_1500": {
+        "mean": 0.9624,
+        "min": 0.9479,
+        "max": 0.9719,
+        "range": 0.024
+      },
+      "histogram_matching": {
+        "mean": 0.6085,
+        "min": 0.5481,
+        "max": 0.6777,
+        "range": 0.1296
+      },
+      "neurocombat": {
+        "mean": 0.3363,
+        "min": 0.2792,
+        "max": 0.422,
+        "range": 0.1428
+      },
+      "stargan_aggressive": {
+        "mean": 0.6975,
+        "min": 0.6451,
+        "max": 0.8063,
+        "range": 0.1612
+      },
+      "stargan_conservative": {
+        "mean": 0.9764,
+        "min": 0.9375,
+        "max": 0.9917,
+        "range": 0.0542
+      }
+    },
+    "decision": {
+      "threshold": 0.18425392316017308,
+      "named_ranges": {
+        "cyclegan_tuned": 0.1069,
+        "diffusion_20k": 0.0692,
+        "histogram_matching": 0.1296,
+        "stargan_aggressive": 0.1612
+      },
+      "all_within": true
+    }
+  },
+  "converged_best": {
+    "seeds": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "kendall_tau": {
+      "min": 0.7191465199607916,
+      "max": 0.9438798074485389,
+      "mean": 0.7992719321485328,
+      "n_pairs": 10
+    },
+    "widest_single_probe_ci": 0.2058586985930736,
+    "raw_ba": {
+      "5": 1.0,
+      "6": 1.0,
+      "7": 0.9791666666666666,
+      "8": 0.96875,
+      "9": 1.0
+    },
+    "per_output": {
+      "adapted_hcld": {
+        "mean": 0.0724,
+        "min": 0.0625,
+        "max": 0.0852,
+        "range": 0.0227
+      },
+      "cyclegan_tuned": {
+        "mean": 0.4315,
+        "min": 0.3734,
+        "max": 0.4884,
+        "range": 0.115
+      },
+      "diffusion_20k": {
+        "mean": 0.5681,
+        "min": 0.4886,
+        "max": 0.6183,
+        "range": 0.1296
+      },
+      "diffusion_20k_redraw": {
+        "mean": 0.5225,
+        "min": 0.4791,
+        "max": 0.5897,
+        "range": 0.1105
+      },
+      "dlest_1000": {
+        "mean": 0.9442,
+        "min": 0.9,
+        "max": 0.975,
+        "range": 0.075
+      },
+      "dlest_1500": {
+        "mean": 0.9352,
+        "min": 0.9062,
+        "max": 0.976,
+        "range": 0.0698
+      },
+      "histogram_matching": {
+        "mean": 0.5799,
+        "min": 0.5135,
+        "max": 0.6897,
+        "range": 0.1761
+      },
+      "neurocombat": {
+        "mean": 0.3264,
+        "min": 0.2792,
+        "max": 0.4018,
+        "range": 0.1226
+      },
+      "stargan_aggressive": {
+        "mean": 0.5972,
+        "min": 0.4985,
+        "max": 0.6543,
+        "range": 0.1558
+      },
+      "stargan_conservative": {
+        "mean": 0.9562,
+        "min": 0.9021,
+        "max": 0.9917,
+        "range": 0.0896
+      }
+    }
+  },
+  "production_best": {
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      42
+    ],
+    "kendall_tau": {
+      "min": 0.5111111111111111,
+      "max": 0.8666666666666666,
+      "mean": 0.6977777777777778,
+      "n_pairs": 10
+    },
+    "widest_single_probe_ci": 0.15979166666666655,
+    "raw_ba": {
+      "1": 0.890625,
+      "2": 0.8734848484848485,
+      "3": 0.9818181818181818,
+      "42": 0.8110795454545454,
+      "4": 0.931818181818182
+    },
+    "per_output": {
+      "adapted_hcld": {
+        "mean": 0.0812,
+        "min": 0.0625,
+        "max": 0.1106,
+        "range": 0.0481
+      },
+      "cyclegan_tuned": {
+        "mean": 0.2848,
+        "min": 0.1292,
+        "max": 0.5879,
+        "range": 0.4587
+      },
+      "diffusion_20k": {
+        "mean": 0.4247,
+        "min": 0.239,
+        "max": 0.6297,
+        "range": 0.3907
+      },
+      "diffusion_20k_redraw": {
+        "mean": 0.4196,
+        "min": 0.303,
+        "max": 0.6178,
+        "range": 0.3148
+      },
+      "dlest_1000": {
+        "mean": 0.8379,
+        "min": 0.7589,
+        "max": 0.8885,
+        "range": 0.1296
+      },
+      "dlest_1500": {
+        "mean": 0.7325,
+        "min": 0.6512,
+        "max": 0.8184,
+        "range": 0.1671
+      },
+      "histogram_matching": {
+        "mean": 0.4409,
+        "min": 0.2677,
+        "max": 0.5926,
+        "range": 0.3249
+      },
+      "neurocombat": {
+        "mean": 0.334,
+        "min": 0.2616,
+        "max": 0.3718,
+        "range": 0.1102
+      },
+      "stargan_aggressive": {
+        "mean": 0.3491,
+        "min": 0.1783,
+        "max": 0.5426,
+        "range": 0.3643
+      },
+      "stargan_conservative": {
+        "mean": 0.7778,
+        "min": 0.6576,
+        "max": 0.8887,
+        "range": 0.2312
+      }
+    }
+  },
+  "shuffle_control_raw_ba": {
+    "best": [
+      0.0354166666666666,
+      0.0166666666666666,
+      0.0562499999999999
+    ],
+    "last": [
+      0.0250270562770562,
+      0.0041666666666666,
+      0.0506493506493506
+    ]
+  },
+  "convergence": {
+    "per_seed": {
+      "converged_raw_seed5": {
+        "epochs": 40,
+        "last5": [
+          0.9853,
+          0.9853,
+          0.9853,
+          0.9853,
+          0.9706
+        ],
+        "last5_range": 0.014699999999999935,
+        "best": 1.0,
+        "final": 0.9706
+      },
+      "converged_raw_seed6": {
+        "epochs": 40,
+        "last5": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "last5_range": 0.0,
+        "best": 1.0,
+        "final": 1.0
+      },
+      "converged_raw_seed7": {
+        "epochs": 40,
+        "last5": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "last5_range": 0.0,
+        "best": 1.0,
+        "final": 1.0
+      },
+      "converged_raw_seed8": {
+        "epochs": 40,
+        "last5": [
+          0.9947,
+          0.9947,
+          0.9947,
+          0.9947,
+          0.9947
+        ],
+        "last5_range": 0.0,
+        "best": 0.9947,
+        "final": 0.9947
+      },
+      "converged_raw_seed9": {
+        "epochs": 40,
+        "last5": [
+          0.9652,
+          0.9706,
+          1.0,
+          0.9853,
+          0.9706
+        ],
+        "last5_range": 0.03480000000000005,
+        "best": 1.0,
+        "final": 0.9706
+      },
+      "converged_shuffle_seed5": {
+        "epochs": 40,
+        "last5": [
+          0.0588,
+          0.0556,
+          0.0588,
+          0.0588,
+          0.0654
+        ],
+        "last5_range": 0.009800000000000003,
+        "best": 0.0887,
+        "final": 0.0654
+      }
+    },
+    "stable": true
+  }
+}

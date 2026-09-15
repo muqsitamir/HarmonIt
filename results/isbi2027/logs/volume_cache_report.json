@@ -1,0 +1,8 @@
+{
+  "n_volumes": 1003,
+  "verified_items": {
+    "train": 80,
+    "val": 80
+  },
+  "out_dir": "/home/mmi/cache/isbi2027_volumes"
+}
