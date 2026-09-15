@@ -13,8 +13,9 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   `IEEEbib.bst` and `strings.bib` are identical to the official ISBI template kit (checked
   2026-09-15 against the zip the author supplied).
 - Manuscript: `paper/isbi2027/main.tex`, compiled `main.pdf` is **4 pages including
-  references**. All planned experiments are complete; every result number is from
-  `results/isbi2027`.
+  references** (a few lines spare). All experiments, including amendments 6-7, are complete and
+  in the manuscript; every result number is from `results/isbi2027` (claim check done
+  2026-09-15). Qualitative figure is column width; references use "et al." to save space.
 - Remaining placeholders: funding (red `\pending{Funding.}`; authors to settle with the
   supervisor). The AI-use statement is drafted and may be edited by the authors.
 - `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
@@ -39,17 +40,23 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 
 ## Findings (source subjects, n = 90)
 
-1. Probe dependence: five identically trained site probes (raw BA 0.81-0.98) gave CycleGAN
-   0.13-0.59, diffusion 0.24-0.63, histogram matching 0.27-0.59, aggressive StarGAN
-   0.18-0.54; Kendall tau between seeds 0.51-0.87.
-2. Destruction scores best: HCLD BA 0.07 (chance), PSNR 13.9 dB, XCorr 0.71, moves away from
-   NYU (dW +0.108).
+1. Verdicts depend on probe training: five benchmark-recipe probes (raw BA 0.81-0.98, unstable
+   validation BA) gave CycleGAN 0.13-0.59, diffusion 0.24-0.63, histogram matching 0.27-0.59,
+   aggressive StarGAN 0.18-0.54 (tau 0.51-0.87). Five converged probes (amendment 6; raw BA
+   1.00) agreed (tau 0.82-0.96, ranges <= 0.16) but rated eight of ten outputs above the frozen
+   probe's interval (aggressive StarGAN 0.65-0.81 vs 0.21; CycleGAN 0.44-0.54 vs 0.31) and
+   reordered methods (tau with frozen 0.64-0.73).
+2. Destruction scores best: HCLD BA 0.07 (chance) under every probe, PSNR 13.9 dB, XCorr 0.71,
+   moves away from NYU (dW +0.108).
 3. Change is not alignment: diffusion changes intensities least (W 0.008) but dW_NYU
-   -0.0013 [-0.0023, -0.0004]; KL to NYU 0.30 -> 0.83. A second diffusion sampling draw
-   differs from the first more than from the input.
-4. Hidden, not removed: raw-trained slice probes 0.33-0.45 on outputs, probes trained on
-   outputs 0.87-0.91. Head silhouettes alone 0.73-0.86. Intensity-histogram probe:
-   histogram matching 0.16 (removed), CycleGAN 0.74 and diffusion 0.70 (retained; raw 0.74).
+   -0.0013 [-0.0023, -0.0004] (1% of raw distance); KL to NYU 0.30 -> 0.83. A second diffusion
+   sampling draw differs from the first more than from the input.
+4. Hidden, not removed: head slice probes raw-trained 0.33-0.45 on outputs, output-trained
+   0.87-0.91 (silhouettes alone 0.73-0.86). Brain-only (amendment 7): raw-trained 0.39-0.62,
+   output-trained 0.74-0.91 (disjoint for all seeds with best checkpoints, 5/9 with final);
+   brain masks alone 0.52-0.54. Intensity histograms: head-level histogram matching 0.16 (looks
+   removed), CycleGAN 0.74, diffusion 0.70 (raw 0.74); brain-level all three retained it
+   (0.53, 0.55, 0.38 vs raw 0.56).
 
 ## Where things live
 
@@ -101,8 +108,9 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 
 ## Next steps
 
-1. Author read of `main.pdf` for story and framing; supervisor review; funding text.
-2. Figure polish: labels in Fig. 1a are crowded at print size.
-3. Claim-by-claim check of the manuscript against `results/isbi2027` and the protocol.
-4. Before submission: make the repository public (or confirm access), check the official
-   ISBI 2027 template and PDF requirements, and fill the submission form.
+1. Author read of `main.pdf` for story and framing (finding 1 changed on 2026-09-15: it is now
+   about probe training, not seed-to-seed disagreement); supervisor review; funding text.
+2. Before submission: make the repository public (or confirm access) and fill the submission
+   form. The template kit matches the official one; no paid fifth page.
+3. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
+   use the benchmark recipe, noted as a limitation).
