@@ -156,6 +156,36 @@ test outputs) and on each of the three exported methods' training outputs (evalu
 on that method's test outputs). Source BA with the evaluation run's stratified
 bootstrap indices; paired difference own-trained minus raw-trained on the same outputs.
 
+Amendment 6, 2026-09-15 16:10 (post hoc; written before any result of this experiment).
+Seen at this point: every result in the manuscript, including the five production-recipe
+probes' per-epoch validation BA, which fluctuated under the constant learning rate (for
+example seed 2: 0.88, 0.50, 0.87 in epochs 8-10; seed 1: 0.89, 0.61, 0.90 in epochs 6-8).
+A reviewer could attribute the spread of verdicts across seeds (finding 1) to unconverged,
+unstable training rather than to probe dependence as such. This experiment tests that.
+
+Converged recipe: architecture, data, splits, preprocessing, random valid training slices,
+affine augmentation, batch 64 and AdamW 3e-4 as in the production recipe, with four
+changes: (1) 40 epochs x 50 steps (2,000 steps, four times the budget); (2) linear warmup
+over 50 steps, then cosine decay to zero; (3) each DataLoader worker's RandomState is
+reseeded from (seed, worker id), removing the inherited quirk; (4) implementation only:
+normalized volumes are read from a local cache written by the dataset's own loader and
+checked for exact equality of returned slices before use. Seeds 5-9 raw probes and one
+subject-level shuffled-label control (seed 5). Primary checkpoint: final epoch (no
+validation selection); the best-validation checkpoint is also evaluated and reported.
+Each checkpoint is evaluated once on the ten test outputs with `eval_isbi2027.py`
+(same bootstrap seed and indices).
+
+Convergence is reported per seed as the range of validation BA over the last five epochs;
+the recipe is called stable if that range is at most 0.05 for every seed. Outcomes: per
+output, the range (min, max) of source BA across the five final checkpoints and Kendall
+tau between seeds, next to the production-recipe values. Interpretation fixed now: if for
+CycleGAN, diffusion, histogram matching and aggressive StarGAN the converged range is no
+wider than the widest 95% bootstrap interval of a single converged probe on any output,
+we report that verdict variability in the benchmark recipe is largely a training-
+stability effect and revise finding 1 accordingly (a probe's recipe and convergence must
+be reported); otherwise we report that convergence does not remove probe dependence. No
+further recipe variants are tried after these results are seen.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
