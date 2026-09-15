@@ -186,6 +186,15 @@ stability effect and revise finding 1 accordingly (a probe's recipe and converge
 be reported); otherwise we report that convergence does not remove probe dependence. No
 further recipe variants are tried after these results are seen.
 
+Outcome of amendment 6 (recorded 2026-09-15 after the results; `analysis/converged_probes.json`).
+Stable: last-five-epoch validation BA range at most 0.035 for every seed; raw test BA 1.00 for
+all final checkpoints; shuffle control 0.03 [0.00, 0.05]. Converged ranges for CycleGAN,
+diffusion, histogram matching and aggressive StarGAN were 0.11, 0.07, 0.13 and 0.16, within the
+widest single-probe interval (0.18), so finding 1 is revised as fixed above. Converged probes
+also rated every output except HCLD and NeuroCombat above the frozen probe's interval (e.g.
+aggressive StarGAN 0.65-0.81 versus 0.21) and reordered methods (Kendall tau with the frozen
+probe 0.64-0.73); the manuscript reports this as dependence on probe training.
+
 Amendment 7, 2026-09-15 17:05 (post hoc; written before any brain-only probe or mask
 statistic was computed). Seen at this point: every result in the manuscript, including the
 head-silhouette control (BA 0.73-0.86) and amendment 6 training logs (no evaluations yet).
@@ -217,6 +226,16 @@ method-trained probes' intervals lie above the raw-trained probes' for every see
 hidden-not-removed conclusion is reported as holding without head geometry; otherwise the
 manuscript restricts that conclusion to the evidence that survives (intensity-only probe)
 and says so.
+
+Outcome of amendment 7 (recorded 2026-09-15 after the results). Gate passed: recomputed raw
+slices identical to the exports (max difference 0); no empty masks; brain-to-head area ratio
+0.23-0.87. With best-validation checkpoints the method-trained brain-only probes' intervals lay
+above the raw-trained probes' for all nine method-seed pairs (mean BA 0.91, 0.79, 0.74 versus
+0.62, 0.48, 0.39); with final-epoch checkpoints for five of nine, which the manuscript states.
+Brain-mask shape control 0.52-0.54. Secondary brain-foreground histogram probe: trained on
+outputs 0.53, 0.55 and 0.38 versus 0.56 on raw brains, so the head-level conclusion that
+histogram matching removed intensity site information does not hold within the brain; the
+manuscript was corrected.
 
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both

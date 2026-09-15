@@ -1,19 +1,19 @@
-\begin{tabular}{@{}lccccccc@{}}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
- & \multicolumn{3}{c}{Change and target alignment} & \multicolumn{4}{c}{Source-site balanced accuracy (probe trained on raw $\rightarrow$ on outputs)} \\
-\cmidrule(lr){2-4}\cmidrule(l){5-8}
-Method & PSNR & XCorr & $\Delta W_{\mathrm{NYU}}$ & Frozen & Retrained & Image probe & Intensity probe \\
+ & \multicolumn{3}{c}{Change and target alignment} & \multicolumn{3}{c}{Source-site balanced accuracy of probes trained on raw images} \\
+\cmidrule(lr){2-4}\cmidrule(l){5-7}
+Method & PSNR & XCorr & $\Delta W_{\mathrm{NYU}}$ & Frozen probe & Benchmark recipe & Converged recipe \\
 \midrule
-Raw input & -- & -- & 0 & 0.95 & 0.90 [0.81, 0.98] & 0.92 & 0.74 \\
-NeuroCombat$^\dagger$ & 20.0 & 0.940 & +0.003 & 0.27 [0.21, 0.32] & 0.33 [0.26, 0.37] & 0.36 & 0.11 \\
-Histogram matching$^\ddagger$ & 23.0 & 0.982 & -0.053 & 0.44 [0.37, 0.52] & 0.44 [0.27, 0.59] & 0.45 $\rightarrow$ 0.87 & 0.08 $\rightarrow$ 0.16 \\
-CycleGAN & 21.3 & 0.977 & -0.036 & 0.31 [0.25, 0.37] & 0.28 [0.13, 0.59] & 0.33 $\rightarrow$ 0.87 & 0.21 $\rightarrow$ 0.74 \\
-StarGAN (aggr.) & 16.0 & 0.896 & -0.019 & 0.21 [0.15, 0.27] & 0.35 [0.18, 0.54] & 0.39 & 0.21 \\
-StarGAN (cons.) & 26.9 & 0.991 & -0.021 & 0.83 [0.79, 0.86] & 0.78 [0.66, 0.89] & 0.82 & 0.34 \\
-DLEST 1500 & 26.6 & 0.993 & -0.020 & 0.67 [0.61, 0.72] & 0.73 [0.65, 0.82] & 0.76 & 0.42 \\
-DLEST 1000 & 28.4 & 0.993 & -0.009 & 0.71 [0.65, 0.77] & 0.84 [0.76, 0.89] & 0.82 & 0.47 \\
-Diffusion img2img & 21.7 & 0.948 & -0.001 & 0.37 [0.32, 0.42] & 0.42 [0.24, 0.63] & 0.44 & 0.36 \\
-\quad second draw & 21.7 & 0.948 & -0.002 & 0.35 [0.29, 0.40] & 0.42 [0.30, 0.62] & 0.41 $\rightarrow$ 0.91 & 0.37 $\rightarrow$ 0.70 \\
-Adapted HCLD & 13.9 & 0.706 & +0.108 & 0.07 [0.06, 0.08] & 0.08 [0.06, 0.11] & 0.07 & 0.07 \\
+Raw input & -- & -- & 0 & 0.95 & 0.90 [0.81, 0.98] & 1.00 [1.00, 1.00] \\
+NeuroCombat$^\dagger$ & 20.0 & 0.940 & +0.003 & 0.27 [0.21, 0.32] & 0.33 [0.26, 0.37] & 0.34 [0.28, 0.42] \\
+Histogram matching$^\ddagger$ & 23.0 & 0.982 & -0.053 & 0.44 [0.37, 0.52] & 0.44 [0.27, 0.59] & 0.61 [0.55, 0.68] \\
+CycleGAN & 21.3 & 0.977 & -0.036 & 0.31 [0.25, 0.37] & 0.28 [0.13, 0.59] & 0.49 [0.44, 0.54] \\
+StarGAN (aggr.) & 16.0 & 0.896 & -0.019 & 0.21 [0.15, 0.27] & 0.35 [0.18, 0.54] & 0.70 [0.65, 0.81] \\
+StarGAN (cons.) & 26.9 & 0.991 & -0.021 & 0.83 [0.79, 0.86] & 0.78 [0.66, 0.89] & 0.98 [0.94, 0.99] \\
+DLEST 1500 & 26.6 & 0.993 & -0.020 & 0.67 [0.61, 0.72] & 0.73 [0.65, 0.82] & 0.96 [0.95, 0.97] \\
+DLEST 1000 & 28.4 & 0.993 & -0.009 & 0.71 [0.65, 0.77] & 0.84 [0.76, 0.89] & 0.99 [0.96, 1.00] \\
+Diffusion img2img & 21.7 & 0.948 & -0.001 & 0.37 [0.32, 0.42] & 0.42 [0.24, 0.63] & 0.57 [0.52, 0.59] \\
+\quad second draw & 21.7 & 0.948 & -0.002 & 0.35 [0.29, 0.40] & 0.42 [0.30, 0.62] & 0.56 [0.50, 0.59] \\
+Adapted HCLD & 13.9 & 0.706 & +0.108 & 0.07 [0.06, 0.08] & 0.08 [0.06, 0.11] & 0.08 [0.06, 0.10] \\
 \bottomrule
 \end{tabular}
