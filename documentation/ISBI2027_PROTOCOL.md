@@ -186,6 +186,38 @@ stability effect and revise finding 1 accordingly (a probe's recipe and converge
 be reported); otherwise we report that convergence does not remove probe dependence. No
 further recipe variants are tried after these results are seen.
 
+Amendment 7, 2026-09-15 17:05 (post hoc; written before any brain-only probe or mask
+statistic was computed). Seen at this point: every result in the manuscript, including the
+head-silhouette control (BA 0.73-0.86) and amendment 6 training logs (no evaluations yet).
+Common harmonization pipelines skull-strip before evaluation, whereas our probes see whole
+head slices, and the silhouette control shows head geometry identifies sites. This control
+asks whether the removed-versus-hidden result (amendment 2) holds when the probe sees only
+brain tissue.
+
+Brain masks: HD-BET 2.0.1 (release 2.0.0 parameters, default test-time augmentation) on each
+raw T1 volume, reoriented to the canonical orientation, cut at the frozen fixed slice,
+cropped with the same head bounding box and resized with the dataset's mask resizer to
+256x256. Gate before any probe use: recomputed raw slices must equal the exports' raw
+slices; masks must be non-empty on every fixed slice. Brain-to-head area ratios are
+reported; subjects with ratio < 0.10 are listed (not excluded). One masked version of each
+slice is shared by raw and harmonized images: brain-only input = image x raw-derived mask.
+
+Probes: slice probes with the amendment 2 recipe (seeds 1-3, best and final checkpoints)
+trained on brain-only raw slices, on brain-only outputs of histogram matching, CycleGAN and
+diffusion (the pre-selected set), and on the binary brain masks (brain-shape control); one
+subject-level shuffled-label control on brain-only raw slices (seed 1). Each checkpoint is
+evaluated once, with brain-only inputs, on the raw test slices and the ten test outputs
+(diffusion-trained probes' primary test set remains the redraw). Secondary: the amendment 5
+intensity-histogram probe with foreground restricted to the brain mask.
+
+Primary quantity as in amendment 2: source BA of the method-trained brain-only probe on
+that method's brain-only test outputs, next to the raw-trained brain-only probe on the same
+outputs, with the brain-shape control as a bound. Interpretation fixed now: if the
+method-trained probes' intervals lie above the raw-trained probes' for every seed, the
+hidden-not-removed conclusion is reported as holding without head geometry; otherwise the
+manuscript restricts that conclusion to the evidence that survives (intensity-only probe)
+and says so.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
