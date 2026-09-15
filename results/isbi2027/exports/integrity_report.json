@@ -1,0 +1,76 @@
+{
+  "test_reproduction": {
+    "histogram_matching": {
+      "ids_match": true,
+      "max_abs_diff": 0.006382569670677185,
+      "subjects_over_atol": 1,
+      "source_psnr_historical": 22.974782943725586,
+      "source_psnr_reexport": 22.974781036376953,
+      "criterion": "deterministic: ids match, max abs diff <= 0.01",
+      "passed": true
+    },
+    "cyclegan_tuned": {
+      "ids_match": true,
+      "max_abs_diff": 0.0005781054496765137,
+      "subjects_over_atol": 90,
+      "source_psnr_historical": 21.251100540161133,
+      "source_psnr_reexport": 21.251100540161133,
+      "criterion": "deterministic: ids match, max abs diff <= 0.01",
+      "passed": true
+    },
+    "diffusion_20k": {
+      "ids_match": true,
+      "max_abs_diff": 0.8968722820281982,
+      "subjects_over_atol": 90,
+      "source_psnr_historical": 21.712718963623047,
+      "source_psnr_reexport": 21.72608757019043,
+      "criterion": "stochastic: ids match, |delta source PSNR| <= 0.1 dB",
+      "passed": true
+    }
+  },
+  "train_val": {
+    "histogram_matching/val": {
+      "passed": true,
+      "covers_split": true,
+      "finite": true,
+      "raw_matches_first_method": true,
+      "n": 113
+    },
+    "cyclegan_tuned/val": {
+      "passed": true,
+      "covers_split": true,
+      "finite": true,
+      "raw_matches_first_method": true,
+      "n": 113
+    },
+    "diffusion_20k/val": {
+      "passed": true,
+      "covers_split": true,
+      "finite": true,
+      "raw_matches_first_method": true,
+      "n": 113
+    },
+    "histogram_matching/train": {
+      "passed": true,
+      "covers_split": true,
+      "finite": true,
+      "raw_matches_first_method": true,
+      "n": 890
+    },
+    "cyclegan_tuned/train": {
+      "passed": true,
+      "covers_split": true,
+      "finite": true,
+      "raw_matches_first_method": true,
+      "n": 890
+    },
+    "diffusion_20k/train": {
+      "passed": true,
+      "covers_split": true,
+      "finite": true,
+      "raw_matches_first_method": true,
+      "n": 890
+    }
+  },
+  "all_passed": true
+}

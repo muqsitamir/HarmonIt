@@ -53,6 +53,7 @@ Core documentation:
 - [Metrics](documentation/METRICS.md): preservation, distribution, and site-probe metrics.
 - [Baselines](documentation/BASELINES.md): NeuroCombat, DLEST, diffusion, and adapted HCLD benchmark context.
 - [Reproducibility](documentation/REPRODUCIBILITY.md): commands for reproducing artifacts, metrics, and figures.
+- [ISBI 2027 audit](documentation/ISBI2027_HANDOFF.md): status, protocol, results and manuscript for the evaluation-audit paper.
 
 Main entry points:
 

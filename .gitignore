@@ -218,3 +218,16 @@ mlflow.db
 mlruns/
 /results/
 outputs/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+
+# Versioned ISBI 2027 audit results (small JSON/CSV/MD; large artifacts stay on vpulab)
+!results/
+results/*
+!results/isbi2027/
+!results/isbi2027/**

@@ -1,0 +1,25 @@
+{
+  "train_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/histogram_matching/train/histogram_matching_slices.npz",
+  "val_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/histogram_matching/val/histogram_matching_slices.npz",
+  "image_key": "raw_images",
+  "splits_path": "/mnt/rhome/mmi/projects/HarmonIt/data/splits.json",
+  "out_dir": "/mnt/rhome/mmi/projects/isbi2027/slice_probes/raw_seed3",
+  "seed": 3,
+  "label_shuffle": false,
+  "batch_size": 64,
+  "epochs": 10,
+  "steps_per_epoch": 50,
+  "lr": 0.0003,
+  "device": "cuda",
+  "n_train": 890,
+  "n_val": 113,
+  "train_npz_sha256": "9a06f8ad6ca9367aa0e28cdb9d75d4410e540d4cd825d8d57c9eb19cc7179a0b",
+  "val_npz_sha256": "fbd71ffa2dc07095c19784ff2c33e669a33ad61e38ba5ffe1b8e18c7b27ef523",
+  "augmentation": {
+    "prob": 0.9,
+    "rot_deg": 12.0,
+    "trans_px": 32,
+    "scale_jitter": 0.2
+  },
+  "sampling": "uniform with replacement over subjects, one fixed slice each"
+}

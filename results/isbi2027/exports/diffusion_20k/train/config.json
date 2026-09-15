@@ -1,0 +1,42 @@
+{
+  "method": "diffusion_img2img_nyu",
+  "split": "train",
+  "checkpoint": "/mnt/rhome/mmi/projects/isbi2027/inputs/diffusion_20k/checkpoints/model_latest.pt",
+  "target_site_id": 5,
+  "target_site_name": "NYU",
+  "identity_target": true,
+  "strength": 0.35,
+  "ddim_steps": 50,
+  "eta": 0.0,
+  "out_hw": [
+    256,
+    256
+  ],
+  "train_config": {
+    "method": "diffusion_img2img_nyu",
+    "train_split": "train",
+    "target_site_id": 5,
+    "target_site_name": "NYU",
+    "num_sites": 17,
+    "out_hw": [
+      256,
+      256
+    ],
+    "num_timesteps": 1000,
+    "beta_start": 0.0001,
+    "beta_end": 0.02,
+    "base_channels": 64,
+    "channel_mults": [
+      1,
+      2,
+      4,
+      4
+    ],
+    "steps": 20000,
+    "batch_size": 16,
+    "lr": 0.0002,
+    "seed": 42
+  },
+  "n_subjects": 890,
+  "n_sites": 17
+}

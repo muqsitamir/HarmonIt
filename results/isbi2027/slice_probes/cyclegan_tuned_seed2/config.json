@@ -1,0 +1,25 @@
+{
+  "train_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/cyclegan_tuned/train/cyclegan_nyu_slices.npz",
+  "val_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/cyclegan_tuned/val/cyclegan_nyu_slices.npz",
+  "image_key": "images",
+  "splits_path": "/mnt/rhome/mmi/projects/HarmonIt/data/splits.json",
+  "out_dir": "/mnt/rhome/mmi/projects/isbi2027/slice_probes/cyclegan_tuned_seed2",
+  "seed": 2,
+  "label_shuffle": false,
+  "batch_size": 64,
+  "epochs": 10,
+  "steps_per_epoch": 50,
+  "lr": 0.0003,
+  "device": "cuda",
+  "n_train": 890,
+  "n_val": 113,
+  "train_npz_sha256": "7bc7e25739b0bdf68c07f62ed4fe66f199c632f48224f96e95bd8f9631aa03e6",
+  "val_npz_sha256": "032477b6e30bd8b76168dc9b84db5c8cda0f0360a2c776c372728d485d6454b4",
+  "augmentation": {
+    "prob": 0.9,
+    "rot_deg": 12.0,
+    "trans_px": 32,
+    "scale_jitter": 0.2
+  },
+  "sampling": "uniform with replacement over subjects, one fixed slice each"
+}

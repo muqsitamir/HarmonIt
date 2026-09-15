@@ -1,0 +1,97 @@
+# ISBI 2027 paper: handoff
+
+Updated 2026-09-15. Read this first when resuming. Scientific protocol and every
+amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
+[results/isbi2027/README.md](../results/isbi2027/README.md).
+
+## Status
+
+- Venue: ISBI 2027 four-page paper. Deadline 26 October 2026 (11:59 pm EDT); notification
+  12 January 2027. Four pages of technical content including figures; an optional paid fifth
+  page may hold only references, ethics and acknowledgments. Single-blind review. An AI-use
+  disclosure is required in the acknowledgments. Template: `paper/isbi2027/spconf.sty`
+  (older kit; compare with the official ISBI template before submission).
+- Manuscript: `paper/isbi2027/main.tex`, compiled `main.pdf` is **4 pages including
+  references**. All planned experiments are complete; every result number is from
+  `results/isbi2027`.
+- Remaining placeholders: funding (red `\pending{Funding.}`; authors to settle with the
+  supervisor). The AI-use statement is drafted and may be edited by the authors.
+- `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
+  claims are wrong (pooled HCLD PSNR, raw-to-output distances read as NYU alignment,
+  class-ID shuffle control). Do not reuse its numbers.
+
+## Decisions by the authors
+
+- Framing: evaluation audit ("site-probe accuracy is not a harmonization score"); the
+  methods are test cases, not a leaderboard. Not a corrected benchmark.
+- Authors: June list and order (Muhammad Muqsit Islam and Gloria García Cuenco equal
+  contribution; José M. Martínez Sánchez; Pierrick Coupé; UAM and University of Bordeaux).
+- Code, protocol and per-subject results are released on GitHub; the paper footnote links
+  `https://github.com/muqsitamir/HarmonIt`. The repository must be public, with this
+  branch's content reachable, before submission.
+- Compute: prefer vpulab (RTX A5000, near dedicated). Use the shared cl cluster only when
+  needed (it was used for the HCLD re-export).
+
+## Findings (source subjects, n = 90)
+
+1. Probe dependence: five identically trained site probes (raw BA 0.81-0.98) gave CycleGAN
+   0.13-0.59, diffusion 0.24-0.63, histogram matching 0.27-0.59, aggressive StarGAN
+   0.18-0.54; Kendall tau between seeds 0.51-0.87.
+2. Destruction scores best: HCLD BA 0.07 (chance), PSNR 13.9 dB, XCorr 0.71, moves away from
+   NYU (dW +0.108).
+3. Change is not alignment: diffusion changes intensities least (W 0.008) but dW_NYU
+   -0.0013 [-0.0023, -0.0004]; KL to NYU 0.30 -> 0.83. A second diffusion sampling draw
+   differs from the first more than from the input.
+4. Hidden, not removed: raw-trained slice probes 0.33-0.45 on outputs, probes trained on
+   outputs 0.87-0.91. Head silhouettes alone 0.73-0.86. Intensity-histogram probe:
+   histogram matching 0.16 (removed), CycleGAN 0.74 and diffusion 0.70 (retained; raw 0.74).
+
+## Where things live
+
+| What | Location |
+| --- | --- |
+| Code, paper, results | branch `codex/isbi2027-evaluation`; local worktree `outputs/development/isbi2027` of `~/PycharmProjects/HarmonIt` |
+| Experiment root (vpulab) | `/mnt/rhome/mmi/projects/isbi2027`: `code/` (rsync snapshot, `COMMIT` file), `runs/`, `exports/`, `slice_probes/`, `probe_work/`, `inputs/`, `analysis/` |
+| Data, historical artifacts, frozen probe (vpulab) | `/mnt/rhome/mmi/projects/HarmonIt` (`data/`, `outputs/harmonized/`, `checkpoints/`) |
+| Python env (vpulab) | `/home/mmi/envs/harmonit-isbi` (torch 2.5.1+cu121, numpy 1.26.4); installer `/mnt/rhome/mmi/envs/install_harmonit_isbi.sh` |
+| HCLD and diffusion training (cl) | `/home/muqsitamir/repos/HarmonIt`; HCLD canonical re-export in `outputs/harmonized/adapted_hcld_isbi2027_canonical` |
+| LaTeX (Mac) | TinyTeX in `~/Library/TinyTeX` (not on PATH); `bash paper/isbi2027/build.sh` |
+
+vpulab notes: set `https_proxy=http://192.168.22.3:8080` for downloads (the system value uses
+an `https://` scheme and fails). Deploy code with rsync using root-anchored excludes
+(`--exclude '/data/'`, not `data/`). Do not wait on jobs with `pgrep -f <script>` inside
+`ssh`; it matches its own command line.
+
+## Pipeline
+
+| Step | Script |
+| --- | --- |
+| Evaluate outputs with a probe | `scripts/eval_isbi2027.py` via `scripts/vpulab_isbi2027_eval.sh` (`SITE_PROBE`, `EXTRA_ARTIFACT`, `HCLD_ARTIFACT`, `REDRAW` env) |
+| Retrain site probes | `scripts/train_site_probe.py` via `scripts/vpulab_isbi2027_probe.sh` and `vpulab_isbi2027_probe_seeds.sh` |
+| Train/val/test re-exports | `scripts/vpulab_isbi2027_exports.sh`; gate `scripts/check_isbi2027_exports.py` |
+| Slice probes (harmonized, silhouette) | `scripts/train_slice_probe.py` via `vpulab_isbi2027_slice_probes.sh`, `vpulab_isbi2027_silhouette.sh`, `make_silhouette_npz.py` |
+| HCLD re-export (cl) | `slurm/isbi2027_hcld_reexport.sbatch` |
+| Target alignment | `scripts/target_alignment_isbi2027.py` |
+| Intensity-only probe | `scripts/isbi2027_histogram_probe.py` |
+| Collect, agreement, table, figures | `isbi2027_collect.py`, `isbi2027_probe_agreement.py`, `isbi2027_tables.py`, `isbi2027_figures.py`, `isbi2027_qualitative.py` |
+| Metric functions and tests | `src/harmonit/metrics/subject_evaluation.py`, `tests/test_isbi_evaluation.py` |
+
+## Known caveats (all stated in the protocol or paper)
+
+- Fixed-slice selection has exact ties (4/109 test subjects); slices are frozen in
+  `configs/isbi2027/test_slice_indices.json`, and the evaluator rejects mismatches.
+- Diffusion img2img start noise is not reproducible across GPUs; its outputs are a draw.
+- NeuroCombat was fit on the test cohort (transductive); histogram matching uses a pooled
+  17-site training reference, not NYU.
+- The dataset's NumPy RandomState is copied unchanged into DataLoader workers (inherited
+  from the production probe recipe; kept for fidelity).
+- Test subjects were inspected in the earlier benchmark: retrospective reanalysis.
+  Amendments 4-5 (silhouette and intensity-only controls) were added post hoc.
+
+## Next steps
+
+1. Author read of `main.pdf` for story and framing; supervisor review; funding text.
+2. Figure polish: labels in Fig. 1a are crowded at print size.
+3. Claim-by-claim check of the manuscript against `results/isbi2027` and the protocol.
+4. Before submission: make the repository public (or confirm access), check the official
+   ISBI 2027 template and PDF requirements, and fill the submission form.

@@ -1,0 +1,34 @@
+{
+  "method": "cyclegan_nyu",
+  "split": "test",
+  "checkpoint": "/mnt/rhome/mmi/projects/HarmonIt/outputs/harmonized/cyclegan_nyu_id1_s1500/train/checkpoints/latest.pt",
+  "target_site_id": 5,
+  "target_site_name": "NYU",
+  "identity_target": true,
+  "out_hw": [
+    256,
+    256
+  ],
+  "train_config": {
+    "method": "cyclegan_nyu",
+    "target_site_id": 5,
+    "target_site_name": "NYU",
+    "out_hw": [
+      256,
+      256
+    ],
+    "steps": 1500,
+    "batch_size": 2,
+    "lr": 0.0002,
+    "beta1": 0.5,
+    "base_channels": 32,
+    "res_blocks": 4,
+    "lambda_cycle": 10.0,
+    "lambda_identity": 1.0,
+    "lambda_gradient": 1.0,
+    "train_split": "train",
+    "seed": 42
+  },
+  "n_subjects": 109,
+  "n_sites": 17
+}

@@ -1,0 +1,25 @@
+{
+  "train_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/silhouette/train/silhouette_slices.npz",
+  "val_npz": "/mnt/rhome/mmi/projects/isbi2027/exports/silhouette/val/silhouette_slices.npz",
+  "image_key": "images",
+  "splits_path": "/mnt/rhome/mmi/projects/HarmonIt/data/splits.json",
+  "out_dir": "/mnt/rhome/mmi/projects/isbi2027/slice_probes/silhouette_seed2",
+  "seed": 2,
+  "label_shuffle": false,
+  "batch_size": 64,
+  "epochs": 10,
+  "steps_per_epoch": 50,
+  "lr": 0.0003,
+  "device": "cuda",
+  "n_train": 890,
+  "n_val": 113,
+  "train_npz_sha256": "d622e7612cf087c1995394fc34fccde161f93dfc000fa2d97eb0e105354d6f98",
+  "val_npz_sha256": "b2b6de9d4edf7e291a7470d1df9cc58504c6d31b58897f41e02663d02d833134",
+  "augmentation": {
+    "prob": 0.9,
+    "rot_deg": 12.0,
+    "trans_px": 32,
+    "scale_jitter": 0.2
+  },
+  "sampling": "uniform with replacement over subjects, one fixed slice each"
+}

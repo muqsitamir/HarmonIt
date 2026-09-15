@@ -3,6 +3,7 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\urlstyle{same}
 
 % Red marker for numbers that await running experiments; must be empty before submission.
 \newcommand{\pending}[1]{\textcolor{red}{[#1]}}
@@ -39,7 +40,7 @@ Acquisition differences between sites confound pooled MRI analyses and degrade m
 
 Each proxy measures less than it appears to. A frozen probe reports what one classifier recovers; it can also fail because outputs are unfamiliar, damaged or noisy. Removing an attribute until a fixed adversary fails does not stop a newly trained classifier from recovering it~\cite{elazar2018adversarial}. Similarity to the input rewards doing nothing, and a small input-to-output distance says nothing about the target site.
 
-We audit these practices on outputs of seven harmonization families. Contributions: (1) a subject-level protocol with paired uncertainty, valid probe controls, separate reporting of target-site subjects, and target alignment measured apart from change; (2) evidence that probe verdicts depend on the checkpoint, that the lowest site accuracy can signal destruction, and that small change does not imply alignment; (3) a test of removed versus hidden site information using probes trained on harmonized images, with geometry-only and intensity-only controls; and (4) a reporting checklist. We neither propose nor rank harmonizers.
+We audit these practices on outputs of seven harmonization families. Contributions: (1) a subject-level protocol with paired uncertainty, valid probe controls, separate reporting of target-site subjects, and target alignment measured apart from change; (2) evidence that probe verdicts depend on the checkpoint, that the lowest site accuracy can signal destruction, and that small change does not imply alignment; (3) a test of removed versus hidden site information using probes trained on harmonized images, with geometry-only and intensity-only controls; and (4) a reporting checklist.\footnote{Code, the evaluation protocol with all amendments, and per-subject results: \url{https://github.com/muqsitamir/HarmonIt}.} We neither propose nor rank harmonizers.
 
 \section{Data and Audited Outputs}
 \label{sec:data}
@@ -49,7 +50,7 @@ We audit these practices on outputs of seven harmonization families. Contributio
 
 \section{Audit Protocol}
 \label{sec:protocol}
-\textbf{Change and target alignment.} PSNR on a fixed $[0,1]$ scale and normalized cross-correlation (XCorr) compare output with input on whole images; exact identities have infinite PSNR, so we summarize the 90 source subjects and report NYU separately. \emph{Change} is the per-subject Wasserstein-1 distance $W$ between input and output intensities. \emph{Target alignment} is the Wasserstein-1 distance and KL divergence between foreground intensities and a reference from raw slices of the 147 NYU training subjects, weighted equally; foreground is defined on the raw slice, and $\Delta W_{\mathrm{NYU}}$ is the output's distance minus the input's.
+\textbf{Change and target alignment.} PSNR on a fixed $[0,1]$ scale and normalized cross-correlation (XCorr) compare output with input on whole images; NYU outputs of generators are exact or near-exact identities (PSNR infinite or above 150~dB), so we summarize the 90 source subjects and report NYU separately. \emph{Change} is the per-subject Wasserstein-1 distance $W$ between input and output intensities. \emph{Target alignment} is the Wasserstein-1 distance and KL divergence between foreground intensities and a reference from raw slices of the 147 NYU training subjects, weighted equally; foreground is defined on the raw slice, and $\Delta W_{\mathrm{NYU}}$ is the output's distance minus the input's.
 
 \textbf{Site probes.} Probes are single-channel ResNet-18 networks~\cite{he2016resnet} predicting 17 sites, trained with AdamW (learning rate $3\times10^{-4}$, batch 64, 500 steps) and random affine augmentation. The \emph{frozen} probe is the earlier benchmark's checkpoint. \emph{Retrained} probes use the same recipe on random valid training slices (seeds 42, 1--4), selected on validation balanced accuracy (BA) and tested once. A shuffled-label control permutes labels between subjects within each split. To separate removed from hidden site information, \emph{slice probes} are trained with the same recipe on fixed slices of raw images or of one method's outputs, for three methods chosen in advance to span intensity, adversarial and diffusion families (seeds 1--3). Two controls, added after the first slice-probe results and before their own, restrict the input: slice probes on filled binary head silhouettes (geometry only), and multinomial logistic regression on 50-bin foreground intensity histograms (intensity only), trained on raw slices or on a method's outputs.
 
@@ -84,7 +85,7 @@ We audit these practices on outputs of seven harmonization families. Contributio
 
 \textbf{Verdicts depend on the probe.} Identically trained probes assigned very different site BA to the same outputs (Table~\ref{tab:main}, Fig.~\ref{fig:verdicts}a): CycleGAN received 0.13--0.59 across seeds, diffusion 0.24--0.63, histogram matching 0.27--0.59 and aggressive StarGAN 0.18--0.54, ranges two to three times the widest bootstrap interval of any single probe (0.16), with the frozen probe inside each range. Ranges were narrower for NeuroCombat (0.26--0.37), HCLD (0.06--0.11) and DLEST~1000 (0.76--0.89). Method orderings agreed moderately (Kendall $\tau$ 0.51--0.87 between seeds) and pairs reversed: seed~3 rated aggressive StarGAN above CycleGAN (0.54 vs.\ 0.20), seed~42 the opposite (0.44 vs.\ 0.59). Probe strength did not explain this: the probe with the highest raw BA (0.98) gave CycleGAN 0.20.
 
-\textbf{The lowest site accuracy came from destruction.} HCLD reached BA 0.07 [0.06, 0.08] under the frozen probe, at chance, with the lowest PSNR (13.9~dB) and XCorr (0.71) and visible loss of anatomy (Fig.~\ref{fig:qualitative}), and it moved intensities away from the target ($\Delta W_{\mathrm{NYU}}=+0.108$). Averages over all 109 subjects would include 19 NYU subjects returned exactly or almost exactly unchanged (PSNR infinite or above 150~dB) and are undefined or dominated by them.
+\textbf{The lowest site accuracy came from destruction.} HCLD reached BA 0.07 [0.06, 0.08] under the frozen probe, at chance, with the lowest PSNR (13.9~dB) and XCorr (0.71) and visible loss of anatomy (Fig.~\ref{fig:qualitative}), and it moved intensities away from the target ($\Delta W_{\mathrm{NYU}}=+0.108$).
 
 \textbf{Small change is not target alignment.} Diffusion translation changed intensities least ($W=0.008$) yet moved them no closer to NYU ($\Delta W_{\mathrm{NYU}}=-0.0013$ [$-0.0023$, $-0.0004$]) and raised the KL divergence to NYU from 0.30 to 0.83, whereas histogram matching ($-0.053$) and CycleGAN ($-0.036$) moved toward the target. Diffusion outputs are also a random draw: resampling the same checkpoint gave images differing from the first draw by a mean foreground absolute difference of 0.085, more than from the input (0.075), at unchanged PSNR (21.71 vs.\ 21.73~dB). Site BA barely changed between draws (frozen 0.37 vs.\ 0.35).
 
@@ -102,7 +103,7 @@ This research study was conducted retrospectively using human subject data made 
 
 \section{Acknowledgments}
 \label{sec:acknowledgments}
-\pending{Funding.} The authors have no relevant financial or non-financial interests to disclose. \pending{AI-use disclosure: wording to be approved by the authors.}
+\pending{Funding.} The authors have no relevant financial or non-financial interests to disclose. Generative AI tools (OpenAI Codex and Anthropic Claude) were used to assist with writing evaluation and analysis code and with drafting and editing the manuscript; the authors reviewed and verified all code, results and text and take full responsibility for the content.
 
 \bibliographystyle{IEEEbib}
 \bibliography{refs}

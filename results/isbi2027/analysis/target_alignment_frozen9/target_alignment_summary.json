@@ -1,0 +1,551 @@
+{
+  "eval_run": "runs/frozen_probe_v1_9methods_20260914_101417",
+  "reference_npz": "exports/histogram_matching/train/histogram_matching_slices.npz",
+  "reference_sha256": "9a06f8ad6ca9367aa0e28cdb9d75d4410e540d4cd825d8d57c9eb19cc7179a0b",
+  "reference_subjects": 147,
+  "foreground": "raw slice > 0.02",
+  "kl_direction": "KL(image || NYU reference)",
+  "cohort": "source (non-NYU) test subjects",
+  "methods": {
+    "neurocombat": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.10619974215637049,
+          "ci95": [
+            0.10142986928754205,
+            0.11127937092723786
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.0032944281492969193,
+          "ci95": [
+            -0.001061608886540381,
+            0.007723043512107233
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.8775647580518687,
+          "ci95": [
+            0.8325908743905889,
+            0.9282629740147819
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.5734143659492593,
+          "ci95": [
+            0.5213764485214675,
+            0.6240831767187182
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "histogram_matching": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.04965928044283105,
+          "ci95": [
+            0.04961989504945272,
+            0.04970443086569025
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.053246033564242526,
+          "ci95": [
+            -0.05876498414813718,
+            -0.04759326798905802
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.08576010443724381,
+          "ci95": [
+            0.08429073315989843,
+            0.08739208661791821
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.2183902876653655,
+          "ci95": [
+            -0.24003017613908192,
+            -0.19680197726040086
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "cyclegan_tuned": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.06688721543586561,
+          "ci95": [
+            0.06313952759882704,
+            0.07103900860980233
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.03601809857120798,
+          "ci95": [
+            -0.0397575408524484,
+            -0.0321200688232287
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.24560255791684288,
+          "ci95": [
+            0.2353555026677519,
+            0.2553500712700835
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.058547834185766395,
+          "ci95": [
+            -0.08040583761828352,
+            -0.03777963031677581
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "stargan_aggressive": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.08394921739369109,
+          "ci95": [
+            0.08062213149675422,
+            0.08743683550397013
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.018956096613382493,
+          "ci95": [
+            -0.024232752422458294,
+            -0.01343826300214117
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.3195351894275344,
+          "ci95": [
+            0.30144235679983583,
+            0.339682222816988
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.0153847973249251,
+          "ci95": [
+            -0.0072890945213005594,
+            0.040395715666106335
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "stargan_conservative": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.08172233170193935,
+          "ci95": [
+            0.07588085484748565,
+            0.0874778345542043
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.021182982305134226,
+          "ci95": [
+            -0.02383218073384445,
+            -0.018531676788844424
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.27151706606996034,
+          "ci95": [
+            0.24806765055643326,
+            0.2944505860951628
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.03263332603264895,
+          "ci95": [
+            -0.04695513732015027,
+            -0.017939959397022406
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "dlest_1500": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.08298203822316465,
+          "ci95": [
+            0.07753373957020311,
+            0.08841456951633533
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.019923275783908918,
+          "ci95": [
+            -0.023046903167217473,
+            -0.016928943288583638
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.24538150121349192,
+          "ci95": [
+            0.2284108789585332,
+            0.2626045952235026
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.05876889088911736,
+          "ci95": [
+            -0.0690976284779039,
+            -0.04865310462071945
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "dlest_1000": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.09365519351618369,
+          "ci95": [
+            0.08887669105782364,
+            0.09845674192904058
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.009250120490889907,
+          "ci95": [
+            -0.011674268632242368,
+            -0.006883432393835734
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.3070444081832229,
+          "ci95": [
+            0.2883184898193923,
+            0.3255337661839985
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.0028940160806135828,
+          "ci95": [
+            -0.007801386686900772,
+            0.013475442386340946
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "diffusion_20k": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.10158827574215883,
+          "ci95": [
+            0.09606343990446527,
+            0.10696761147645985
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": -0.0013170382649147806,
+          "ci95": [
+            -0.002256945479564962,
+            -0.0003504651782964824
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.8338504053376044,
+          "ci95": [
+            0.7706265267259693,
+            0.903334899767815
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.5297000132349948,
+          "ci95": [
+            0.46815093331883323,
+            0.5975176637341635
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "adapted_hcld": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.2110933195474609,
+          "ci95": [
+            0.20506634865846698,
+            0.21712136643287652
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.10818800554038732,
+          "ci95": [
+            0.10090112639638647,
+            0.1160269841707622
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 3.3494645227187143,
+          "ci95": [
+            3.039959943301646,
+            3.658904061420907
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 3.0453141306161053,
+          "ci95": [
+            2.734114936235903,
+            3.3545948841374673
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    }
+  }
+}

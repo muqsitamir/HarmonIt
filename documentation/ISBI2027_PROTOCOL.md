@@ -170,8 +170,8 @@ directories are diagnostic and must not be treated as complete tables.
 
 Historical results remain untouched. The initial corrected table uses the existing
 frozen probe and must be labeled accordingly; the new probe is a subsequent
-experiment. No new files are pushed to GitHub without revisiting the user's
-existing changed-files-only publication preference.
+experiment. Publication decided 2026-09-15: code, protocol, versioned results and the
+manuscript are pushed to GitHub on this branch and linked from the paper.
 
 Go/no-go: 4 October. Require a reproducible table, interpretable probe controls,
 and a supported scientific finding beyond correction of implementation mistakes.
