@@ -9,8 +9,9 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 - Venue: ISBI 2027 four-page paper. Deadline 26 October 2026 (11:59 pm EDT); notification
   12 January 2027. Four pages of technical content including figures; an optional paid fifth
   page may hold only references, ethics and acknowledgments. Single-blind review. An AI-use
-  disclosure is required in the acknowledgments. Template: `paper/isbi2027/spconf.sty`
-  (older kit; compare with the official ISBI template before submission).
+  disclosure is required in the acknowledgments. Template: `paper/isbi2027/spconf.sty`,
+  `IEEEbib.bst` and `strings.bib` are identical to the official ISBI template kit (checked
+  2026-09-15 against the zip the author supplied).
 - Manuscript: `paper/isbi2027/main.tex`, compiled `main.pdf` is **4 pages including
   references**. All planned experiments are complete; every result number is from
   `results/isbi2027`.
@@ -31,6 +32,10 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   branch's content reachable, before submission.
 - Compute: prefer vpulab (RTX A5000, near dedicated). Use the shared cl cluster only when
   needed (it was used for the HCLD re-export).
+- No paid fifth page (decided 2026-09-15): the whole paper, including references, ethics and
+  acknowledgments, must fit in four pages.
+- Reviewer-risk experiments approved 2026-09-15 ("whatever improves acceptability"):
+  amendment 6 (converged probe recipe) and amendment 7 (brain-only probes with HD-BET masks).
 
 ## Findings (source subjects, n = 90)
 
@@ -55,12 +60,16 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 | Data, historical artifacts, frozen probe (vpulab) | `/mnt/rhome/mmi/projects/HarmonIt` (`data/`, `outputs/harmonized/`, `checkpoints/`) |
 | Python env (vpulab) | `/home/mmi/envs/harmonit-isbi` (torch 2.5.1+cu121, numpy 1.26.4); installer `/mnt/rhome/mmi/envs/install_harmonit_isbi.sh` |
 | HCLD and diffusion training (cl) | `/home/muqsitamir/repos/HarmonIt`; HCLD canonical re-export in `outputs/harmonized/adapted_hcld_isbi2027_canonical` |
+| Normalized-volume cache (vpulab, local disk) | `/home/mmi/cache/isbi2027_volumes` (46 GB, train+val; `cache_report.json`) |
+| HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks `/mnt/rhome/mmi/projects/isbi2027/brain_masks/hdbet` |
+| Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/` (masks, masked train/val, brain_shape), `isbi2027/brain_probes/`, log `isbi2027/brain_run.log` |
 | LaTeX (Mac) | TinyTeX in `~/Library/TinyTeX` (not on PATH); `bash paper/isbi2027/build.sh` |
 
 vpulab notes: set `https_proxy=http://192.168.22.3:8080` for downloads (the system value uses
 an `https://` scheme and fails). Deploy code with rsync using root-anchored excludes
 (`--exclude '/data/'`, not `data/`). Do not wait on jobs with `pgrep -f <script>` inside
-`ssh`; it matches its own command line.
+`ssh`, and never `pkill -f <script>` inside `ssh`: both match the ssh command line itself
+(pkill kills the session). Launch detached jobs as `ssh -n vpulab '(setsid nohup ... &)'`.
 
 ## Pipeline
 
@@ -72,7 +81,9 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 | Slice probes (harmonized, silhouette) | `scripts/train_slice_probe.py` via `vpulab_isbi2027_slice_probes.sh`, `vpulab_isbi2027_silhouette.sh`, `make_silhouette_npz.py` |
 | HCLD re-export (cl) | `slurm/isbi2027_hcld_reexport.sbatch` |
 | Target alignment | `scripts/target_alignment_isbi2027.py` |
-| Intensity-only probe | `scripts/isbi2027_histogram_probe.py` |
+| Intensity-only probe | `scripts/isbi2027_histogram_probe.py` (`--brain-masks` for amendment 7) |
+| Converged probes (amendment 6) | `cache_normalized_volumes.py`; `RECIPE=converged VOLUME_CACHE_DIR=... SEEDS="5 6 7 8 9" vpulab_isbi2027_probe_seeds.sh`; `isbi2027_converged.py` |
+| Brain-only control (amendment 7) | `run_hdbet_masks.py` (hdbet env), then `vpulab_isbi2027_brain.sh` (`make_brain_npz.py`, slice probes, `eval_isbi2027.py --probe-input-mask`) |
 | Collect, agreement, table, figures | `isbi2027_collect.py`, `isbi2027_probe_agreement.py`, `isbi2027_tables.py`, `isbi2027_figures.py`, `isbi2027_qualitative.py` |
 | Metric functions and tests | `src/harmonit/metrics/subject_evaluation.py`, `tests/test_isbi_evaluation.py` |
 
