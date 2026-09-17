@@ -29,9 +29,9 @@ INK, MUTED, GRID, SHADE = "#0b0b0b", "#52514e", "#d9d8d4", "#f1f0ec"
 CHANCE_SOURCE = 1 / 16  # 16 source (non-NYU) sites
 DX = .3  # horizontal offset (dB) separating probe families at one output
 LABELS = {
-    "neurocombat": "NeuroComb.$^\\dagger$", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
+    "neurocombat": "NeuroCombat", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
     "stargan_aggressive": "StarGAN-A", "stargan_conservative": "StarGAN-C", "dlest_1000": "DLEST-1000",
-    "dlest_1500": "DLEST-1500", "diffusion_20k": "Diffusion", "diffusion_20k_redraw": "Diff. redraw",
+    "dlest_1500": "DLEST-1500", "diffusion_20k": "Diff. draw 1", "diffusion_20k_redraw": "Diff. draw 2",
     "adapted_hcld": "HCLD",
 }
 # Label offsets in points, chosen to avoid collisions at column width.
@@ -135,7 +135,7 @@ def panel_adversary(ax, df, hist, hist_brain):
     ]
     ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(-.02, 1.04), ncol=3, frameon=False,
               handletextpad=.2, columnspacing=.8, borderaxespad=0, labelspacing=.15, fontsize=6)
-    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diffusion"])
+    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diff. draw 2"])
     for i in range(len(ADVERSARY)):
         ax.text(i - .22, 1.03, "head", fontsize=5.3, color=MUTED, ha="center", va="top")
         ax.text(i + .22, 1.03, "brain", fontsize=5.3, color=MUTED, ha="center", va="top")

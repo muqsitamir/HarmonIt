@@ -68,14 +68,14 @@ We audit these practices on outputs of seven harmonization families. Contributio
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_probe_verdicts.pdf}
-\caption{(a) Source site BA of each output, ordered by PSNR. (b) Probes trained on raw slices (blue) or on a method's outputs (aqua), tested on that method's outputs, on whole heads and brain-only slices: image probes (circles, mean and range over 3 seeds) and intensity-histogram probes (squares, 95\% interval). Black bar: raw-trained probe on raw test slices. Grey: image probes given only head silhouettes or brain masks.}
+\caption{(a) Source site BA of each output, ordered by PSNR. (b) Probes trained on raw slices (blue) or on a method's outputs (aqua), tested on that method's outputs (diffusion: second draw), on whole heads and brain-only slices: image probes (circles, mean and range over 3 seeds) and intensity-histogram probes (squares, 95\% interval). Black bar: raw-trained probe on raw test slices. Grey: image probes given only head silhouettes or brain masks.}
 \label{fig:verdicts}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_qualitative.pdf}
-\caption{Source test subject with median PSNR over all outputs. Bottom: output minus input, with PSNR. HCLD loses anatomy; diffusion adds texture that differs between draws.}
+\caption{Source test subject with median PSNR over all outputs. Bottom: output minus input, with this subject's PSNR. HCLD loses anatomy; diffusion adds texture that differs between draws.}
 \label{fig:qualitative}
 \end{figure}
 
