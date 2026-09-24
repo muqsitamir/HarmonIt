@@ -15,12 +15,42 @@ producing consistent volumes that remain useful for downstream analysis.
 [Evaluation definitions](documentation/METRICS.md) |
 [Installation](documentation/INSTALLATION.md) |
 [Baseline implementations](scripts/methods) |
-[ISBI 2027 evaluation audit](documentation/ISBI2027_HANDOFF.md)
+[ISBI 2027 evaluation audit](#isbi-2027-evaluation-audit)
 
-> **Research status:** first-phase baseline experiments are complete, and an
-> evaluation-audit manuscript for ISBI 2027 is in preparation (protocol, code and
-> versioned results in this repository). The next contribution is a planned **2.5D
-> diffusion model**. No 2.5D training results or clinical benefit are claimed yet.
+> **Research status:** the first-phase benchmark and its evaluation audit are
+> complete. The audit manuscript for ISBI 2027, its written protocol, code and
+> versioned per-subject results are in this repository. The next contribution is a
+> planned **2.5D diffusion model**; no 2.5D training results or clinical benefit are
+> claimed yet.
+
+## ISBI 2027 Evaluation Audit
+
+**Frozen Site-Probe Accuracy Is Not a Standalone Harmonization Score: An Audit of
+Evaluation Practice for Multi-Site MRI.** Manuscript for ISBI 2027:
+[PDF](paper/isbi2027/main.pdf) | [LaTeX source](paper/isbi2027/main.tex)
+
+The audit uses ten outputs from seven harmonization families as test cases for the
+evaluation, not as a leaderboard, on the 90 source-site test subjects:
+
+- **Probe verdicts depend on how the probe is trained.** Five probes trained with the
+  benchmark's recipe gave the same CycleGAN outputs site balanced accuracies of
+  0.13-0.59; five converged probes agreed (0.44-0.54) but found more site information
+  in eight of ten outputs.
+- **The lowest site accuracy came from the most destructive output.** The adapted HCLD
+  output scored within the shuffled-label null, with the lowest PSNR and visible loss
+  of anatomy: a counterexample for the metric, not a verdict on the published method.
+- **Small change is not target alignment.** Diffusion translation changed intensities
+  least but barely moved them toward the target site.
+- **Low frozen-probe accuracy does not establish removal.** Probes trained on
+  harmonized outputs still decoded the source site from whole heads, skull-stripped
+  brains and brain intensity histograms.
+
+| Resource | Contents |
+| --- | --- |
+| [Protocol](documentation/ISBI2027_PROTOCOL.md) | Cohort, metrics, statistics and dated amendments, each written before its outcome was seen |
+| [Results](results/isbi2027/README.md) | Versioned per-subject metrics, probe predictions and bootstrap summaries behind every number in the paper |
+| [Evaluator](scripts/eval_isbi2027.py) | Subject-level evaluation with fixed-scale PSNR, target alignment and a paired site-stratified bootstrap |
+| [Project notes](documentation/ISBI2027_HANDOFF.md) | Pipeline, artifact locations and reproduction steps |
 
 ## Why This Matters
 
@@ -38,8 +68,8 @@ HarmonIt evaluates these questions together and makes the limitations explicit.
 
 | Phase | Contribution | Status |
 | --- | --- | --- |
-| TRDP1: establish the comparison | Common slice pipeline, subject splits, site probe, baseline exports and qualitative comparisons | Experiments completed; historical metrics under review |
-| Evaluation repair | Correct metric semantics, separate translated subjects from target identities, trace generating code and artifacts | Local corrections and audit in progress |
+| TRDP1: establish the comparison | Common slice pipeline, subject splits, site probe, baseline exports and qualitative comparisons | Complete; outputs re-evaluated in the ISBI 2027 audit |
+| Evaluation audit (ISBI 2027) | Correct metric semantics, separate translated subjects from target identities, retrain and converge site probes, train probes on outputs, measure target alignment | Complete; manuscript, protocol and results in this repository |
 | TRDP2: use neighbouring anatomy | Site-conditioned diffusion with adjacent slices as context and a harmonized centre-slice output | Planned; initial design defined |
 | Volumetric validation | Full-volume export, slice continuity, segmentation consistency and regional-volume analysis | Planned |
 
@@ -69,8 +99,9 @@ NYU translation.
 
 ## Baseline Coverage
 
-The first phase explored the following families. Historical rankings are
-provisional until evaluated with the corrected, documented protocol.
+The first phase explored the following families. The ISBI 2027 audit re-evaluates
+their outputs under the corrected protocol as test cases and does not rank them;
+first-phase rankings are superseded.
 
 | Baseline | Role in the comparison |
 | --- | --- |
@@ -148,8 +179,8 @@ python scripts/eval_harmonized_npz.py --help
 | Resource | Contents |
 | --- | --- |
 | [Research direction](#from-benchmark-to-25d-diffusion) | Completed benchmark work and planned 2.5D comparison |
-| [Metrics](documentation/METRICS.md) | Implemented quantities, interpretation, and planned corrections |
-| [ISBI 2027 audit](documentation/ISBI2027_HANDOFF.md) | Status, [protocol](documentation/ISBI2027_PROTOCOL.md), [results](results/isbi2027/README.md) and [manuscript](paper/isbi2027/main.tex) |
+| [Metrics](documentation/METRICS.md) | Metric definitions, interpretation and limits |
+| [ISBI 2027 audit](#isbi-2027-evaluation-audit) | [Manuscript](paper/isbi2027/main.pdf), [protocol](documentation/ISBI2027_PROTOCOL.md), [results](results/isbi2027/README.md) and [project notes](documentation/ISBI2027_HANDOFF.md) |
 | [Baselines](documentation/BASELINES.md) and [reproducibility](documentation/REPRODUCIBILITY.md) | Method notes and reproduction commands |
 | [Preprocessing](documentation/PREPROCESSING.md) | ABIDE-to-slice pipeline |
 | [Installation](documentation/INSTALLATION.md) | Local and GPU setup |

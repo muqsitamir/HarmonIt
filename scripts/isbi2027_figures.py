@@ -27,13 +27,13 @@ import pandas as pd  # noqa: E402
 BLUE, ORANGE, AQUA, VIOLET = "#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7"
 RAW_TRAINED = "#52514e"  # neutral: blue is reserved for the frozen probe in panel (a)
 INK, MUTED, GRID, SHADE = "#0b0b0b", "#52514e", "#d9d8d4", "#f1f0ec"
-CHANCE_SOURCE = 1 / 16  # 16 source (non-NYU) sites
+CHANCE_SOURCE = 1 / 17  # uniform guess over the 17 predicted classes; BA averages the 16 source classes
 DX = .3  # horizontal offset (dB) separating probe families at one output
 LABELS = {
     "neurocombat": "NeuroCombat", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
     "stargan_aggressive": "StarGAN-A", "stargan_conservative": "StarGAN-C", "dlest_1000": "DLEST-1000",
     "dlest_1500": "DLEST-1500", "diffusion_20k": "Diff. draw 1", "diffusion_20k_redraw": "Diff. draw 2",
-    "adapted_hcld": "HCLD",
+    "adapted_hcld": "Adapted HCLD",
 }
 # Label offsets in points, chosen to avoid collisions at column width.
 OFFSETS = {"dlest_1000": (10, -3), "dlest_1500": (-4, -9), "stargan_conservative": (-40, 3),
@@ -67,8 +67,8 @@ def panel_tradeoff(ax, df):
     psnr = value(frozen, metric="psnr").set_index("method").estimate.sort_values(ascending=False)
     f_ba = value(frozen, metric="harmonized_site_ba").set_index("method")
     rows = {method: i for i, method in enumerate(psnr.index)}
-    families = (("retrained_site_probe", "best", ORANGE, "s", -.27, "benchmark recipe"),
-                ("converged_site_probe", "last", VIOLET, "D", .27, "converged recipe"))
+    families = (("retrained_site_probe", "best", ORANGE, "s", -.27, "benchmark"),
+                ("converged_site_probe", "last", VIOLET, "D", .27, "converged"))
     for family, ckpt, color, marker, offset, label in families:
         sel = src[(src.family == family) & (src.source == "raw") & (src.ckpt == ckpt) & (src.metric == "harmonized_site_ba")]
         agg = sel.groupby("method").estimate.agg(["mean", "min", "max"])

@@ -1,6 +1,6 @@
 # ISBI 2027 paper: handoff
 
-Updated 2026-09-15. Read this first when resuming. Scientific protocol and every
+Updated 2026-09-25. Read this first when resuming. Scientific protocol and every
 amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 [results/isbi2027/README.md](../results/isbi2027/README.md).
 
@@ -18,14 +18,23 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   4 shuffled + 24 slice + 6 restricted-input, plus 8 logistic fits), probes explained as a list in
   the protocol section, discussion opens with three takeaways, and slice probes are flagged as a
   conservative bound. No placeholders remain; ready for co-author review.
+- Co-author review by P. Coupé applied 2026-09-25. Title: *Frozen Site-Probe Accuracy Is Not a
+  Standalone Harmonization Score: An Audit of Evaluation Practice for Multi-Site MRI*. Chance is
+  1/17 (probes predict 17 classes; BA averages the 16 source classes) with the shuffled-label
+  null as the empirical reference; claims say "still decodable", not "concealed" or "transformed
+  signature"; 2-15 test subjects per source site and bootstrap intervals conditional on sites and
+  checkpoints are stated; "the adapted HCLD output" is a counterexample for the metric, not a
+  verdict on published HCLD; novelty is set against feature-level ComBat studies; the README and
+  METRICS.md describe the audit as complete; the AI disclosure names the tools, the affected
+  sections and the level of use.
 - Acknowledgments now carry the ABIDE-required funding acknowledgment (NIMH K23MH087770,
   R03MH096321, Stavros Niarchos and Leon Levy Foundations) and the compute resources. If a
   supervisor names a grant, add it there; otherwise the paper carries no grant line.
-- Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coup\'e if the
+- Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
-- Remaining placeholders: funding (red `\pending{Funding.}`; authors to settle with the
-  supervisor). The AI-use statement is drafted and may be edited by the authors.
+- No grant line: the only funding acknowledged is ABIDE's required one. The authors may edit the
+  AI-use statement's wording.
 - `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
   claims are wrong (pooled HCLD PSNR, raw-to-output distances read as NYU alignment,
   class-ID shuffle control). Do not reuse its numbers.
@@ -55,12 +64,13 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
    1.00) agreed (tau 0.82-0.96, ranges <= 0.16) but rated eight of ten outputs above the frozen
    probe's interval (aggressive StarGAN 0.65-0.81 vs 0.21; CycleGAN 0.44-0.54 vs 0.31) and
    reordered methods (tau with frozen 0.64-0.73).
-2. Destruction scores best: HCLD BA 0.07 (chance) under every probe, PSNR 13.9 dB, XCorr 0.71,
+2. The lowest site accuracy came from destruction: the adapted HCLD output scored BA 0.07
+   (within the shuffled-label null) under every probe, PSNR 13.9 dB, XCorr 0.71,
    moves away from NYU (dW +0.108).
 3. Change is not alignment: diffusion changes intensities least (W 0.008) but dW_NYU
    -0.0013 [-0.0023, -0.0004] (1% of raw distance); KL to NYU 0.30 -> 0.83. A second diffusion
    sampling draw differs from the first more than from the input.
-4. Hidden, not removed: head slice probes raw-trained 0.33-0.45 on outputs, output-trained
+4. Still decodable after harmonization: head slice probes raw-trained 0.33-0.45 on outputs, output-trained
    0.87-0.91 (silhouettes alone 0.73-0.86). Brain-only (amendment 7): raw-trained 0.39-0.62,
    output-trained 0.74-0.91 (disjoint for all seeds with best checkpoints, 5/9 with final);
    brain masks alone 0.52-0.54. Intensity histograms: head-level histogram matching 0.16 (looks
@@ -123,8 +133,8 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 
 ## Next steps
 
-1. Author read the revised `main.pdf` on 2026-09-15 and approved it; supervisor review and
-   funding text (the author will add it) remain.
+1. Co-author review: P. Coupé's points applied 2026-09-25; the author circulates the PDF to the
+   co-authors.
 2. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
    and the ISBI work is merged into `main`, so the paper's repository link is correct. The
    template kit matches the official one; no paid fifth page.

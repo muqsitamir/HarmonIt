@@ -23,7 +23,7 @@ ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggress
          "dlest_1000", "diffusion_20k", "diffusion_20k_redraw", "adapted_hcld"]
 TITLES = {"neurocombat": "NeuroComb.", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
           "stargan_aggressive": "StarGAN-A", "stargan_conservative": "StarGAN-C", "dlest_1000": "DLEST-1000",
-          "diffusion_20k": "Diffusion", "diffusion_20k_redraw": "Diff. draw 2", "adapted_hcld": "HCLD"}
+          "diffusion_20k": "Diffusion", "diffusion_20k_redraw": "Diff. draw 2", "adapted_hcld": "Adapted HCLD"}
 SHORT = {"histogram_matching": "Hist. match.", "diffusion_20k": "Diff. draw 1", "diffusion_20k_redraw": "Diff. draw 2"}
 DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#184f95", "#f0efec", "#a8322f"])
 
