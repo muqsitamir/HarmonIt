@@ -5,13 +5,6 @@
 \usepackage{hyperref}
 \urlstyle{same}
 
-% Allow LaTeX to pack more floats per page; the defaults push the wide figure onto a page of its own.
-\setcounter{topnumber}{3}
-\setcounter{totalnumber}{4}
-\renewcommand{\topfraction}{0.92}
-\renewcommand{\textfraction}{0.06}
-\renewcommand{\floatpagefraction}{0.8}
-
 % Red marker for numbers that await running experiments; must be empty before submission.
 \newcommand{\pending}[1]{\textcolor{red}{[#1]}}
 
@@ -47,42 +40,29 @@ Acquisition differences between sites confound pooled MRI analyses and degrade m
 
 Each proxy measures less than it appears to. A frozen probe reports what one classifier recovers; it can also fail because outputs are unfamiliar, damaged or noisy. Removing an attribute until a fixed adversary fails does not stop a newly trained classifier from recovering it~\cite{elazar2018adversarial}, and for harmonized features site classifiers retrained after ComBat still predicted site above chance~\cite{marzi2024efficacy}. Site is also decodable at about 0.9 balanced accuracy from frozen, even randomly initialized, encoders, so the signal lies partly in low-level image statistics~\cite{rahbar2026fingerprints}. Similarity to the input rewards doing nothing, and a small input-to-output distance says nothing about the target site.
 
-We audit these practices on outputs of seven harmonization families. Contributions: (1) a subject-level protocol with paired uncertainty, probe controls and target alignment measured apart from change; (2) evidence that probe verdicts depend on how the probe was trained, that the lowest site accuracy can signal destruction, and that small change does not imply alignment; (3) a test of removed versus hidden site information using probes trained on harmonized images, with geometry-only, intensity-only and brain-only controls; and (4) a reporting checklist.\footnote{Code, the evaluation protocol with all amendments, and per-subject results: \url{https://github.com/muqsitamir/HarmonIt}.} We neither propose nor rank harmonizers.
+We audit these practices on outputs of seven harmonization families. Contributions: (1) a subject-level protocol with paired uncertainty, valid probe controls, separate reporting of target-site subjects, and target alignment measured apart from change; (2) evidence that probe verdicts depend on how the probe was trained, that the lowest site accuracy can signal destruction, and that small change does not imply alignment; (3) a test of removed versus hidden site information using probes trained on harmonized images, with geometry-only, intensity-only and brain-only controls; and (4) a reporting checklist.\footnote{Code, the evaluation protocol with all amendments, and per-subject results: \url{https://github.com/muqsitamir/HarmonIt}.} We neither propose nor rank harmonizers.
 
 \section{Data and Audited Outputs}
 \label{sec:data}
 \textbf{Cohort.} Raw ABIDE~I T1-weighted scans~\cite{dimartino2014abide} of 1,112 subjects from 17 sites are split by subject, stratified by site, into 890 training, 113 validation and 109 test subjects. Volumes are reoriented, clipped to $[p_1,p_{99}]$ and scaled to $[0,1]$; one axial slice per subject is chosen by foreground area, cropped to a dilated head mask and resized to $256\times256$. NYU, the largest site, is the target; 19 test subjects are from NYU and 90 from 16 source sites. Exact ties made slice choice host-dependent, so slices are frozen and verified for every output. The label is coarser than the acquisition: ABIDE~I releases UM, UCLA and Leuven as two sub-samples each, merged by our labels, and 11 of 17 sites hold more than one voxel size or matrix (UCLA includes 10 scans at 1.5$\times$1.5$\times$4~mm); no per-subject scanner identifier is released.
 
-\textbf{Audited outputs.} Earlier benchmark outputs were evaluated without retraining: NeuroCombat~\cite{johnson2007combat,fortin2018harmonization} per pixel, fit on the test cohort itself (transductive); histogram matching of foreground quantiles to a pooled 17-site training reference~\cite{nyul2000standardization}; CycleGAN~\cite{zhu2017cyclegan}; StarGAN~\cite{choi2018stargan}, aggressive and conservative; DLEST~\cite{wu2025dlest} after 1,000 and 1,500 steps; conditional diffusion image-to-image translation~\cite{ho2020ddpm,meng2022sdedit} (strength 0.35, 50 DDIM steps); and adapted volumetric HCLD~\cite{wu2026hcld}. Learned methods were trained on the training split; Fig.~\ref{fig:qualitative} shows one test subject across outputs. Test subjects were inspected in the earlier benchmark, so this is a retrospective reanalysis; each audit experiment was written into a protocol before its outcome was seen, recording what had been observed.
+\textbf{Audited outputs.} Earlier benchmark outputs were evaluated without retraining: NeuroCombat~\cite{johnson2007combat,fortin2018harmonization} per pixel, fit on the test cohort itself (transductive); histogram matching of foreground quantiles to a pooled 17-site training reference~\cite{nyul2000standardization}; CycleGAN~\cite{zhu2017cyclegan}; StarGAN~\cite{choi2018stargan}, aggressive and conservative; DLEST~\cite{wu2025dlest} after 1,000 and 1,500 steps; conditional diffusion image-to-image translation~\cite{ho2020ddpm,meng2022sdedit} (strength 0.35, 50 DDIM steps); and adapted volumetric HCLD~\cite{wu2026hcld}. Learned methods were trained on the training split. Test subjects were inspected in the earlier benchmark, so this is a retrospective reanalysis; each audit experiment was written into a protocol before its outcome was seen, recording what had been observed.
 
 \section{Audit Protocol}
 \label{sec:protocol}
-\textbf{Change and target alignment.} PSNR on a fixed $[0,1]$ scale and normalized cross-correlation (XCorr) compare output with input on whole images; generators return NYU inputs almost unchanged, so we summarize the 90 source subjects. \emph{Change} is the per-subject Wasserstein-1 distance $W$ between input and output intensities. \emph{Target alignment} is the Wasserstein-1 distance and KL divergence between foreground intensities (defined on the raw slice) and a reference from the 147 NYU training subjects; $\Delta W_{\mathrm{NYU}}$ is the output's distance minus the input's.
+\textbf{Change and target alignment.} PSNR on a fixed $[0,1]$ scale and normalized cross-correlation (XCorr) compare output with input on whole images; generators return NYU inputs almost unchanged (PSNR infinite or above 150~dB), so we summarize the 90 source subjects. \emph{Change} is the per-subject Wasserstein-1 distance $W$ between input and output intensities. \emph{Target alignment} is the Wasserstein-1 distance and KL divergence between foreground intensities (defined on the raw slice) and a reference from the 147 NYU training subjects; $\Delta W_{\mathrm{NYU}}$ is the output's distance minus the input's.
 
-\textbf{Site probes.} All probes are single-channel ResNet-18 networks~\cite{he2016resnet} predicting 17 sites, trained with AdamW (learning rate $3\times10^{-4}$, batch 64, 500 steps) and random affine augmentation; Table~\ref{tab:probes} lists them. \emph{Benchmark-recipe} probes repeat the earlier benchmark's training (seeds 42, 1--4); \emph{converged} probes (seeds 5--9) use four times the steps with cosine learning-rate decay and are tested at the final epoch. \emph{Slice probes} (seeds 1--3) see one fixed slice per subject, taken from raw images or from one method's outputs, for three methods chosen in advance to span intensity, adversarial and diffusion families. Brain-only variants first multiply raw and harmonized slices by the raw volume's HD-BET brain mask~\cite{isensee2019hdbet}. Each probe is selected on validation BA from its own source and evaluated once. The converged, silhouette, histogram and brain-only experiments were added after earlier results and before their own, as the protocol records.
+\textbf{Site probes.} All probes are single-channel ResNet-18 networks~\cite{he2016resnet} predicting 17 sites, trained with AdamW (learning rate $3\times10^{-4}$, batch 64, 500 steps) and random affine augmentation, each selected on validation BA from its own training source and evaluated once. We train 44 of them in five families:
+\begin{list}{}{\setlength{\leftmargin}{1em}\setlength{\itemindent}{0pt}\setlength{\topsep}{2pt}\setlength{\itemsep}{1pt}\setlength{\parsep}{0pt}}
+\item \emph{Frozen} (1): the earlier benchmark's own checkpoint.
+\item \emph{Benchmark recipe} (5 seeds): that training repeated on raw volumes. Does the seed change the verdict?
+\item \emph{Converged} (5 seeds): four times the steps with cosine decay, tested at the final epoch. Does a converged probe agree?
+\item \emph{Shuffled labels} (4): labels permuted between subjects. Is the probe reading images, not labels?
+\item \emph{Slice probes} (24, with 14 restricted-input networks and 8 logistic fits): one fixed slice per subject, from raw images or from one method's outputs. Removed or hidden? Restricted variants see only head silhouettes or brain masks (geometry), only foreground intensity histograms (intensity), or slices masked by the raw volume's HD-BET brain mask~\cite{isensee2019hdbet}.
+\end{list}
+The three methods behind the slice probes were chosen in advance to span intensity, adversarial and diffusion families. The converged, silhouette, histogram and brain-only experiments were added after earlier results and before their own, as the protocol records.
 
-\begin{table}[!ht]
-\centering
-\caption{Probes in the audit: 45 networks, 44 trained here, and 8 logistic fits. Counts in brackets pool whole-head and brain-only variants.}
-\label{tab:probes}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}p{1.75cm}p{2.1cm}p{3.5cm}@{}}
-\toprule
-Probes & Trained on & Question it answers \\
-\midrule
-Frozen (1) & raw volumes & what the benchmark reports \\
-Benchmark recipe (5) & raw volumes & does the seed change the verdict? \\
-Converged (5) & raw volumes & does a converged probe agree? \\
-Shuffled labels (4) & permuted labels & is the probe reading images, not labels? \\
-Slice (24) & raw slices, then one method's outputs & removed or hidden? \\
-Restricted input (14) & silhouettes, brain masks, or foreground histograms & which channel carries site? \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Statistics.} Source BA is macro-averaged over the 16 source sites (chance 1/16). Intervals are 95\% percentiles of 2,000 bootstrap replicates resampling subjects within site, shared across methods and probes, and conditional on fixed checkpoints.
-
+\textbf{Statistics.} Source BA is macro-averaged over the 16 source sites (chance 1/16). Intervals are 95\% percentiles of 2,000 bootstrap replicates resampling subjects within site, shared across methods and probes (paired) and conditional on fixed checkpoints.
 
 \begin{table*}[t]
 \centering
@@ -93,16 +73,6 @@ Restricted input (14) & silhouettes, brain masks, or foreground histograms & whi
 \input{tables/table_main.tex}
 \end{table*}
 
-
-
-% Variants kept: fig_qualitative.pdf (column width) and fig_qualitative_rows2.pdf (with difference maps).
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_qualitative_wide.pdf}
-\caption{Source test subject with median PSNR over all outputs; insets are a $2\times$ zoom of the boxed region and each panel gives this subject's PSNR. HCLD loses anatomy; the two diffusion draws differ in texture.}
-\label{fig:qualitative}
-\end{figure*}
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/fig_probe_verdicts.pdf}
@@ -110,11 +80,19 @@ Restricted input (14) & silhouettes, brain masks, or foreground histograms & whi
 \label{fig:verdicts}
 \end{figure}
 
+% figures/fig_qualitative.pdf is the column-width variant, kept for a tighter layout.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_qualitative_wide.pdf}
+\caption{Source test subject with median PSNR over all outputs; insets are a $2\times$ zoom of the boxed region. Bottom: output minus input, with this subject's PSNR. HCLD loses anatomy; diffusion adds texture that differs between draws.}
+\label{fig:qualitative}
+\end{figure*}
+
 \section{Results}
 \label{sec:results}
 \textbf{Probe validity.} On raw source images the frozen probe reached BA 0.95 [0.90, 1.00], benchmark-recipe probes 0.81--0.98 and converged probes 1.00; shuffled-label controls scored 0.03. Probes learn site-related structure, not necessarily scanner appearance: head silhouettes alone gave 0.73--0.86.
 
-\textbf{Verdicts depend on probe training.} Benchmark-recipe probes assigned very different site BA to the same outputs (Table~\ref{tab:main}, Fig.~\ref{fig:verdicts}a): CycleGAN 0.13--0.59 and aggressive StarGAN 0.18--0.54, with Kendall $\tau$ 0.51--0.87 between method orderings. Their validation BA fluctuated between epochs, and raw accuracy did not reveal it: the probe with raw BA 0.98 gave CycleGAN 0.20. Converged probes (validation BA within 0.035 over the last five epochs) agreed ($\tau$ 0.82--0.96; per-output ranges at most 0.16, within the widest single-probe interval of 0.18), but every converged probe exceeded the frozen probe's interval on all outputs except HCLD and NeuroCombat: aggressive StarGAN 0.65--0.81 (frozen 0.21), CycleGAN 0.44--0.54 (0.31) and DLEST 0.95--1.00 (0.67--0.71). Orderings changed ($\tau$ 0.64--0.73 with the frozen probe), which placed aggressive StarGAN second lowest and converged probes above histogram matching. A probe that has not converged overstates harmonization.
+\textbf{Verdicts depend on probe training.} Benchmark-recipe probes assigned very different site BA to the same outputs (Table~\ref{tab:main}, Fig.~\ref{fig:verdicts}a): CycleGAN 0.13--0.59 and aggressive StarGAN 0.18--0.54, with Kendall $\tau$ 0.51--0.87 between method orderings. Their validation BA fluctuated between epochs (e.g.\ 0.88, 0.50, 0.87), and raw accuracy did not reveal it: the probe with raw BA 0.98 gave CycleGAN 0.20. Converged probes (validation BA within 0.035 over the last five epochs) agreed ($\tau$ 0.82--0.96; per-output ranges at most 0.16, within the widest single-probe interval of 0.18), but every converged probe exceeded the frozen probe's interval on all outputs except HCLD and NeuroCombat: aggressive StarGAN 0.65--0.81 (frozen 0.21), CycleGAN 0.44--0.54 (0.31) and DLEST 0.95--1.00 (0.67--0.71). Orderings changed ($\tau$ 0.64--0.73 with the frozen probe), which placed aggressive StarGAN second lowest and converged probes above histogram matching. A probe that has not converged overstates harmonization.
 
 \textbf{The lowest site accuracy came from destruction.} HCLD reached BA 0.07 [0.06, 0.08] under the frozen probe and 0.06--0.11 under every retrained probe, at chance, with the lowest PSNR (13.9~dB) and XCorr (0.71), visible loss of anatomy (Fig.~\ref{fig:qualitative}), and intensities moved away from the target ($\Delta W_{\mathrm{NYU}}=+0.108$).
 
@@ -138,7 +116,6 @@ This retrospective study used open-access human data from ABIDE~I~\cite{dimartin
 \label{sec:acknowledgments}
 This study used ABIDE~I, whose collection was supported by NIMH grants K23MH087770 and R03MH096321, the Stavros Niarchos and Leon Levy Foundations. Experiments used GPU resources of the VPU Lab (UAM). The authors have no relevant financial or non-financial interests to disclose. Generative AI tools (OpenAI Codex, Anthropic Claude) assisted with analysis code and drafting; the authors verified and take full responsibility for all code, results and text.
 
-% Tighter reference spacing: content-preserving way to keep the paper at four pages.
 \let\oldthebibliography\thebibliography
 \renewcommand{\thebibliography}[1]{\oldthebibliography{#1}%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}

@@ -96,7 +96,7 @@ def panel_tradeoff(ax, df):
               ncol=1, frameon=False, handletextpad=.2, borderaxespad=.2, labelspacing=.2, fontsize=5.8)
 
 
-def panel_adversary(ax, df, hist, family, control, title, xlabels=True):
+def panel_adversary(ax, df, hist, family, control, title):
     """One input restriction (whole head or brain only): raw-trained -> output-trained probes.
 
     Grey = probe trained on raw images, aqua = probe trained on that method's outputs; circles are
@@ -138,7 +138,7 @@ def panel_adversary(ax, df, hist, family, control, title, xlabels=True):
         ]
         ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(-.02, 1.04), ncol=3, frameon=False,
                   handletextpad=.2, columnspacing=.8, borderaxespad=0, labelspacing=.15, fontsize=6)
-    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diff. draw 2"] if xlabels else [""] * len(ADVERSARY))
+    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diff. draw 2"])
     ax.set_xlim(-.5, len(ADVERSARY) - .5)
     ax.set_ylim(0, 1.05)
     ax.grid(axis="y", color=GRID, lw=.4)
@@ -155,14 +155,16 @@ def main():
     df = pd.read_csv(args.csv)
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    fig = plt.figure(figsize=(3.39, 4.0))
-    ax_a = fig.add_axes([.345, .680, .625, .275])
-    ax_b = fig.add_axes([.165, .400, .80, .175])
-    ax_c = fig.add_axes([.165, .130, .80, .175])
+    fig = plt.figure(figsize=(3.39, 4.45))
+    ax_a = fig.add_axes([.345, .670, .625, .270])
+    ax_b = fig.add_axes([.165, .411, .80, .162])
+    ax_c = fig.add_axes([.165, .139, .80, .162])
     panel_tradeoff(ax_a, df)
     load = lambda path: json.loads(Path(path).read_text())
-    panel_adversary(ax_b, df, load(args.histogram_probe), "slice_probe", "silhouette", "(b) whole head", xlabels=False)
+    panel_adversary(ax_b, df, load(args.histogram_probe), "slice_probe", "silhouette", "(b) whole head")
     panel_adversary(ax_c, df, load(args.histogram_probe_brain), "brain_slice_probe", "brain_shape", "(c) brain only")
+    for ax in (ax_b, ax_c):
+        ax.set_ylabel("Site BA on outputs", fontsize=6.5)
     handles = [
         plt.Line2D([], [], ls="", marker="o", ms=3.6, color=RAW_TRAINED, label="trained on raw"),
         plt.Line2D([], [], ls="", marker="o", ms=3.6, color=AQUA, label="trained on outputs"),
