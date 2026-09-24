@@ -23,6 +23,7 @@ artifacts (image NPZs, checkpoints) stay on vpulab under
 | `analysis/histogram_probe_brain.json` | Amendment 7 intensity-only probe with brain-mask foreground. |
 | `brain_probes/<source>_seed<S>/` | Amendment 7 brain-only slice-probe configs and histories. |
 | `exports/brain/brain_mask_report.json` | Amendment 7 gate: raw-slice reproduction and brain-to-head area ratios. |
+| `analysis/acquisition_heterogeneity.json`, `analysis/acquisition_per_subject.csv` | Amendment 8: voxel size and matrix per subject, and per-site counts of distinct acquisition geometries (`scripts/isbi2027_acquisition_heterogeneity.py`). |
 | `logs/` | Converged-probe training logs (validation BA per epoch) and the volume-cache verification report. |
 
 ## Run names

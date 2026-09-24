@@ -71,6 +71,7 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 | Normalized-volume cache (vpulab, local disk) | `/home/mmi/cache/isbi2027_volumes` (46 GB, train+val; `cache_report.json`) |
 | HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks `/mnt/rhome/mmi/projects/isbi2027/brain_masks/hdbet` |
 | Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/` (masks, masked train/val, brain_shape), `isbi2027/brain_probes/`, log `isbi2027/brain_run.log` |
+| Figure variants | `paper/isbi2027/figures/fig_qualitative.pdf` is the column-width version used in the paper; `fig_qualitative_wide.pdf` is the full-width variant for a journal version |
 | LaTeX (Mac) | TinyTeX in `~/Library/TinyTeX` (not on PATH); `bash paper/isbi2027/build.sh` |
 
 vpulab notes: set `https_proxy=http://192.168.22.3:8080` for downloads (the system value uses
@@ -92,11 +93,15 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 | Intensity-only probe | `scripts/isbi2027_histogram_probe.py` (`--brain-masks` for amendment 7) |
 | Converged probes (amendment 6) | `cache_normalized_volumes.py`; `RECIPE=converged VOLUME_CACHE_DIR=... SEEDS="5 6 7 8 9" vpulab_isbi2027_probe_seeds.sh`; `isbi2027_converged.py` |
 | Brain-only control (amendment 7) | `run_hdbet_masks.py` (hdbet env), then `vpulab_isbi2027_brain.sh` (`make_brain_npz.py`, slice probes, `eval_isbi2027.py --probe-input-mask`) |
+| Cohort acquisition heterogeneity (amendment 8) | `isbi2027_acquisition_heterogeneity.py` (runs locally; needs the NIfTI files) |
 | Collect, agreement, table, figures | `isbi2027_collect.py`, `isbi2027_probe_agreement.py`, `isbi2027_tables.py`, `isbi2027_figures.py`, `isbi2027_qualitative.py` |
 | Metric functions and tests | `src/harmonit/metrics/subject_evaluation.py`, `tests/test_isbi_evaluation.py` |
 
 ## Known caveats (all stated in the protocol or paper)
 
+- Site labels are coarser than the acquisition: 11 of 17 sites hold more than one voxel size or
+  matrix, UM/UCLA/Leuven merge two released sub-samples each, and 10 UCLA training scans are
+  1.5x1.5x4 mm. No per-subject scanner identifier exists in ABIDE I (amendment 8).
 - Fixed-slice selection has exact ties (4/109 test subjects); slices are frozen in
   `configs/isbi2027/test_slice_indices.json`, and the evaluator rejects mismatches.
 - Diffusion img2img start noise is not reproducible across GPUs; its outputs are a draw.

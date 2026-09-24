@@ -36,6 +36,7 @@ def main():
     p.add_argument("--show", nargs="+", help="Outputs to display (default all); selection still uses all")
     p.add_argument("--width", type=float, default=7.0, help="Figure width in inches")
     p.add_argument("--height", type=float, help="Figure height in inches (default from width)")
+    p.add_argument("--zoom-box", type=int, default=64, help="Side of the zoomed region in pixels; 0 disables")
     args = p.parse_args()
     run = Path(args.eval_run)
     protocol = json.loads((run / "protocol.json").read_text())
@@ -57,28 +58,49 @@ def main():
             assert str(data["subject_ids"][row]) == subject
             images[m] = data["images"][row, 0]
 
+    # Display window from the input's own foreground, shared by every panel, so panels are comparable
+    # and dark scans stay readable; metrics are always computed on the unscaled images.
+    foreground = raw > 0.02
+    vmax = float(np.percentile(raw[foreground], 99.5)) if foreground.any() else 1.0
+    rows, cols_idx = np.nonzero(foreground)
+    centre = (int(rows.mean()), int(cols_idx.mean()))
+    half = args.zoom_box // 2
+    r0 = int(np.clip(centre[0] - half, 0, raw.shape[0] - args.zoom_box)) if args.zoom_box else 0
+    c0 = int(np.clip(centre[1] - half, 0, raw.shape[1] - args.zoom_box)) if args.zoom_box else 0
+    crop = lambda img: img[r0:r0 + args.zoom_box, c0:c0 + args.zoom_box]
+
     plt.rcParams.update({"font.size": 6, "font.family": "DejaVu Sans", "pdf.fonttype": 42})
     shown = [m for m in methods if not args.show or m in args.show]
     cols = len(shown) + 1
     size = 5 if args.show else 6
     fig, axes = plt.subplots(2, cols, figsize=(args.width, args.height or args.width * 2 / cols * 1.12),
                              gridspec_kw=dict(wspace=.04, hspace=.06))
-    axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=1)
+    axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=vmax)
     axes[0, 0].set_title("Input", fontsize=size, pad=2)
     axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=size, color="#52514e",
                     transform=axes[1, 0].transAxes)
     psnr = table[table.subject_id == subject].set_index("method").psnr
     for j, m in enumerate(shown, start=1):
-        axes[0, j].imshow(np.clip(images[m], 0, 1), cmap="gray", vmin=0, vmax=1)
+        axes[0, j].imshow(np.clip(images[m], 0, 1), cmap="gray", vmin=0, vmax=vmax)
         axes[0, j].set_title((SHORT if args.show else {}).get(m, TITLES[m]), fontsize=size, pad=2)
         diff = axes[1, j].imshow(images[m] - raw, cmap=DIVERGING, vmin=-args.limit, vmax=args.limit)
         axes[1, j].text(.03, .04, f"{psnr[m]:.1f} dB", color="#0b0b0b", fontsize=size - 0.5, transform=axes[1, j].transAxes)
+    if args.zoom_box:  # 2x inset of a fixed central region, so anatomy is legible at print size
+        for j, img in enumerate([raw] + [np.clip(images[m], 0, 1) for m in shown]):
+            inset = axes[0, j].inset_axes([.5, .0, .5, .5])
+            inset.imshow(crop(img), cmap="gray", vmin=0, vmax=vmax)
+            inset.set_xticks([]), inset.set_yticks([])
+            for spine in inset.spines.values():
+                spine.set_edgecolor("white"), spine.set_linewidth(.6)
+        axes[0, 0].add_patch(plt.Rectangle((c0, r0), args.zoom_box, args.zoom_box, fill=False,
+                                           edgecolor="white", lw=.6))
     for ax in axes.ravel():
         ax.set_xticks([]), ax.set_yticks([])
         for spine in ax.spines.values():
             spine.set_visible(False)
     bar = fig.colorbar(diff, ax=axes[1, :].tolist(), fraction=.012, pad=.005)
     bar.ax.tick_params(labelsize=5, length=2)
+    bar.set_label("output $-$ input", size=size - 0.5, color="#52514e")
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out, bbox_inches="tight", pad_inches=.01)
     fig.savefig(Path(args.out).with_suffix(".png"), dpi=300, bbox_inches="tight", pad_inches=.01)

@@ -1,0 +1,459 @@
+{
+  "n_subjects": 1112,
+  "n_sites": 17,
+  "sites_with_multiple_geometries": 11,
+  "heterogeneous_sites": [
+    "CMU",
+    "Caltech",
+    "KKI",
+    "MaxMun",
+    "OHSU",
+    "Olin",
+    "Trinity",
+    "UCLA",
+    "UM",
+    "USM",
+    "Yale"
+  ],
+  "non_isotropic_or_thick_slice": {
+    "criterion": "largest voxel dimension >= 3 mm",
+    "n": 10,
+    "subjects": [
+      "UCLA_51232",
+      "UCLA_51233",
+      "UCLA_51242",
+      "UCLA_51243",
+      "UCLA_51244",
+      "UCLA_51245",
+      "UCLA_51246",
+      "UCLA_51247",
+      "UCLA_51270",
+      "UCLA_51310"
+    ],
+    "by_split": {
+      "train": 10
+    },
+    "sites": [
+      "UCLA"
+    ]
+  },
+  "note": "ABIDE I releases UM, UCLA and Leuven as two sub-samples each; the manifest merges them, so one label can cover more than one acquisition protocol.",
+  "per_site": {
+    "CMU": {
+      "n": 27,
+      "distinct_geometries": 13,
+      "dominant": "1 x 1 x 1 mm, 176 x 256 x 256",
+      "dominant_fraction": 0.556,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 176 x 256 x 256",
+          "n": 15
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 170 x 217 x 151",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 171 x 218 x 147",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 173 x 228 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 169 x 215 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 161 x 200 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 173 x 218 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 164 x 204 x 126",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 168 x 213 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 169 x 194 x 155",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 168 x 218 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 171 x 209 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 168 x 215 x 200",
+          "n": 1
+        }
+      ]
+    },
+    "Caltech": {
+      "n": 38,
+      "distinct_geometries": 3,
+      "dominant": "1 x 1 x 1 mm, 176 x 256 x 256",
+      "dominant_fraction": 0.947,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 176 x 256 x 256",
+          "n": 36
+        },
+        {
+          "geometry": "1 x 0.973 x 0.973 mm, 176 x 240 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 0.9 mm, 256 x 224 x 176",
+          "n": 1
+        }
+      ]
+    },
+    "KKI": {
+      "n": 55,
+      "distinct_geometries": 4,
+      "dominant": "1 x 1 x 1 mm, 256 x 200 x 256",
+      "dominant_fraction": 0.8,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 200 x 256",
+          "n": 44
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 180 x 256",
+          "n": 7
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 190 x 256",
+          "n": 3
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 170 x 256",
+          "n": 1
+        }
+      ]
+    },
+    "Leuven": {
+      "n": 64,
+      "distinct_geometries": 1,
+      "dominant": "0.977 x 1.2 x 0.977 mm, 256 x 182 x 256",
+      "dominant_fraction": 1.0,
+      "geometries": [
+        {
+          "geometry": "0.977 x 1.2 x 0.977 mm, 256 x 182 x 256",
+          "n": 64
+        }
+      ]
+    },
+    "MaxMun": {
+      "n": 57,
+      "distinct_geometries": 4,
+      "dominant": "1 x 1 x 1 mm, 160 x 240 x 256",
+      "dominant_fraction": 0.754,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 160 x 240 x 256",
+          "n": 43
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 144 x 240 x 256",
+          "n": 8
+        },
+        {
+          "geometry": "1 x 0.977 x 0.977 mm, 160 x 256 x 256",
+          "n": 5
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 160 x 239 x 155",
+          "n": 1
+        }
+      ]
+    },
+    "NYU": {
+      "n": 184,
+      "distinct_geometries": 1,
+      "dominant": "1.33 x 1 x 1 mm, 128 x 256 x 256",
+      "dominant_fraction": 1.0,
+      "geometries": [
+        {
+          "geometry": "1.33 x 1 x 1 mm, 128 x 256 x 256",
+          "n": 184
+        }
+      ]
+    },
+    "OHSU": {
+      "n": 28,
+      "distinct_geometries": 3,
+      "dominant": "1.1 x 1 x 1 mm, 160 x 239 x 200",
+      "dominant_fraction": 0.929,
+      "geometries": [
+        {
+          "geometry": "1.1 x 1 x 1 mm, 160 x 239 x 200",
+          "n": 26
+        },
+        {
+          "geometry": "1.1 x 1 x 1 mm, 160 x 238 x 200",
+          "n": 1
+        },
+        {
+          "geometry": "1.1 x 1 x 1 mm, 160 x 239 x 189",
+          "n": 1
+        }
+      ]
+    },
+    "Olin": {
+      "n": 36,
+      "distinct_geometries": 2,
+      "dominant": "1 x 1 x 1 mm, 208 x 256 x 176",
+      "dominant_fraction": 0.972,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 208 x 256 x 176",
+          "n": 35
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 176 x 256 x 176",
+          "n": 1
+        }
+      ]
+    },
+    "Pitt": {
+      "n": 57,
+      "distinct_geometries": 1,
+      "dominant": "1.05 x 1.051 x 1.051 mm, 176 x 256 x 256",
+      "dominant_fraction": 1.0,
+      "geometries": [
+        {
+          "geometry": "1.05 x 1.051 x 1.051 mm, 176 x 256 x 256",
+          "n": 57
+        }
+      ]
+    },
+    "SBL": {
+      "n": 30,
+      "distinct_geometries": 1,
+      "dominant": "1 x 1 x 1 mm, 256 x 256 x 170",
+      "dominant_fraction": 1.0,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 256 x 170",
+          "n": 30
+        }
+      ]
+    },
+    "SDSU": {
+      "n": 36,
+      "distinct_geometries": 1,
+      "dominant": "1 x 1 x 1 mm, 172 x 256 x 256",
+      "dominant_fraction": 1.0,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 172 x 256 x 256",
+          "n": 36
+        }
+      ]
+    },
+    "Stanford": {
+      "n": 40,
+      "distinct_geometries": 1,
+      "dominant": "0.859 x 1.5 x 0.859 mm, 256 x 132 x 256",
+      "dominant_fraction": 1.0,
+      "geometries": [
+        {
+          "geometry": "0.859 x 1.5 x 0.859 mm, 256 x 132 x 256",
+          "n": 40
+        }
+      ]
+    },
+    "Trinity": {
+      "n": 49,
+      "distinct_geometries": 2,
+      "dominant": "1 x 1 x 1 mm, 160 x 256 x 256",
+      "dominant_fraction": 0.98,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 160 x 256 x 256",
+          "n": 48
+        },
+        {
+          "geometry": "1 x 0.931 x 0.931 mm, 160 x 288 x 288",
+          "n": 1
+        }
+      ]
+    },
+    "UCLA": {
+      "n": 109,
+      "distinct_geometries": 5,
+      "dominant": "1.2 x 1 x 1 mm, 160 x 240 x 256",
+      "dominant_fraction": 0.881,
+      "geometries": [
+        {
+          "geometry": "1.2 x 1 x 1 mm, 160 x 240 x 256",
+          "n": 96
+        },
+        {
+          "geometry": "1.5 x 1.5 x 4 mm, 128 x 128 x 34",
+          "n": 10
+        },
+        {
+          "geometry": "1 x 0.977 x 0.977 mm, 176 x 214 x 205",
+          "n": 1
+        },
+        {
+          "geometry": "1.2 x 0.961 x 0.961 mm, 160 x 240 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 0.977 x 0.977 mm, 176 x 256 x 256",
+          "n": 1
+        }
+      ]
+    },
+    "UM": {
+      "n": 145,
+      "distinct_geometries": 21,
+      "dominant": "1.016 x 1.016 x 1.2 mm, 256 x 256 x 124",
+      "dominant_fraction": 0.421,
+      "geometries": [
+        {
+          "geometry": "1.016 x 1.016 x 1.2 mm, 256 x 256 x 124",
+          "n": 61
+        },
+        {
+          "geometry": "1.016 x 1.016 x 1.4 mm, 256 x 256 x 102",
+          "n": 33
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 106 x 256 x 256",
+          "n": 15
+        },
+        {
+          "geometry": "1 x 1 x 1.4 mm, 256 x 256 x 102",
+          "n": 9
+        },
+        {
+          "geometry": "1 x 1 x 1.4 mm, 256 x 256 x 106",
+          "n": 6
+        },
+        {
+          "geometry": "1 x 1 x 1.2 mm, 256 x 256 x 124",
+          "n": 3
+        },
+        {
+          "geometry": "1 x 1 x 1.4 mm, 256 x 256 x 112",
+          "n": 2
+        },
+        {
+          "geometry": "1.016 x 1.016 x 1.2 mm, 256 x 256 x 116",
+          "n": 2
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 120 x 256 x 256",
+          "n": 2
+        },
+        {
+          "geometry": "1 x 1 x 1.2 mm, 256 x 256 x 116",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1.4 mm, 256 x 256 x 120",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1.4 mm, 256 x 256 x 115",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1.4 mm, 256 x 256 x 118",
+          "n": 1
+        },
+        {
+          "geometry": "1.016 x 1.016 x 1.4 mm, 256 x 256 x 116",
+          "n": 1
+        },
+        {
+          "geometry": "1.016 x 1.016 x 1.4 mm, 256 x 256 x 112",
+          "n": 1
+        },
+        {
+          "geometry": "1.4 x 0.86 x 0.86 mm, 106 x 256 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 102 x 256 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 105 x 256 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 116 x 256 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 112 x 256 x 256",
+          "n": 1
+        },
+        {
+          "geometry": "1.4 x 1 x 1 mm, 110 x 256 x 256",
+          "n": 1
+        }
+      ]
+    },
+    "USM": {
+      "n": 101,
+      "distinct_geometries": 4,
+      "dominant": "1.2 x 0.5 x 0.5 mm, 160 x 480 x 512",
+      "dominant_fraction": 0.97,
+      "geometries": [
+        {
+          "geometry": "1.2 x 0.5 x 0.5 mm, 160 x 480 x 512",
+          "n": 98
+        },
+        {
+          "geometry": "1.2 x 0.5 x 0.5 mm, 153 x 441 x 400",
+          "n": 1
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 256 x 160",
+          "n": 1
+        },
+        {
+          "geometry": "1.2 x 0.5 x 0.5 mm, 160 x 463 x 347",
+          "n": 1
+        }
+      ]
+    },
+    "Yale": {
+      "n": 56,
+      "distinct_geometries": 3,
+      "dominant": "1 x 1 x 1 mm, 160 x 256 x 256",
+      "dominant_fraction": 0.911,
+      "geometries": [
+        {
+          "geometry": "1 x 1 x 1 mm, 160 x 256 x 256",
+          "n": 51
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 176 x 256 x 256",
+          "n": 4
+        },
+        {
+          "geometry": "1 x 1 x 1 mm, 256 x 256 x 160",
+          "n": 1
+        }
+      ]
+    }
+  }
+}

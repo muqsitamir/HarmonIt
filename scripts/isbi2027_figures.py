@@ -25,6 +25,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 BLUE, ORANGE, AQUA, VIOLET = "#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7"
+RAW_TRAINED = "#52514e"  # neutral: blue is reserved for the frozen probe in panel (a)
 INK, MUTED, GRID, SHADE = "#0b0b0b", "#52514e", "#d9d8d4", "#f1f0ec"
 CHANCE_SOURCE = 1 / 16  # 16 source (non-NYU) sites
 DX = .3  # horizontal offset (dB) separating probe families at one output
@@ -74,7 +75,7 @@ def panel_tradeoff(ax, df):
         y = np.array([rows[m] for m in agg.index]) + offset
         ax.hlines(y, agg["min"], agg["max"], color=color, lw=1.1, zorder=2)
         ax.scatter(agg["mean"], y, s=11, marker=marker, color=color, edgecolor="white", lw=.4, zorder=3,
-                   label=f"{label} (mean, range, 5 seeds)")
+                   label=f"{label} (5 seeds)")
     y = np.array([rows[m] for m in f_ba.index])
     ax.hlines(y, f_ba.ci_low, f_ba.ci_high, color=BLUE, lw=1.1, zorder=2)
     ax.scatter(f_ba.estimate, y, s=14, marker="o", color=BLUE, edgecolor="white", lw=.4, zorder=3,
@@ -90,57 +91,53 @@ def panel_tradeoff(ax, df):
     ax.grid(axis="x", color=GRID, lw=.4)
     handles, labels = ax.get_legend_handles_labels()
     order = [labels.index(l) for l in sorted(labels, key=lambda s: not s.startswith("frozen"))]
-    ax.legend([handles[i] for i in order], [labels[i] for i in order], loc="lower left", bbox_to_anchor=(-.02, 1.04),
-              ncol=1, frameon=False, handletextpad=.2, borderaxespad=0, labelspacing=.15)
+    ax.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper left", bbox_to_anchor=(.075, .995),
+              ncol=1, frameon=False, handletextpad=.2, borderaxespad=.2, labelspacing=.2, fontsize=5.8)
 
 
-def panel_adversary(ax, df, hist, hist_brain):
-    """Dumbbells: probe trained on raw (blue) -> on the method's outputs (aqua), tested on those outputs."""
-    src = df[(df.group == "source_non_nyu") & (df.ckpt == "best")]
-    kinds = (("slice_probe", None, -.33, "o"), ("slice_probe", hist, -.11, "s"),
-             ("brain_slice_probe", None, .11, "o"), ("brain_slice_probe", hist_brain, .33, "s"))
-    controls = {"slice_probe": ("silhouette", "silhouette"), "brain_slice_probe": ("brain_shape", "brain_shape")}
+def panel_adversary(ax, df, hist, family, control, legend=False):
+    """One input restriction (whole head or brain only): raw-trained -> output-trained probes.
+
+    Grey = probe trained on raw images, aqua = probe trained on that method's outputs; circles are
+    image probes (mean, min-max over 3 seeds), squares intensity-histogram probes (95% interval).
+    """
+    src = df[(df.group == "source_non_nyu") & (df.ckpt == "best") & (df.family == family)]
     for i, (source, artifact) in enumerate(ADVERSARY.items()):
-        ax.axvspan(i + .005, i + .45, color=SHADE, lw=0, zorder=0)
-        for family, h, offset, marker in kinds:
+        for h, offset, marker in ((None, -.17, "o"), (hist, .17, "s")):
             x = i + offset
-            fam = src[src.family == family]
-            if h is None:  # image probes: mean over seeds, min-max whiskers
-                c_src, c_art = controls[family]
-                ctrl = value(fam, source=c_src, method=c_art, metric="harmonized_site_ba").estimate
+            if h is None:  # image probes
+                ctrl = value(src, source=control, method=control, metric="harmonized_site_ba").estimate
                 if len(ctrl):
-                    ax.fill_between([x - .09, x + .09], ctrl.min(), ctrl.max(), color=GRID, lw=0, zorder=.5)
-                raw_test = value(fam, source="raw", method="neurocombat", metric="raw_site_ba").estimate.mean()
+                    ax.fill_between([x - .12, x + .12], ctrl.min(), ctrl.max(), color=GRID, lw=0, zorder=.5)
+                raw_test = value(src, source="raw", method="neurocombat", metric="raw_site_ba").estimate.mean()
                 pts = []
                 for train_src in ("raw", source):
-                    v = value(fam, source=train_src, method=artifact, metric="harmonized_site_ba").estimate
+                    v = value(src, source=train_src, method=artifact, metric="harmonized_site_ba").estimate
                     pts.append((v.mean(), v.min(), v.max()))
-            else:  # intensity probes: estimate with 95% interval
+            else:  # intensity-histogram probes
                 own = next(e["source_ba"] for e in h["own_trained"].values() if e["test_artifact"] == artifact)
                 raw_test = h["raw_trained"]["raw"]["estimate"]
                 pts = [(e["estimate"], *e["ci95"]) for e in (h["raw_trained"][artifact], own)]
             ax.plot([x, x], [pts[0][0], pts[1][0]], color=MUTED, lw=.7, zorder=1)
-            ax.plot([x - .06, x + .06], [raw_test] * 2, color=INK, lw=.9, zorder=1.5)
-            for (est, lo, hi), color in zip(pts, (BLUE, AQUA)):
-                ax.errorbar(x, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=3.4, color=color, mec="white",
+            ax.plot([x - .08, x + .08], [raw_test] * 2, color=INK, lw=.9, zorder=1.5)
+            for (est, lo, hi), color in zip(pts, (RAW_TRAINED, AQUA)):
+                ax.errorbar(x, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=3.6, color=color, mec="white",
                             mew=.4, ecolor=color, elinewidth=.7, zorder=3)
     ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
-    handles = [
-        plt.Line2D([], [], ls="", marker="o", ms=3.4, color=BLUE, label="trained on raw"),
-        plt.Line2D([], [], ls="", marker="o", ms=3.4, color=AQUA, label="trained on outputs"),
-        plt.Line2D([], [], ls="", marker="o", ms=3.4, color=MUTED, label="image probe"),
-        plt.Line2D([], [], ls="", marker="s", ms=3.4, color=MUTED, label="intensity probe"),
-        plt.Line2D([], [], ls="-", lw=.9, color=INK, label="raw test images"),
-        plt.Rectangle((0, 0), 1, 1, color=GRID, label="geometry only"),
-    ]
-    ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(-.02, 1.04), ncol=3, frameon=False,
-              handletextpad=.2, columnspacing=.8, borderaxespad=0, labelspacing=.15, fontsize=6)
+    ax.text(-.47, .055, "chance", fontsize=5.3, color=MUTED, va="bottom")
+    if legend:
+        handles = [
+            plt.Line2D([], [], ls="", marker="o", ms=3.6, color=RAW_TRAINED, label="trained on raw"),
+            plt.Line2D([], [], ls="", marker="o", ms=3.6, color=AQUA, label="trained on outputs"),
+            plt.Line2D([], [], ls="", marker="o", ms=3.6, color=MUTED, label="image probe"),
+            plt.Line2D([], [], ls="", marker="s", ms=3.6, color=MUTED, label="intensity probe"),
+            plt.Line2D([], [], ls="-", lw=.9, color=INK, label="raw test images"),
+            plt.Rectangle((0, 0), 1, 1, color=GRID, label="geometry only"),
+        ]
+        ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(-.02, 1.04), ncol=3, frameon=False,
+                  handletextpad=.2, columnspacing=.8, borderaxespad=0, labelspacing=.15, fontsize=6)
     ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diff. draw 2"])
-    for i in range(len(ADVERSARY)):
-        ax.text(i - .22, 1.03, "head", fontsize=5.3, color=MUTED, ha="center", va="top")
-        ax.text(i + .22, 1.03, "brain", fontsize=5.3, color=MUTED, ha="center", va="top")
     ax.set_xlim(-.5, len(ADVERSARY) - .5)
-    ax.set_ylabel("Source site BA on outputs")
     ax.set_ylim(0, 1.05)
     ax.grid(axis="y", color=GRID, lw=.4)
 
@@ -156,13 +153,19 @@ def main():
     df = pd.read_csv(args.csv)
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    fig = plt.figure(figsize=(3.39, 4.45))
-    axes = [fig.add_axes([.295, .565, .675, .345]), fig.add_axes([.12, .065, .85, .335])]
-    panel_tradeoff(axes[0], df)
+    fig = plt.figure(figsize=(3.39, 4.6))
+    ax_a = fig.add_axes([.295, .641, .675, .337])
+    ax_b = fig.add_axes([.165, .309, .805, .191])
+    ax_c = fig.add_axes([.165, .070, .805, .191])
+    panel_tradeoff(ax_a, df)
     load = lambda path: json.loads(Path(path).read_text())
-    panel_adversary(axes[1], df, load(args.histogram_probe), load(args.histogram_probe_brain))
-    fig.text(.01, .99, "(a)", fontsize=7.5, fontweight="bold", va="top")
-    fig.text(.01, .49, "(b)", fontsize=7.5, fontweight="bold", va="top")
+    panel_adversary(ax_b, df, load(args.histogram_probe), "slice_probe", "silhouette", legend=True)
+    panel_adversary(ax_c, df, load(args.histogram_probe_brain), "brain_slice_probe", "brain_shape")
+    for ax in (ax_b, ax_c):
+        ax.set_ylabel("Site BA on outputs", fontsize=6.5)
+    fig.text(.012, .995, "(a)", fontsize=7.5, fontweight="bold", va="top")
+    fig.text(.012, .58, "(b) whole head", fontsize=7.5, fontweight="bold", va="top")
+    fig.text(.012, .272, "(c) brain only", fontsize=7.5, fontweight="bold", va="top")
     fig.savefig(out / "fig_probe_verdicts.pdf")
     fig.savefig(out / "fig_probe_verdicts.png", dpi=300)
     print(out / "fig_probe_verdicts.pdf")

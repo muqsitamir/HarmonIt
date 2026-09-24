@@ -237,6 +237,17 @@ outputs 0.53, 0.55 and 0.38 versus 0.56 on raw brains, so the head-level conclus
 histogram matching removed intensity site information does not hold within the brain; the
 manuscript was corrected.
 
+Amendment 8, 2026-09-24 (cohort description, no experiment). Reviewer question: are there
+scanner differences within a site? ABIDE I releases no per-subject scanner identifier, and our
+17 labels merge the released sub-samples (UM_1/UM_2, UCLA_1/UCLA_2, Leuven_1/Leuven_2).
+`scripts/isbi2027_acquisition_heterogeneity.py` reads voxel size and matrix from every NIfTI
+header and writes `results/isbi2027/analysis/acquisition_heterogeneity.json` plus a per-subject
+CSV. Outcome: 11 of 17 sites hold more than one acquisition geometry (UM has two dominant
+protocols, 1.016x1.016x1.2 mm for 61 subjects and 1.016x1.016x1.4 mm for 33; UCLA includes 10
+scans at 1.5x1.5x4 mm, all in the training split); Leuven, NYU, Pitt, SBL, SDSU and Stanford are
+homogeneous. This bounds what a single site label can mean and is reported as a limitation; no
+probe or generator was retrained.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
