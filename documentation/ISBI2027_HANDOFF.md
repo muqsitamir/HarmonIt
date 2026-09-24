@@ -71,6 +71,7 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 | Normalized-volume cache (vpulab, local disk) | `/home/mmi/cache/isbi2027_volumes` (46 GB, train+val; `cache_report.json`) |
 | HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks `/mnt/rhome/mmi/projects/isbi2027/brain_masks/hdbet` |
 | Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/` (masks, masked train/val, brain_shape), `isbi2027/brain_probes/`, log `isbi2027/brain_run.log` |
+| Figure raster quality | `isbi2027_qualitative.py` saves at dpi=600 with `interpolation="nearest"`: vector backends rasterize embedded images at the figure dpi, so the default 100 dpi stored each 256x256 slice as ~42x42 px and printed blurred. Check with `page.get_images()` after any change. |
 | Figure variants | `paper/isbi2027/figures/fig_qualitative.pdf` is the column-width version used in the paper; `fig_qualitative_wide.pdf` is the full-width variant for a journal version |
 | LaTeX (Mac) | TinyTeX in `~/Library/TinyTeX` (not on PATH); `bash paper/isbi2027/build.sh` |
 

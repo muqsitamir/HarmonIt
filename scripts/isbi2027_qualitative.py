@@ -75,20 +75,22 @@ def main():
     size = 5 if args.show else 6
     fig, axes = plt.subplots(2, cols, figsize=(args.width, args.height or args.width * 2 / cols * 1.12),
                              gridspec_kw=dict(wspace=.04, hspace=.06))
-    axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=vmax)
+    axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=vmax, interpolation="nearest", resample=False)
     axes[0, 0].set_title("Input", fontsize=size, pad=2)
     axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=size, color="#52514e",
                     transform=axes[1, 0].transAxes)
     psnr = table[table.subject_id == subject].set_index("method").psnr
     for j, m in enumerate(shown, start=1):
-        axes[0, j].imshow(np.clip(images[m], 0, 1), cmap="gray", vmin=0, vmax=vmax)
+        axes[0, j].imshow(np.clip(images[m], 0, 1), cmap="gray", vmin=0, vmax=vmax, interpolation="nearest",
+                          resample=False)
         axes[0, j].set_title((SHORT if args.show else {}).get(m, TITLES[m]), fontsize=size, pad=2)
-        diff = axes[1, j].imshow(images[m] - raw, cmap=DIVERGING, vmin=-args.limit, vmax=args.limit)
+        diff = axes[1, j].imshow(images[m] - raw, cmap=DIVERGING, vmin=-args.limit, vmax=args.limit,
+                                 interpolation="nearest", resample=False)
         axes[1, j].text(.03, .04, f"{psnr[m]:.1f} dB", color="#0b0b0b", fontsize=size - 0.5, transform=axes[1, j].transAxes)
     if args.zoom_box:  # 2x inset of a fixed central region, so anatomy is legible at print size
         for j, img in enumerate([raw] + [np.clip(images[m], 0, 1) for m in shown]):
             inset = axes[0, j].inset_axes([.5, .0, .5, .5])
-            inset.imshow(crop(img), cmap="gray", vmin=0, vmax=vmax)
+            inset.imshow(crop(img), cmap="gray", vmin=0, vmax=vmax, interpolation="nearest", resample=False)
             inset.set_xticks([]), inset.set_yticks([])
             for spine in inset.spines.values():
                 spine.set_edgecolor("white"), spine.set_linewidth(.6)
@@ -102,8 +104,10 @@ def main():
     bar.ax.tick_params(labelsize=5, length=2)
     bar.set_label("output $-$ input", size=size - 0.5, color="#52514e")
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(args.out, bbox_inches="tight", pad_inches=.01)
-    fig.savefig(Path(args.out).with_suffix(".png"), dpi=300, bbox_inches="tight", pad_inches=.01)
+    # Vector backends rasterize embedded images at the figure dpi: at the default 100 dpi each
+    # 256x256 slice would be stored as ~42x42 px and print blurred. 600 dpi keeps native detail.
+    fig.savefig(args.out, bbox_inches="tight", pad_inches=.01, dpi=600)
+    fig.savefig(Path(args.out).with_suffix(".png"), dpi=600, bbox_inches="tight", pad_inches=.01)
     print(f"subject {subject} (site {int(source[source.subject_id == subject].site_id.iloc[0])}); saved {args.out}")
 
 
