@@ -12,10 +12,12 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   disclosure is required in the acknowledgments. Template: `paper/isbi2027/spconf.sty`,
   `IEEEbib.bst` and `strings.bib` are identical to the official ISBI template kit (checked
   2026-09-15 against the zip the author supplied).
-- Manuscript: `paper/isbi2027/main.tex`, compiled `main.pdf` is **4 pages including
-  references** (a few lines spare). All experiments, including amendments 6-7, are complete and
-  in the manuscript; every result number is from `results/isbi2027` (claim check done
-  2026-09-15). Qualitative figure is column width; references use "et al." to save space.
+- Manuscript: `paper/isbi2027/main.tex`, compiled `main.pdf` is **4 pages including references**
+  (last column ends at 715/724). Final pass 2026-09-24: every result number re-verified against
+  `results/isbi2027`, probe counts corrected (44 trained: 1 frozen + 5 benchmark + 5 converged +
+  4 shuffled + 24 slice + 6 restricted-input, plus 8 logistic fits), probes explained as a list in
+  the protocol section, discussion opens with three takeaways, and slice probes are flagged as a
+  conservative bound. No placeholders remain; ready for co-author review.
 - Acknowledgments now carry the ABIDE-required funding acknowledgment (NIMH K23MH087770,
   R03MH096321, Stavros Niarchos and Leon Levy Foundations) and the compute resources. If a
   supervisor names a grant, add it there; otherwise the paper carries no grant line.

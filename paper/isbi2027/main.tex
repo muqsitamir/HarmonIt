@@ -12,7 +12,7 @@
 An Audit of Evaluation Practice for Multi-Site MRI}
 
 \name{
-\parbox{\textwidth}{\centering
+\parbox{\linewidth}{\centering
 Muhammad Muqsit Islam$^{1,2,\star,\dagger}$\thanks{$^\star$Corresponding author}\thanks{$^\dagger$ Equal contribution}
 \qquad
 Gloria García Cuenco$^{1,2,\dagger}$ \\
@@ -58,7 +58,7 @@ We audit these practices on outputs of seven harmonization families. Contributio
 \item \emph{Benchmark recipe} (5 seeds): that training repeated on raw volumes. Does the seed change the verdict?
 \item \emph{Converged} (5 seeds): four times the steps with cosine decay, tested at the final epoch. Does a converged probe agree?
 \item \emph{Shuffled labels} (4): labels permuted between subjects. Is the probe reading images, not labels?
-\item \emph{Slice probes} (24, with 14 restricted-input networks and 8 logistic fits): one fixed slice per subject, from raw images or from one method's outputs. Removed or hidden? Restricted variants see only head silhouettes or brain masks (geometry), only foreground intensity histograms (intensity), or slices masked by the raw volume's HD-BET brain mask~\cite{isensee2019hdbet}.
+\item \emph{Slice probes} (24, plus 6 restricted-input networks and 8 logistic fits): one fixed slice per subject, from raw images or from one method's outputs. Removed or hidden? Restricted variants see only head silhouettes or brain masks (geometry), only foreground intensity histograms (intensity), or slices masked by the raw volume's HD-BET brain mask~\cite{isensee2019hdbet}.
 \end{list}
 The three methods behind the slice probes were chosen in advance to span intensity, adversarial and diffusion families. The converged, silhouette, histogram and brain-only experiments were added after earlier results and before their own, as the protocol records.
 
@@ -92,7 +92,7 @@ The three methods behind the slice probes were chosen in advance to span intensi
 \label{sec:results}
 \textbf{Probe validity.} On raw source images the frozen probe reached BA 0.95 [0.90, 1.00], benchmark-recipe probes 0.81--0.98 and converged probes 1.00; shuffled-label controls scored 0.03. Probes learn site-related structure, not necessarily scanner appearance: head silhouettes alone gave 0.73--0.86.
 
-\textbf{Verdicts depend on probe training.} Benchmark-recipe probes assigned very different site BA to the same outputs (Table~\ref{tab:main}, Fig.~\ref{fig:verdicts}a): CycleGAN 0.13--0.59 and aggressive StarGAN 0.18--0.54, with Kendall $\tau$ 0.51--0.87 between method orderings. Their validation BA fluctuated between epochs (e.g.\ 0.88, 0.50, 0.87), and raw accuracy did not reveal it: the probe with raw BA 0.98 gave CycleGAN 0.20. Converged probes (validation BA within 0.035 over the last five epochs) agreed ($\tau$ 0.82--0.96; per-output ranges at most 0.16, within the widest single-probe interval of 0.18), but every converged probe exceeded the frozen probe's interval on all outputs except HCLD and NeuroCombat: aggressive StarGAN 0.65--0.81 (frozen 0.21), CycleGAN 0.44--0.54 (0.31) and DLEST 0.95--1.00 (0.67--0.71). Orderings changed ($\tau$ 0.64--0.73 with the frozen probe), which placed aggressive StarGAN second lowest and converged probes above histogram matching. A probe that has not converged overstates harmonization.
+\textbf{Verdicts depend on probe training.} Benchmark-recipe probes assigned very different site BA to the same outputs (Table~\ref{tab:main}, Fig.~\ref{fig:verdicts}a): CycleGAN 0.13--0.59 and aggressive StarGAN 0.18--0.54, with Kendall $\tau$ 0.51--0.87 between method orderings. Their validation BA fluctuated between epochs (e.g.\ 0.88, 0.50, 0.87), and raw accuracy did not reveal it: the probe with raw BA 0.98 gave CycleGAN 0.20. Converged probes (validation BA within 0.035 over the last five epochs) agreed ($\tau$ 0.82--0.96; per-output ranges at most 0.16, within the widest single-probe interval of 0.18), but every converged probe exceeded the frozen probe's interval on all outputs except HCLD and NeuroCombat: aggressive StarGAN 0.65--0.81 (frozen 0.21), CycleGAN 0.44--0.54 (0.31) and DLEST 0.95--1.00 (0.67--0.71). Orderings changed ($\tau$ 0.64--0.73 with the frozen probe): it placed aggressive StarGAN second lowest, converged probes above histogram matching. A probe that has not converged overstates harmonization.
 
 \textbf{The lowest site accuracy came from destruction.} HCLD reached BA 0.07 [0.06, 0.08] under the frozen probe and 0.06--0.11 under every retrained probe, at chance, with the lowest PSNR (13.9~dB) and XCorr (0.71), visible loss of anatomy (Fig.~\ref{fig:qualitative}), and intensities moved away from the target ($\Delta W_{\mathrm{NYU}}=+0.108$).
 
