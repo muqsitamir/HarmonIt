@@ -16,6 +16,12 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   references** (a few lines spare). All experiments, including amendments 6-7, are complete and
   in the manuscript; every result number is from `results/isbi2027` (claim check done
   2026-09-15). Qualitative figure is column width; references use "et al." to save space.
+- Acknowledgments now carry the ABIDE-required funding acknowledgment (NIMH K23MH087770,
+  R03MH096321, Stavros Niarchos and Leon Levy Foundations) and the compute resources. If a
+  supervisor names a grant, add it there; otherwise the paper carries no grant line.
+- Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coup\'e if the
+  paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
+  from IEEE Xplore unless the presenting author is registered and presents in person.
 - Remaining placeholders: funding (red `\pending{Funding.}`; authors to settle with the
   supervisor). The AI-use statement is drafted and may be edited by the authors.
 - `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
