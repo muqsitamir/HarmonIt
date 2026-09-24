@@ -33,14 +33,15 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
-- Ethics (2026-09-25): ISBI 2027 requires formal review and approval, or formal review and
-  waiver, by an ethics committee. ABIDE's usage agreement does not say approval is unnecessary,
-  so Section 6 no longer claims it. It now cites ABIDE's own statement (Di Martino et al. 2014,
-  Methods): every contributing study had local IRB approval, and each site had IRB approval or
-  an explicit waiver to share the fully anonymized data. **Open before submission:** ask the UAM
-  Research Ethics Committee (or the supervisor) whether this secondary analysis needs review and
-  add one sentence naming the determination; a two-line sentence fits in Section 6 without
-  breaking four pages (tested).
+- Ethics (decided 2026-09-25): Section 6 follows accepted ISBI papers that used ABIDE, which
+  use ISBI's example statement ("ethical approval was not required as confirmed by the license
+  attached with the open access data"): Wang and Dvornek, ISBI 2021 (arXiv 2105.02874); Duan et
+  al., ISBI 2025 oral (2502.15595); Weng et al., ISBI 2025 (2502.19386). It adds ABIDE's own
+  account (Di Martino et al. 2014, Methods) that sites shared the anonymized data with local IRB
+  approval or an explicit waiver. ABIDE's usage agreement itself does not mention ethics review;
+  the stronger alternative, used by Jönemo et al. (2110.10489), cites the authors' own ethics
+  committee confirming that approval was not required. A two-line sentence of that kind still
+  fits in Section 6 (tested).
 - No grant line: the only funding acknowledged is ABIDE's required one. The authors may edit the
   AI-use statement's wording.
 - `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
@@ -145,7 +146,7 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
    co-authors. Final wording pass the same day: redraw difference defined as the median
    per-subject mean absolute foreground difference, target alignment as the share of the
    initial foreground intensity-distribution distance, link borders hidden.
-2. Ethics determination (see Status) before submission.
+2. Optional: an ethics-committee confirmation from UAM (see Status) would strengthen Section 6.
 3. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
    and the ISBI work is merged into `main`, so the paper's repository link is correct. The
    template kit matches the official one; no paid fifth page.
