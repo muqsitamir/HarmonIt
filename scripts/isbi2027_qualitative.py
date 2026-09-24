@@ -37,6 +37,8 @@ def main():
     p.add_argument("--width", type=float, default=7.0, help="Figure width in inches")
     p.add_argument("--height", type=float, help="Figure height in inches (default from width)")
     p.add_argument("--zoom-box", type=int, default=64, help="Side of the zoomed region in pixels; 0 disables")
+    p.add_argument("--rows", type=int, choices=(1, 2), default=2,
+                   help="2 = images and difference maps; 1 = images only, which prints them twice as large")
     args = p.parse_args()
     run = Path(args.eval_run)
     protocol = json.loads((run / "protocol.json").read_text())
@@ -73,20 +75,23 @@ def main():
     shown = [m for m in methods if not args.show or m in args.show]
     cols = len(shown) + 1
     size = 5 if args.show else 6
-    fig, axes = plt.subplots(2, cols, figsize=(args.width, args.height or args.width * 2 / cols * 1.12),
-                             gridspec_kw=dict(wspace=.04, hspace=.06))
+    fig, axes = plt.subplots(args.rows, cols, figsize=(args.width, args.height or args.width * args.rows / cols * 1.12),
+                             squeeze=False, gridspec_kw=dict(wspace=.04, hspace=.06))
     axes[0, 0].imshow(raw, cmap="gray", vmin=0, vmax=vmax, interpolation="nearest", resample=False)
     axes[0, 0].set_title("Input", fontsize=size, pad=2)
-    axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=size, color="#52514e",
-                    transform=axes[1, 0].transAxes)
+    if args.rows == 2:
+        axes[1, 0].text(.5, .5, "output\n$-$ input", ha="center", va="center", fontsize=size, color="#52514e",
+                        transform=axes[1, 0].transAxes)
     psnr = table[table.subject_id == subject].set_index("method").psnr
     for j, m in enumerate(shown, start=1):
         axes[0, j].imshow(np.clip(images[m], 0, 1), cmap="gray", vmin=0, vmax=vmax, interpolation="nearest",
                           resample=False)
         axes[0, j].set_title((SHORT if args.show else {}).get(m, TITLES[m]), fontsize=size, pad=2)
-        diff = axes[1, j].imshow(images[m] - raw, cmap=DIVERGING, vmin=-args.limit, vmax=args.limit,
-                                 interpolation="nearest", resample=False)
-        axes[1, j].text(.03, .04, f"{psnr[m]:.1f} dB", color="#0b0b0b", fontsize=size - 0.5, transform=axes[1, j].transAxes)
+        if args.rows == 2:
+            diff = axes[1, j].imshow(images[m] - raw, cmap=DIVERGING, vmin=-args.limit, vmax=args.limit,
+                                     interpolation="nearest", resample=False)
+        axes[args.rows - 1, j].text(.03, .04, f"{psnr[m]:.1f} dB", color="white" if args.rows == 1 else "#0b0b0b",
+                                    fontsize=size - 0.5, transform=axes[args.rows - 1, j].transAxes)
     if args.zoom_box:  # 2x inset of a fixed central region, so anatomy is legible at print size
         for j, img in enumerate([raw] + [np.clip(images[m], 0, 1) for m in shown]):
             inset = axes[0, j].inset_axes([.5, .0, .5, .5])
@@ -100,9 +105,10 @@ def main():
         ax.set_xticks([]), ax.set_yticks([])
         for spine in ax.spines.values():
             spine.set_visible(False)
-    bar = fig.colorbar(diff, ax=axes[1, :].tolist(), fraction=.012, pad=.005)
-    bar.ax.tick_params(labelsize=5, length=2)
-    bar.set_label("output $-$ input", size=size - 0.5, color="#52514e")
+    if args.rows == 2:
+        bar = fig.colorbar(diff, ax=axes[1, :].tolist(), fraction=.012, pad=.005)
+        bar.ax.tick_params(labelsize=5, length=2)
+        bar.set_label("output $-$ input", size=size - 0.5, color="#52514e")
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     # Vector backends rasterize embedded images at the figure dpi: at the default 100 dpi each
     # 256x256 slice would be stored as ~42x42 px and print blurred. 600 dpi keeps native detail.

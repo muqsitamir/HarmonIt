@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggressive", "stargan_conservative",
-         "dlest_1500", "dlest_1000", "diffusion_20k", "diffusion_20k_redraw", "adapted_hcld"]
+         "dlest_1500", "dlest_1000", "diffusion_20k", "adapted_hcld"]  # redraw is in Fig. 1a
 NAMES = {"neurocombat": "NeuroCombat$^\\dagger$", "histogram_matching": "Histogram matching$^\\ddagger$",
          "cyclegan_tuned": "CycleGAN", "stargan_aggressive": "StarGAN (aggr.)", "stargan_conservative": "StarGAN (cons.)",
          "dlest_1500": "DLEST 1500", "dlest_1000": "DLEST 1000", "diffusion_20k": "Diffusion img2img",
