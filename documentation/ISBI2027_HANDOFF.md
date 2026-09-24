@@ -33,6 +33,14 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
+- Ethics (2026-09-25): ISBI 2027 requires formal review and approval, or formal review and
+  waiver, by an ethics committee. ABIDE's usage agreement does not say approval is unnecessary,
+  so Section 6 no longer claims it. It now cites ABIDE's own statement (Di Martino et al. 2014,
+  Methods): every contributing study had local IRB approval, and each site had IRB approval or
+  an explicit waiver to share the fully anonymized data. **Open before submission:** ask the UAM
+  Research Ethics Committee (or the supervisor) whether this secondary analysis needs review and
+  add one sentence naming the determination; a two-line sentence fits in Section 6 without
+  breaking four pages (tested).
 - No grant line: the only funding acknowledged is ABIDE's required one. The authors may edit the
   AI-use statement's wording.
 - `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
@@ -134,9 +142,12 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 ## Next steps
 
 1. Co-author review: P. Coupé's points applied 2026-09-25; the author circulates the PDF to the
-   co-authors.
-2. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
+   co-authors. Final wording pass the same day: redraw difference defined as the median
+   per-subject mean absolute foreground difference, target alignment as the share of the
+   initial foreground intensity-distribution distance, link borders hidden.
+2. Ethics determination (see Status) before submission.
+3. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
    and the ISBI work is merged into `main`, so the paper's repository link is correct. The
    template kit matches the official one; no paid fifth page.
-3. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
+4. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
    use the benchmark recipe, noted as a limitation).
