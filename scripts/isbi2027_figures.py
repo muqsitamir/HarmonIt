@@ -81,13 +81,14 @@ def panel_tradeoff(ax, df):
     ax.scatter(f_ba.estimate, y, s=14, marker="o", color=BLUE, edgecolor="white", lw=.4, zorder=3,
                label="frozen probe (95% CI)")
     ax.set_yticks(range(len(psnr)), [f"{LABELS.get(m, m)}  {psnr[m]:.1f}" for m in psnr.index])
+    ax.set_ylabel("Output, PSNR (dB)", fontsize=6.5, labelpad=2)
+    ax.set_title("(a) probes trained on raw images", loc="left", fontsize=7, fontweight="bold", pad=3)
     ax.tick_params(axis="y", length=0)
     ax.set_ylim(len(psnr) - .45, -.55)
     ax.axvline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
     ax.text(CHANCE_SOURCE + .01, -.35, "chance", fontsize=5.3, color=MUTED, va="center")
     ax.set_xlim(0, 1.02)
     ax.set_xlabel("Source site BA on outputs")
-    ax.text(-.02, 1.005, "Output, PSNR (dB)", transform=ax.transAxes, fontsize=5.8, color=MUTED, ha="right", va="bottom")
     ax.grid(axis="x", color=GRID, lw=.4)
     handles, labels = ax.get_legend_handles_labels()
     order = [labels.index(l) for l in sorted(labels, key=lambda s: not s.startswith("frozen"))]
@@ -95,7 +96,7 @@ def panel_tradeoff(ax, df):
               ncol=1, frameon=False, handletextpad=.2, borderaxespad=.2, labelspacing=.2, fontsize=5.8)
 
 
-def panel_adversary(ax, df, hist, family, control, legend=False):
+def panel_adversary(ax, df, hist, family, control, title):
     """One input restriction (whole head or brain only): raw-trained -> output-trained probes.
 
     Grey = probe trained on raw images, aqua = probe trained on that method's outputs; circles are
@@ -125,7 +126,8 @@ def panel_adversary(ax, df, hist, family, control, legend=False):
                             mew=.4, ecolor=color, elinewidth=.7, zorder=3)
     ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
     ax.text(-.47, .055, "chance", fontsize=5.3, color=MUTED, va="bottom")
-    if legend:
+    ax.set_title(title, loc="left", fontsize=7, fontweight="bold", pad=3)
+    if False:
         handles = [
             plt.Line2D([], [], ls="", marker="o", ms=3.6, color=RAW_TRAINED, label="trained on raw"),
             plt.Line2D([], [], ls="", marker="o", ms=3.6, color=AQUA, label="trained on outputs"),
@@ -153,19 +155,26 @@ def main():
     df = pd.read_csv(args.csv)
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    fig = plt.figure(figsize=(3.39, 4.6))
-    ax_a = fig.add_axes([.295, .641, .675, .337])
-    ax_b = fig.add_axes([.165, .309, .805, .191])
-    ax_c = fig.add_axes([.165, .070, .805, .191])
+    fig = plt.figure(figsize=(3.39, 4.45))
+    ax_a = fig.add_axes([.345, .670, .625, .270])
+    ax_b = fig.add_axes([.165, .411, .80, .162])
+    ax_c = fig.add_axes([.165, .139, .80, .162])
     panel_tradeoff(ax_a, df)
     load = lambda path: json.loads(Path(path).read_text())
-    panel_adversary(ax_b, df, load(args.histogram_probe), "slice_probe", "silhouette", legend=True)
-    panel_adversary(ax_c, df, load(args.histogram_probe_brain), "brain_slice_probe", "brain_shape")
+    panel_adversary(ax_b, df, load(args.histogram_probe), "slice_probe", "silhouette", "(b) whole head")
+    panel_adversary(ax_c, df, load(args.histogram_probe_brain), "brain_slice_probe", "brain_shape", "(c) brain only")
     for ax in (ax_b, ax_c):
         ax.set_ylabel("Site BA on outputs", fontsize=6.5)
-    fig.text(.012, .995, "(a)", fontsize=7.5, fontweight="bold", va="top")
-    fig.text(.012, .58, "(b) whole head", fontsize=7.5, fontweight="bold", va="top")
-    fig.text(.012, .272, "(c) brain only", fontsize=7.5, fontweight="bold", va="top")
+    handles = [
+        plt.Line2D([], [], ls="", marker="o", ms=3.6, color=RAW_TRAINED, label="trained on raw"),
+        plt.Line2D([], [], ls="", marker="o", ms=3.6, color=AQUA, label="trained on outputs"),
+        plt.Line2D([], [], ls="", marker="o", ms=3.6, color=MUTED, label="image probe"),
+        plt.Line2D([], [], ls="", marker="s", ms=3.6, color=MUTED, label="intensity probe"),
+        plt.Line2D([], [], ls="-", lw=.9, color=INK, label="raw test images"),
+        plt.Rectangle((0, 0), 1, 1, color=GRID, label="geometry only"),
+    ]
+    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.55, 0), ncol=3, frameon=False,
+               handletextpad=.2, columnspacing=.9, labelspacing=.2, fontsize=6)
     fig.savefig(out / "fig_probe_verdicts.pdf")
     fig.savefig(out / "fig_probe_verdicts.png", dpi=300)
     print(out / "fig_probe_verdicts.pdf")
