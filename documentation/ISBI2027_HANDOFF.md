@@ -27,9 +27,9 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   verdict on published HCLD; novelty is set against feature-level ComBat studies; the README and
   METRICS.md describe the audit as complete; the AI disclosure names the tools, the affected
   sections and the level of use.
-- Acknowledgments now carry the ABIDE-required funding acknowledgment (NIMH K23MH087770,
-  R03MH096321, Stavros Niarchos and Leon Levy Foundations) and the compute resources. If a
-  supervisor names a grant, add it there; otherwise the paper carries no grant line.
+- Acknowledgments carry the ABIDE-required funding acknowledgment (NIMH K23MH087770,
+  R03MH096321, Stavros Niarchos and Leon Levy Foundations), the compute resources and P. Coupé's
+  project funding (see Funding below).
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
@@ -42,8 +42,10 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   the stronger alternative, used by Jönemo et al. (2110.10489), cites the authors' own ethics
   committee confirming that approval was not required. A two-line sentence of that kind still
   fits in Section 6 (tested).
-- No grant line: the only funding acknowledged is ABIDE's required one. The authors may edit the
-  AI-use statement's wording.
+- Funding (2026-09-30): the acknowledgments carry P. Coupé's required text verbatim (project
+  HoliBrain, ANR-23-CE45-0020-01; PEPR StratifyAging, PEPR Prodrom-ND and IHU VBHI,
+  ANR-23-IAHU-0001) after the ABIDE and VPU Lab lines. The authors may edit the AI-use
+  statement's wording.
 - `paper/isbi2027/main_june2026.tex` is the superseded June benchmark draft; several of its
   claims are wrong (pooled HCLD PSNR, raw-to-output distances read as NYU alignment,
   class-ID shuffle control). Do not reuse its numbers.
@@ -147,12 +149,12 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
    per-subject mean absolute foreground difference, target alignment as the share of the
    initial foreground intensity-distribution distance, link borders hidden.
 2. Optional: an ethics-committee confirmation from UAM (see Status) would strengthen Section 6.
-3. Funding line (J. M. Martínez, 2026-09-30): the review is single-blind, so the acknowledgments
-   should name P. Coupé's project as funding (name and grant number still needed) and possibly
-   the Erasmus Mundus IPCVai master (J. M. Martínez to confirm). A sentence of that length pushes
-   about three reference lines to page 5, so trim about three lines when adding it. His other two
-   points are applied: the abstract says "ten outputs from harmonization approaches" and the
-   NeuroCombat citations read [1, 11].
+3. J. M. Martínez's review (2026-09-30) is applied: single-blind review, so the repository link
+   and VPU Lab credit stay; the abstract says "ten outputs from harmonization approaches"; the
+   NeuroCombat citations read [1, 11]; P. Coupé's funding text is in the acknowledgments. To fit
+   it, Table 1's caption and a few phrases were shortened and `\emergencystretch` fixes two
+   overfull lines. Still open: whether to acknowledge the Erasmus Mundus IPCVai master
+   (J. M. Martínez to confirm); page 4's right column has about one line free.
 4. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
    and the ISBI work is merged into `main`, so the paper's repository link is correct. The
    template kit matches the official one; no paid fifth page.
