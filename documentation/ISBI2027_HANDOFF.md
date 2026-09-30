@@ -147,8 +147,14 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
    per-subject mean absolute foreground difference, target alignment as the share of the
    initial foreground intensity-distribution distance, link borders hidden.
 2. Optional: an ethics-committee confirmation from UAM (see Status) would strengthen Section 6.
-3. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
+3. Funding line (J. M. Martínez, 2026-09-30): the review is single-blind, so the acknowledgments
+   should name P. Coupé's project as funding (name and grant number still needed) and possibly
+   the Erasmus Mundus IPCVai master (J. M. Martínez to confirm). A sentence of that length pushes
+   about three reference lines to page 5, so trim about three lines when adding it. His other two
+   points are applied: the abstract says "ten outputs from harmonization approaches" and the
+   NeuroCombat citations read [1, 11].
+4. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
    and the ISBI work is merged into `main`, so the paper's repository link is correct. The
    template kit matches the official one; no paid fifth page.
-4. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
+5. Optional if space allows: brain-only probes with a converged recipe were not run (slice probes
    use the benchmark recipe, noted as a limitation).
