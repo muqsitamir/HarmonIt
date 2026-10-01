@@ -69,14 +69,14 @@ HarmonIt evaluates these questions together and makes the limitations explicit.
 
 | Phase | Contribution | Status |
 | --- | --- | --- |
-| TRDP1: establish the comparison | Common slice pipeline, subject splits, site probe, baseline exports and qualitative comparisons | Complete; outputs re-evaluated in the ISBI 2027 audit |
+| Benchmark: establish the comparison | Common slice pipeline, subject splits, site probe, baseline exports and qualitative comparisons | Complete; outputs re-evaluated in the ISBI 2027 audit |
 | Evaluation audit (ISBI 2027) | Correct metric semantics, separate translated subjects from target identities, retrain and converge site probes, train probes on outputs, measure target alignment | Complete; manuscript, protocol and results in this repository |
-| TRDP2: harmonization method | A method designed against the audit's criteria: less site information recoverable by probes trained on its outputs, anatomy preserved, movement toward the target site, and consistent volumes | In development; code is added here when the method is submitted |
+| Harmonization method | A method designed against the audit's criteria: less site information recoverable by probes trained on its outputs, anatomy preserved, movement toward the target site, and consistent volumes | In development; code is added here when the method is submitted |
 | Volumetric validation | Full-volume evaluation: slice continuity, segmentation consistency and regional volumes | Planned, with the method |
 
 An earlier plan for a 2.5D diffusion model, with adjacent slices as context, was not
 pursued: adjacent-slice harmonization already exists, and the audit pointed to a
-different gap. [The plan](documentation/TRDP2_PLAN.md) is kept as a record.
+different gap. [The plan](documentation/2.5D_DIFFUSION_PLAN.md) is kept as a record.
 
 ## Benchmark Design
 

@@ -7,7 +7,7 @@ Audit date: 2026-09-12. Status: local evidence reviewed; historical rankings pro
 >
 > Subsequent steering, 2026-09-12: the active plan now prioritizes 2.5D diffusion
 > development with a bounded evaluation repair in parallel. See
-> [TRDP2_PLAN.md](TRDP2_PLAN.md), which supersedes this report's original
+> [the 2.5D diffusion plan](2.5D_DIFFUSION_PLAN.md), which supersedes this report's original
 > evaluation-first schedule. Git inspection also located the additional baseline
 > code, including the 2D diffusion implementation, on a research branch; it has
 > since been merged into `main`.
@@ -24,7 +24,7 @@ does not outperform existing methods. A 2.5D diffusion extension is a gated
 secondary contribution. It must demonstrate added value beyond changing the
 number of input channels.
 
-This report builds on `TRDP2_PLAN.md`. Existing working-tree changes were present
+This report builds on `2.5D_DIFFUSION_PLAN.md`. Existing working-tree changes were present
 before this audit and have been preserved. No training, remote synchronization,
 historical-results replacement, manuscript edits, or publication took place.
 

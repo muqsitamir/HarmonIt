@@ -153,7 +153,7 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
    and VPU Lab credit stay; the abstract says "ten outputs from harmonization approaches"; the
    NeuroCombat citations read [1, 11]; P. Coupé's funding text is in the acknowledgments. To fit
    it, Table 1's caption and a few phrases were shortened and `\emergencystretch` fixes two
-   overfull lines. Still open: whether to acknowledge the Erasmus Mundus IPCVai master
+   overfull lines. Still open: one further acknowledgment line
    (J. M. Martínez to confirm); page 4's right column has about one line free.
 4. Before submission: fill the submission form. The repository is public (checked 2026-09-15),
    and the ISBI work is merged into `main`, so the paper's repository link is correct. The
