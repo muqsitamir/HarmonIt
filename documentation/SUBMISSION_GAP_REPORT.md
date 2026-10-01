@@ -2,6 +2,9 @@
 
 Audit date: 2026-09-12. Status: local evidence reviewed; historical rankings provisional.
 
+> Historical record. The 2.5D plan referred to below was itself superseded on
+> 1 October 2026 (see the [README](../README.md#research-roadmap)).
+>
 > Subsequent steering, 2026-09-12: the active plan now prioritizes 2.5D diffusion
 > development with a bounded evaluation repair in parallel. See
 > [TRDP2_PLAN.md](TRDP2_PLAN.md), which supersedes this report's original

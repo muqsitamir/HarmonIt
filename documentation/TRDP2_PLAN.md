@@ -1,5 +1,9 @@
 # TRDP2: 2.5D diffusion for anatomy-preserving MRI harmonization
 
+> **Superseded on 1 October 2026.** This 2.5D diffusion plan was not pursued; it is
+> kept as a record of the project's history. The current status is in the
+> [README](../README.md#research-roadmap).
+
 Updated 2026-09-12. This is the current research direction and supersedes the
 earlier evaluation-first, new-method-as-stretch schedule in the submission audit.
 

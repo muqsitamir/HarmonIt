@@ -5,13 +5,13 @@
 **How much scanner variation can we remove before we change the patient?**
 
 HarmonIt investigates this question through a multi-site brain MRI benchmark
-and the development of diffusion-based harmonization. We study the trade-off
+and the development of a harmonization method. We study the trade-off
 between reducing site predictability, preserving individual anatomy, and
 producing consistent volumes that remain useful for downstream analysis.
 
 **1,112 subjects | 17 acquisition sites | ABIDE I T1-weighted MRI**
 
-[Research roadmap](#from-benchmark-to-25d-diffusion) |
+[Research roadmap](#research-roadmap) |
 [Evaluation definitions](documentation/METRICS.md) |
 [Installation](documentation/INSTALLATION.md) |
 [Baseline implementations](scripts/methods) |
@@ -20,8 +20,9 @@ producing consistent volumes that remain useful for downstream analysis.
 > **Research status:** the first-phase benchmark and its evaluation audit are
 > complete. The audit manuscript for ISBI 2027, its written protocol, code and
 > versioned per-subject results are in this repository. The next contribution is a
-> planned **2.5D diffusion model**; no 2.5D training results or clinical benefit are
-> claimed yet.
+> harmonization method designed and judged against the audit's criteria. It is in
+> development and not yet part of this repository; no method results or clinical
+> benefit are claimed.
 
 ## ISBI 2027 Evaluation Audit
 
@@ -64,20 +65,18 @@ can fool a site classifier. An unchanged image can achieve excellent similarity
 scores. Matching an intensity histogram does not establish anatomical fidelity.
 HarmonIt evaluates these questions together and makes the limitations explicit.
 
-## From Benchmark to 2.5D Diffusion
+## Research Roadmap
 
 | Phase | Contribution | Status |
 | --- | --- | --- |
 | TRDP1: establish the comparison | Common slice pipeline, subject splits, site probe, baseline exports and qualitative comparisons | Complete; outputs re-evaluated in the ISBI 2027 audit |
 | Evaluation audit (ISBI 2027) | Correct metric semantics, separate translated subjects from target identities, retrain and converge site probes, train probes on outputs, measure target alignment | Complete; manuscript, protocol and results in this repository |
-| TRDP2: use neighbouring anatomy | Site-conditioned diffusion with adjacent slices as context and a harmonized centre-slice output | Planned; initial design defined |
-| Volumetric validation | Full-volume export, slice continuity, segmentation consistency and regional-volume analysis | Planned |
+| TRDP2: harmonization method | A method designed against the audit's criteria: less site information recoverable by probes trained on its outputs, anatomy preserved, movement toward the target site, and consistent volumes | In development; code is added here when the method is submitted |
+| Volumetric validation | Full-volume evaluation: slice continuity, segmentation consistency and regional volumes | Planned, with the method |
 
-The first 2.5D experiment will compare **one-slice input against three-slice
-context** (`z-1`, `z`, `z+1`) using the same diffusion backbone as far as possible.
-Five-slice context and anatomy constraints follow only when the initial
-comparison motivates them. Stacking slice predictions into a volume does not
-guarantee 3D consistency: that is an outcome we will measure.
+An earlier plan for a 2.5D diffusion model, with adjacent slices as context, was not
+pursued: adjacent-slice harmonization already exists, and the audit pointed to a
+different gap. [The plan](documentation/TRDP2_PLAN.md) is kept as a record.
 
 ## Benchmark Design
 
@@ -178,7 +177,7 @@ python scripts/eval_harmonized_npz.py --help
 
 | Resource | Contents |
 | --- | --- |
-| [Research direction](#from-benchmark-to-25d-diffusion) | Completed benchmark work and planned 2.5D comparison |
+| [Research roadmap](#research-roadmap) | Completed benchmark and audit, and the next step |
 | [Metrics](documentation/METRICS.md) | Metric definitions, interpretation and limits |
 | [ISBI 2027 audit](#isbi-2027-evaluation-audit) | [Manuscript](paper/isbi2027/main.pdf), [protocol](documentation/ISBI2027_PROTOCOL.md), [results](results/isbi2027/README.md) and [project notes](documentation/ISBI2027_HANDOFF.md) |
 | [Baselines](documentation/BASELINES.md) and [reproducibility](documentation/REPRODUCIBILITY.md) | Method notes and reproduction commands |
