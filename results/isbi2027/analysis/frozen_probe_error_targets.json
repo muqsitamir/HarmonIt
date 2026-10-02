@@ -1,0 +1,102 @@
+{
+  "adapted_hcld": {
+    "n_source": 90,
+    "n_errors": 84,
+    "errors_named_target": 0,
+    "target_share_of_errors": 0.0,
+    "most_common_error": {
+      "site": "Yale",
+      "n": 83
+    }
+  },
+  "cyclegan_tuned": {
+    "n_source": 90,
+    "n_errors": 59,
+    "errors_named_target": 47,
+    "target_share_of_errors": 0.797,
+    "most_common_error": {
+      "site": "NYU",
+      "n": 47
+    }
+  },
+  "diffusion_20k_redraw": {
+    "n_source": 90,
+    "n_errors": 52,
+    "errors_named_target": 34,
+    "target_share_of_errors": 0.654,
+    "most_common_error": {
+      "site": "NYU",
+      "n": 34
+    }
+  },
+  "diffusion_20k": {
+    "n_source": 90,
+    "n_errors": 48,
+    "errors_named_target": 32,
+    "target_share_of_errors": 0.667,
+    "most_common_error": {
+      "site": "NYU",
+      "n": 32
+    }
+  },
+  "dlest_1000": {
+    "n_source": 90,
+    "n_errors": 23,
+    "errors_named_target": 5,
+    "target_share_of_errors": 0.217,
+    "most_common_error": {
+      "site": "UCLA",
+      "n": 9
+    }
+  },
+  "dlest_1500": {
+    "n_source": 90,
+    "n_errors": 28,
+    "errors_named_target": 9,
+    "target_share_of_errors": 0.321,
+    "most_common_error": {
+      "site": "NYU",
+      "n": 9
+    }
+  },
+  "histogram_matching": {
+    "n_source": 90,
+    "n_errors": 51,
+    "errors_named_target": 9,
+    "target_share_of_errors": 0.176,
+    "most_common_error": {
+      "site": "USM",
+      "n": 16
+    }
+  },
+  "neurocombat": {
+    "n_source": 90,
+    "n_errors": 65,
+    "errors_named_target": 2,
+    "target_share_of_errors": 0.031,
+    "most_common_error": {
+      "site": "UCLA",
+      "n": 35
+    }
+  },
+  "stargan_aggressive": {
+    "n_source": 90,
+    "n_errors": 67,
+    "errors_named_target": 50,
+    "target_share_of_errors": 0.746,
+    "most_common_error": {
+      "site": "NYU",
+      "n": 50
+    }
+  },
+  "stargan_conservative": {
+    "n_source": 90,
+    "n_errors": 12,
+    "errors_named_target": 1,
+    "target_share_of_errors": 0.083,
+    "most_common_error": {
+      "site": "Pitt",
+      "n": 3
+    }
+  }
+}

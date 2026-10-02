@@ -57,7 +57,16 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   points: the introduction says PRISM evaluates classifiers trained on original images on
   harmonized outputs (the audited protocol); "a drop interpreted as evidence of harmonization [9]";
   HCLD is "near the shuffled-label baseline" (retrained 0.06-0.11 exceeds the 0.03-0.08 null);
-  paired differences are named as three-seed mean BA. Page 4 has about one free line.
+  paired differences are named as three-seed mean BA.
+- 2026-10-02, final round (Astra's third review, weak accept): cites Souza et al. 2023 (site
+  classifiers still predict site after histogram matching) beside Marzi and states what the audit
+  adds; notes PRISM's anatomy and segmentation checks; states the output-trained probes' split;
+  "varied less across seeds" replaces "agreed" and the seed-range versus bootstrap comparison is
+  gone; adds amendment 10 (the frozen probe labelled 83 of 84 adapted-HCLD errors Yale, while
+  65-80% of CycleGAN, aggressive StarGAN and diffusion errors named NYU); merges the discussion
+  takeaways into the checklist with the caveat that high output-trained accuracy is not by itself
+  failed harmonization. Text frozen after this round by the author's decision; no free line on
+  page 4.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.

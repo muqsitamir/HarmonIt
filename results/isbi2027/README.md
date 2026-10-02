@@ -25,6 +25,7 @@ artifacts (image NPZs, checkpoints) stay on vpulab under
 | `exports/brain/brain_mask_report.json` | Amendment 7 gate: raw-slice reproduction and brain-to-head area ratios. |
 | `analysis/acquisition_heterogeneity.json`, `analysis/acquisition_per_subject.csv` | Amendment 8: voxel size and matrix per subject, and per-site counts of distinct acquisition geometries (`scripts/isbi2027_acquisition_heterogeneity.py`). |
 | `analysis/probe_difference.json`, `analysis/probe_difference_last.json` | Amendment 9: paired output-trained minus raw-trained slice-probe BA per method, whole head and brain only, best-validation and final-epoch checkpoints (`scripts/isbi2027_probe_difference.py`). |
+| `analysis/frozen_probe_error_targets.json` | Amendment 10: for each output, how many frozen-probe errors on source subjects name NYU and the most common wrong site (`scripts/isbi2027_error_targets.py`). |
 | `logs/` | Converged-probe training logs (validation BA per epoch) and the volume-cache verification report. |
 
 ## Run names

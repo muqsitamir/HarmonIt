@@ -261,6 +261,13 @@ whole head +0.42 [0.36, 0.48], +0.55 [0.52, 0.58], +0.50 [0.45, 0.54]; brain onl
 +0.38 to +0.59, brain only +0.15 to +0.23). These intervals are conditional on the trained
 checkpoints and replace the per-seed disjoint-interval statements in the paper.
 
+Amendment 10, 2026-10-02 (post hoc description of existing predictions, prompted by an external
+review; nothing retrained). Where the frozen probe sends source outputs it misclassifies:
+`scripts/isbi2027_error_targets.py` writes `results/isbi2027/analysis/frozen_probe_error_targets.json`
+from the canonical run. Outcome: adapted HCLD 84 errors of 90, none named NYU, 83 named Yale;
+CycleGAN 80% of errors named NYU, aggressive StarGAN 75%, diffusion 65-67%, DLEST 22-32%,
+histogram matching 18% (pooled reference, not NYU), NeuroCombat 3%.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
