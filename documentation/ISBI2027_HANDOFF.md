@@ -33,6 +33,10 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 - 2026-10-02: the abstract now ends with the recommendation itself (converged probes including
   output-trained ones, a shuffled-label null, target alignment separate from change), and
   contribution (4) points to the four-item checklist in Sec. 5.
+- 2026-10-02 (later): abstract rewritten in plain terms (defines the site probe, then four findings
+  and the recommendation). Claims are limited to site-label decodability and intensity-distribution
+  alignment, not scanner-effect removal: "understate site decodability", "removal of site-label
+  information", "intensity alignment to the target". Page 4 now has no free line.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
