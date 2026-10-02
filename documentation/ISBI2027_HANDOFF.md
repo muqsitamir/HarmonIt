@@ -53,6 +53,11 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   scanners and applied to harmonized images); UMH (Wu et al., MICCAI 2025) and ImUnity (SVM on
   radiomics) read lower site accuracy as harmonization; the 2025 MRI harmonization survey (Yang et
   al., arXiv 2507.16962) calls site discriminability testing a widely adopted strategy.
+- 2026-10-02: Astra's second review: weak accept, literature objection withdrawn. Applied its last
+  points: the introduction says PRISM evaluates classifiers trained on original images on
+  harmonized outputs (the audited protocol); "a drop interpreted as evidence of harmonization [9]";
+  HCLD is "near the shuffled-label baseline" (retrained 0.06-0.11 exceeds the 0.03-0.08 null);
+  paired differences are named as three-seed mean BA. Page 4 has about one free line.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
