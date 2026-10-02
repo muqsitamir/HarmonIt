@@ -46,6 +46,13 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   "least-changed"; image vs logistic probes, slice sampling and the ten outputs (second diffusion
   draw) are defined; paired output-minus-raw differences (amendment 9) replace the disjoint-
   interval statements. Abstract, contributions and discussion numbers were shortened to fit.
+- 2026-10-02 literature check for the frozen raw-trained probe: PRISM (Galada et al., ISBI 2025
+  oral, arXiv 2411.06513) trains ResNet50/EfficientNet-B2 on pre-harmonized data and evaluates them
+  on harmonized data; it is now cited for that practice. Also found but not cited for space:
+  Scholz et al. 2025 (arXiv 2509.06592, radiomics scanner classifier trained on unharmonized IXI
+  scanners and applied to harmonized images); UMH (Wu et al., MICCAI 2025) and ImUnity (SVM on
+  radiomics) read lower site accuracy as harmonization; the 2025 MRI harmonization survey (Yang et
+  al., arXiv 2507.16962) calls site discriminability testing a widely adopted strategy.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
