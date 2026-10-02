@@ -65,8 +65,11 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   gone; adds amendment 10 (the frozen probe labelled 83 of 84 adapted-HCLD errors Yale, while
   65-80% of CycleGAN, aggressive StarGAN and diffusion errors named NYU); merges the discussion
   takeaways into the checklist with the caveat that high output-trained accuracy is not by itself
-  failed harmonization. Text frozen after this round by the author's decision; no free line on
-  page 4.
+  failed harmonization. Text frozen after this round by the author's decision.
+- 2026-10-02, Figure 1: the panel of per-output site BA (which repeated Table 1) was removed at the
+  author's request. Fig. 1 now has (a) whole head and (b) brain only, each image-probe pair labelled
+  with its paired difference (amendment 9). The figure is 1.25 in shorter, leaving about eight free
+  lines on page 4 (room for an IPCVai acknowledgment).
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.

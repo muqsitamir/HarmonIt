@@ -57,8 +57,10 @@ $PY scripts/isbi2027_converged.py --csv $A/all_runs_long.csv --logs results/isbi
 $PY scripts/isbi2027_tables.py --csv $A/all_runs_long.csv \
   --alignment $A/target_alignment_frozen10/target_alignment_summary.json \
   --out paper/isbi2027/tables/table_main.tex
+$PY scripts/isbi2027_probe_difference.py --runs results/isbi2027/runs --out $A/probe_difference.json
 $PY scripts/isbi2027_figures.py --csv $A/all_runs_long.csv --histogram-probe $A/histogram_probe.json \
-  --histogram-probe-brain $A/histogram_probe_brain.json --out-dir paper/isbi2027/figures
+  --histogram-probe-brain $A/histogram_probe_brain.json --differences $A/probe_difference.json \
+  --out-dir paper/isbi2027/figures
 bash paper/isbi2027/build.sh
 ```
 
