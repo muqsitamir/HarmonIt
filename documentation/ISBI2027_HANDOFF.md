@@ -93,13 +93,14 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 | What | Location |
 | --- | --- |
 | Code, paper, results | branch `main` of `github.com/muqsitamir/HarmonIt` (ISBI work merged 2026-09-15; commit IDs cited in older run logs map to current ones in `ISBI2027_COMMIT_MAP.tsv`) |
-| Experiment root (vpulab) | `/mnt/rhome/mmi/projects/isbi2027`: `code/` (rsync snapshot, `COMMIT` file), `runs/`, `exports/`, `slice_probes/`, `probe_work/`, `inputs/`, `analysis/` |
+| Experiment root (vpulab) | `/mnt/rhome/mmi/projects/isbi2027` was mostly deleted on 2026-10-01: `code/`, `exports/`, `slice_probes/`, `probe_work/`, `inputs/`, `analysis/`, brain masks and most `runs/` are gone; part of `brain_probes/` and a few run folders remain. Every reported number is versioned in `results/isbi2027`. Not bit-reproducible: the second diffusion draw (`diffusion_20k_redraw`). Deterministic exports and probes can be regenerated with the pipeline below if reviewers ask for new probe experiments. |
+| Test artifacts used by the paper | The eight test artifacts under `HarmonIt/outputs/harmonized/` (vpulab) and the canonical HCLD export on cl match the SHA-256 hashes in each run's `*_summary.json` (checked 2026-10-02). |
 | Data, historical artifacts, frozen probe (vpulab) | `/mnt/rhome/mmi/projects/HarmonIt` (`data/`, `outputs/harmonized/`, `checkpoints/`) |
 | Python env (vpulab) | `/home/mmi/envs/harmonit-isbi` (torch 2.5.1+cu121, numpy 1.26.4); installer `/mnt/rhome/mmi/envs/install_harmonit_isbi.sh` |
 | HCLD and diffusion training (cl) | `/home/muqsitamir/repos/HarmonIt`; HCLD canonical re-export in `outputs/harmonized/adapted_hcld_isbi2027_canonical` |
 | Normalized-volume cache (vpulab, local disk) | `/home/mmi/cache/isbi2027_volumes` (46 GB, train+val; `cache_report.json`) |
-| HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks `/mnt/rhome/mmi/projects/isbi2027/brain_masks/hdbet` |
-| Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/` (masks, masked train/val, brain_shape), `isbi2027/brain_probes/`, log `isbi2027/brain_run.log` |
+| HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks were in `isbi2027/brain_masks/hdbet` (deleted 2026-10-01; `run_hdbet_masks.py` regenerates them) |
+| Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/` and `isbi2027/brain_run.log` were deleted on 2026-10-01; part of `isbi2027/brain_probes/` remains |
 | Figure raster quality | `isbi2027_qualitative.py` saves at dpi=600 with `interpolation="nearest"`: vector backends rasterize embedded images at the figure dpi, so the default 100 dpi stored each 256x256 slice as ~42x42 px and printed blurred. Check with `page.get_images()` after any change. |
 | Figure variants | The paper uses `figures/fig_qualitative_wide.pdf` (7.0 x 2.05 in, two rows: outputs and difference maps). `isbi2027_qualitative.py --rows 1` makes a single-row variant with larger brains but no difference maps; `fig_qualitative.pdf` is the column-width fallback |
 | LaTeX (Mac) | TinyTeX in `~/Library/TinyTeX` (not on PATH); `bash paper/isbi2027/build.sh` |
@@ -125,6 +126,7 @@ an `https://` scheme and fails). Deploy code with rsync using root-anchored excl
 | Brain-only control (amendment 7) | `run_hdbet_masks.py` (hdbet env), then `vpulab_isbi2027_brain.sh` (`make_brain_npz.py`, slice probes, `eval_isbi2027.py --probe-input-mask`) |
 | Cohort acquisition heterogeneity (amendment 8) | `isbi2027_acquisition_heterogeneity.py` (runs locally; needs the NIfTI files) |
 | Collect, agreement, table, figures | `isbi2027_collect.py`, `isbi2027_probe_agreement.py`, `isbi2027_tables.py`, `isbi2027_figures.py`, `isbi2027_qualitative.py` |
+| Per-subject review panels | `isbi2027_subject_panels.py`: five source subjects, four methods, per-subject metrics and difference maps (made for P. Coupé's review, 2026-10-02) |
 | Metric functions and tests | `src/harmonit/metrics/subject_evaluation.py`, `tests/test_isbi_evaluation.py` |
 
 ## Known caveats (all stated in the protocol or paper)
