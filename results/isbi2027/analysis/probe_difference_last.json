@@ -1,0 +1,78 @@
+{
+  "ckpt": "last",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "replicates": 2000,
+  "bootstrap_seed": 20260913,
+  "results": {
+    "whole_head/histogram_matching": {
+      "test_artifact": "histogram_matching",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.4089,
+      "output_trained_ba": 0.7859,
+      "difference": 0.377,
+      "difference_ci95": [
+        0.3308,
+        0.4277
+      ]
+    },
+    "whole_head/cyclegan_tuned": {
+      "test_artifact": "cyclegan_tuned",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.2908,
+      "output_trained_ba": 0.8851,
+      "difference": 0.5942,
+      "difference_ci95": [
+        0.5532,
+        0.6351
+      ]
+    },
+    "whole_head/diffusion_20k": {
+      "test_artifact": "diffusion_20k_redraw",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.3721,
+      "output_trained_ba": 0.9111,
+      "difference": 0.539,
+      "difference_ci95": [
+        0.4946,
+        0.5816
+      ]
+    },
+    "brain_only/histogram_matching": {
+      "test_artifact": "histogram_matching",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.5707,
+      "output_trained_ba": 0.7979,
+      "difference": 0.2272,
+      "difference_ci95": [
+        0.1769,
+        0.2788
+      ]
+    },
+    "brain_only/cyclegan_tuned": {
+      "test_artifact": "cyclegan_tuned",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.5172,
+      "output_trained_ba": 0.7,
+      "difference": 0.1828,
+      "difference_ci95": [
+        0.1302,
+        0.2344
+      ]
+    },
+    "brain_only/diffusion_20k": {
+      "test_artifact": "diffusion_20k_redraw",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.4607,
+      "output_trained_ba": 0.607,
+      "difference": 0.1463,
+      "difference_ci95": [
+        0.098,
+        0.1935
+      ]
+    }
+  }
+}

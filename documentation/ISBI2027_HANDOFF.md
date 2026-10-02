@@ -37,6 +37,15 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   and the recommendation). Claims are limited to site-label decodability and intensity-distribution
   alignment, not scanner-effect removal: "understate site decodability", "removal of site-label
   information", "intensity alignment to the target". Page 4 now has no free line.
+- 2026-10-02 (external review by OpenAI's Astra, borderline/weak reject): applied. The
+  introduction no longer cites Glocker and Dinsdale for the frozen raw-trained probe; it cites
+  Glocker for site predictability and DLEST/HCLD for reading lower site accuracy as harmonization
+  (they retrain on harmonized images or fit on frozen features), and names the frozen probe as the
+  audited benchmark's. Recipe effects are no longer attributed to convergence alone; histograms
+  "discard spatial arrangement"; "smallest intensity-distribution change" replaces
+  "least-changed"; image vs logistic probes, slice sampling and the ten outputs (second diffusion
+  draw) are defined; paired output-minus-raw differences (amendment 9) replace the disjoint-
+  interval statements. Abstract, contributions and discussion numbers were shortened to fit.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.

@@ -248,6 +248,19 @@ scans at 1.5x1.5x4 mm, all in the training split); Leuven, NYU, Pitt, SBL, SDSU 
 homogeneous. This bounds what a single site label can mean and is reported as a limitation; no
 probe or generator was retrained.
 
+Amendment 9, 2026-10-02 (post hoc summary of existing predictions, after all probe results;
+prompted by an external review). No probe was retrained. For each slice-probe method
+(histogram matching, CycleGAN, diffusion tested on its second draw), the paired difference in
+source BA between probes trained on that method's outputs and probes trained on raw slices,
+averaged over seeds 1-3, with the evaluator's site-stratified bootstrap indices (2,000
+replicates, seed 20260913), on whole heads and brain-only slices.
+`scripts/isbi2027_probe_difference.py` writes `results/isbi2027/analysis/probe_difference.json`
+(best-validation checkpoints) and `probe_difference_last.json` (final epoch). Outcome (best):
+whole head +0.42 [0.36, 0.48], +0.55 [0.52, 0.58], +0.50 [0.45, 0.54]; brain only +0.29 [0.23,
+0.35], +0.31 [0.24, 0.37], +0.36 [0.28, 0.43]. Final epoch: every interval above zero (whole head
++0.38 to +0.59, brain only +0.15 to +0.23). These intervals are conditional on the trained
+checkpoints and replace the per-seed disjoint-interval statements in the paper.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
