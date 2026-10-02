@@ -28,8 +28,11 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   METRICS.md describe the audit as complete; the AI disclosure names the tools, the affected
   sections and the level of use.
 - Acknowledgments carry the ABIDE-required funding acknowledgment (NIMH K23MH087770,
-  R03MH096321, Stavros Niarchos and Leon Levy Foundations), the compute resources and P. Coupé's
-  project funding (see Funding below).
+  R03MH096321, Stavros Niarchos and Leon Levy Foundations) and P. Coupé's project funding (see
+  Funding below). The VPU Lab GPU line was removed on 2026-10-02 with J. M. Martínez's agreement.
+- 2026-10-02: the abstract now ends with the recommendation itself (converged probes including
+  output-trained ones, a shuffled-label null, target alignment separate from change), and
+  contribution (4) points to the four-item checklist in Sec. 5.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
