@@ -81,6 +81,10 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   table and references at \small (9 pt), footnotes 9 pt, Fig. 1 regenerated at 9 pt, Fig. 2 rebuilt
   at 9 pt from its extracted panels. Every text span is 9 pt except sub/superscripts. Page 4's
   right column is about half empty. IPCVai acknowledgment: not added (no funding, per J. M. Martínez).
+- 2026-10-04 (later): the author rejected the 9-pt layout's look. Reverted to 10-pt body, \scriptsize table,
+  \footnotesize references and the previous Fig. 1 and Fig. 2; all accuracy corrections above are
+  kept, with small wording trims to stay at four pages. The template's 9-pt guidance is therefore
+  not met for Table 1, references and figure labels (author's decision).
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
