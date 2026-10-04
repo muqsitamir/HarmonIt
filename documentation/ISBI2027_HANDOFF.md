@@ -70,6 +70,17 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   author's request. Fig. 1 now has (a) whole head and (b) brain only, each image-probe pair labelled
   with its paired difference (amendment 9). The figure is 1.25 in shorter, leaving about eight free
   lines on page 4 (room for an IPCVai acknowledgment).
+- 2026-10-04, accuracy corrections from a third review (all verified against code and data):
+  the "DLEST" outputs come from a DLEST-style content/AdaIN baseline without DLEST's energy-based
+  sampler and are now named so (text and Table 1); the converged recipe's reseeded data-loader
+  workers are disclosed and the benchmark spread is called largely a training-stability effect, as
+  amendment 6 committed; HCLD's 0.06-0.11 is limited to benchmark-recipe and converged probes
+  (diffusion-trained slice probes give 0.19-0.29); Fig. 2's caption says median PSNR over nine
+  outputs (ORDER in isbi2027_qualitative.py omits dlest_1500); two brain-histogram intervals fixed
+  (double rounding); Rahbar's 0.9 is chance-corrected BA. Template minimum of 9 pt: \ninept body,
+  table and references at \small (9 pt), footnotes 9 pt, Fig. 1 regenerated at 9 pt, Fig. 2 rebuilt
+  at 9 pt from its extracted panels. Every text span is 9 pt except sub/superscripts. Page 4's
+  right column is about half empty. IPCVai acknowledgment: not added (no funding, per J. M. Martínez).
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.

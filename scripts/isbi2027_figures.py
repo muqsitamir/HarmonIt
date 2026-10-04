@@ -31,8 +31,8 @@ ADVERSARY = {"histogram_matching": "histogram_matching", "cyclegan_tuned": "cycl
 
 def style():
     plt.rcParams.update({
-        "font.size": 7, "axes.labelsize": 7, "xtick.labelsize": 6.5, "ytick.labelsize": 6.5,
-        "legend.fontsize": 6.5, "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED,
+        "font.size": 9, "axes.labelsize": 9, "xtick.labelsize": 9, "ytick.labelsize": 9,
+        "legend.fontsize": 9, "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED,
         "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False, "axes.linewidth": .6,
         "pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "DejaVu Sans",
     })
@@ -66,7 +66,7 @@ def panel_adversary(ax, df, hist, family, control, title, differences):
                     v = value(src, source=train_src, method=artifact, metric="harmonized_site_ba").estimate
                     pts.append((v.mean(), v.min(), v.max()))
                 diff = differences[source]["difference"]
-                ax.text(x, 1.1, f"{diff:+.2f}", fontsize=6, color=INK, ha="center", va="center")
+                ax.text(x, 1.12, f"{diff:+.2f}", fontsize=9, color=INK, ha="center", va="center")
             else:  # intensity-histogram probes
                 own = next(e["source_ba"] for e in h["own_trained"].values() if e["test_artifact"] == artifact)
                 raw_test = h["raw_trained"]["raw"]["estimate"]
@@ -74,16 +74,15 @@ def panel_adversary(ax, df, hist, family, control, title, differences):
             ax.plot([x, x], [pts[0][0], pts[1][0]], color=MUTED, lw=.7, zorder=1)
             ax.plot([x - .08, x + .08], [raw_test] * 2, color=INK, lw=.9, zorder=1.5)
             for (est, lo, hi), color in zip(pts, (RAW_TRAINED, AQUA)):
-                ax.errorbar(x, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=3.8, color=color, mec="white",
+                ax.errorbar(x, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=4.5, color=color, mec="white",
                             mew=.4, ecolor=color, elinewidth=.7, zorder=3)
-    ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
-    ax.text(-.47, .07, "chance", fontsize=5.5, color=MUTED, va="bottom")
-    ax.set_title(title, loc="left", fontsize=7, fontweight="bold", pad=3)
-    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diffusion (draw 2)"])
+    ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)  # explained in the caption
+    ax.set_title(title, loc="left", fontsize=9, fontweight="bold", pad=4)
+    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diffusion"])
     ax.set_xlim(-.5, len(ADVERSARY) - .5)
-    ax.set_ylim(0, 1.17)
+    ax.set_ylim(0, 1.22)
     ax.set_yticks([0, .25, .5, .75, 1])
-    ax.set_ylabel("Source site BA on outputs", fontsize=6.5)
+    ax.set_ylabel("Source site BA", fontsize=9)
     ax.grid(axis="y", color=GRID, lw=.4)
 
 
@@ -102,23 +101,23 @@ def main():
     by_family = lambda family: {key.split("/")[1]: r for key, r in diffs.items() if key.startswith(family)}
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    fig = plt.figure(figsize=(3.39, 3.2))
-    ax_a = fig.add_axes([.15, .615, .83, .33])
-    ax_b = fig.add_axes([.15, .165, .83, .32])
+    fig = plt.figure(figsize=(3.39, 4.2))
+    ax_a = fig.add_axes([.165, .635, .815, .30])
+    ax_b = fig.add_axes([.165, .235, .815, .29])
     panel_adversary(ax_a, df, load(args.histogram_probe), "slice_probe", "silhouette", "(a) whole head",
                     by_family("whole_head"))
     panel_adversary(ax_b, df, load(args.histogram_probe_brain), "brain_slice_probe", "brain_shape", "(b) brain only",
                     by_family("brain_only"))
     handles = [
-        plt.Line2D([], [], ls="", marker="o", ms=3.8, color=RAW_TRAINED, label="trained on raw"),
-        plt.Line2D([], [], ls="", marker="o", ms=3.8, color=AQUA, label="trained on outputs"),
-        plt.Line2D([], [], ls="", marker="o", ms=3.8, color=MUTED, label="image probe"),
-        plt.Line2D([], [], ls="", marker="s", ms=3.8, color=MUTED, label="intensity probe"),
+        plt.Line2D([], [], ls="", marker="o", ms=4.5, color=RAW_TRAINED, label="trained on raw"),
+        plt.Line2D([], [], ls="", marker="o", ms=4.5, color=AQUA, label="trained on outputs"),
+        plt.Line2D([], [], ls="", marker="o", ms=4.5, color=MUTED, label="image probe"),
+        plt.Line2D([], [], ls="", marker="s", ms=4.5, color=MUTED, label="intensity probe"),
         plt.Line2D([], [], ls="-", lw=.9, color=INK, label="raw test images"),
         plt.Rectangle((0, 0), 1, 1, color=GRID, label="geometry only"),
     ]
-    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.55, 0), ncol=3, frameon=False,
-               handletextpad=.2, columnspacing=.9, labelspacing=.2, fontsize=6)
+    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.55, 0), ncol=2, frameon=False,
+               handletextpad=.3, columnspacing=1.2, labelspacing=.25, fontsize=9)
     fig.savefig(out / "fig_probe_verdicts.pdf")
     fig.savefig(out / "fig_probe_verdicts.png", dpi=300)
     print(out / "fig_probe_verdicts.pdf")
