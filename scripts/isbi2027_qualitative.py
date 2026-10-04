@@ -20,7 +20,7 @@ import pandas as pd  # noqa: E402
 from matplotlib.colors import LinearSegmentedColormap  # noqa: E402
 
 # dlest_1500 is absent from ORDER, so the subject is the median over nine outputs; the published
-# Fig. 2 (UM_50428) used this selection and its caption says so.
+# Fig. 2 (UM_50428) used this selection (caption: "median PSNR across outputs").
 ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggressive", "stargan_conservative",
          "dlest_1000", "diffusion_20k", "diffusion_20k_redraw", "adapted_hcld"]
 TITLES = {"neurocombat": "NeuroComb.", "histogram_matching": "Hist. match", "cyclegan_tuned": "CycleGAN",
