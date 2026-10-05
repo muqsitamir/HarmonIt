@@ -3,8 +3,9 @@
 Rendered like the original panels in `paper/isbi2027/figures/qualitative_panels/`: the input's
 foreground 99.5th-percentile display window, a 64-pixel zoom box at the foreground centroid,
 difference maps on the blue-grey-red scale at +-0.3, nearest-neighbour upsampling to the
-original panel size. The NYU subject is the NYU test slice with the highest normalized
-cross-correlation with the input.
+original panel size. The NYU subject maximizes head-mask Dice with the input times correlation
+inside the zoom box: Dice keeps the input's in-plane orientation, which varies between subjects,
+and the box correlation picks matching central anatomy (slice level), which Dice alone does not.
 """
 
 from __future__ import annotations
@@ -46,9 +47,12 @@ def main():
     c0 = int(np.clip(cols.mean() - ZOOM // 2, 0, inp.shape[1] - ZOOM))
     crop = lambda img: img[r0:r0 + ZOOM, c0:c0 + ZOOM]
 
+    dice = lambda m: 2 * (fg & m).sum() / (fg.sum() + m.sum())
     centred = lambda img: (img - img.mean()) / np.linalg.norm(img - img.mean())
-    nyu = [i for i in np.flatnonzero(sites == TARGET_SITE)]
-    match = nyu[int(np.argmax([(centred(inp) * centred(raw[i].astype(np.float64))).sum() for i in nyu]))]
+    box_corr = lambda img: (centred(crop(inp)) * centred(crop(img))).sum()
+    nyu = np.flatnonzero(sites == TARGET_SITE)
+    scores = [dice(raw[i] > .02) * box_corr(raw[i].astype(np.float64)) for i in nyu]
+    match = int(nyu[np.argmax(scores)])
     blurred = gaussian_filter(raw[row], sigma=args.sigma, mode="constant", cval=0.0).astype(np.float64)
     psnr = 10 * np.log10(1 / np.mean((blurred - inp) ** 2))
 

@@ -96,7 +96,7 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   Table 1 now has W, KL_NYU, the frozen probe's NYU share, both diffusion draws and the blur row
   (`scripts/isbi2027_tables.py`); Fig. 2 has an NCC-matched NYU subject and the blur column
   (`scripts/isbi2027_qualitative_extra_panels.py` then `isbi2027_qualitative_relabel.py`, original
-  small fonts). Also: amendment 11 demographics (0.22, 0.31 with brain volume), 53 probes (44
+  small fonts; NYU example = max head-mask Dice x zoom-box correlation, NYU_51062, so it shares the input's axial orientation; a reviewer misread an earlier rotated pick as sagittal). Also: amendment 11 demographics (0.22, 0.31 with brain volume), 53 probes (44
   ResNets), histogram matching's pooled reference, NYU reference = all 147 NYU training subjects,
   1/16 constant-class value, small-site limitation, P. Coupé's LaBRI affiliation (3). Kendall tau
   without HCLD: benchmark 0.39-0.83, converged 0.78-0.94, frozen vs converged 0.56-0.67. Still

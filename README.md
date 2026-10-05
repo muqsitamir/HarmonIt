@@ -38,7 +38,7 @@ cases for the evaluation, not as a leaderboard, on the 90 source-site test subje
   0.13-0.59; five converged probes agreed (0.44-0.54) but found more site information
   in eight of nine outputs.
 - **A blur scores lower than every harmonizer.** Gaussian blur of the inputs, which
-  harmonizes nothing and keeps PSNR at 24.7 dB, scored frozen-probe balanced accuracy
+  moves intensities away from NYU and keeps PSNR at 24.7 dB, scored frozen-probe balanced accuracy
   0.07, within the shuffled-label null; the probe labelled the blurred slices Yale.
 - **Small change is not target alignment.** Diffusion translation changed intensities
   least but barely moved them toward the target site.
