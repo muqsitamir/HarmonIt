@@ -85,6 +85,11 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   \footnotesize references and the previous Fig. 1 and Fig. 2; all accuracy corrections above are
   kept, with small wording trims to stay at four pages. The template's 9-pt guidance is therefore
   not met for Table 1, references and figure labels (author's decision).
+- 2026-10-05 (P. Coupé asked what "adapted HCLD" is): Section 2 now states it is the authors' code
+  retrained by us on ABIDE, without encoder/decoder non-local attention and at 192x192x64 to fit a
+  40 GB GPU, and that its autoencoder alone loses anatomy, so the output does not represent HCLD
+  (harmonit-dev results/ae_fidelity_val_20261001: our HCLD autoencoder keeps segmentation Dice 0.54
+  with the input, against 0.89 for pretrained VAEs and 0.85 for the resize alone).
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
