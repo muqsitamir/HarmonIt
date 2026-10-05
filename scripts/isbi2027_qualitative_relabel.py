@@ -1,11 +1,12 @@
-"""Rebuild Fig. 2 (fig_qualitative_wide.pdf) with 9-point text from its saved panels.
+"""Rebuild Fig. 2 (fig_qualitative_wide.pdf) from its saved panels.
 
 The second diffusion draw shown in Fig. 2 was deleted from vpulab on 2026-10-01, so the figure
 can no longer be rendered from data with `isbi2027_qualitative.py`. Its panels were extracted
 pixel for pixel from the published figure into `paper/isbi2027/figures/qualitative_panels/`;
-this script lays them out again at the paper's text width so every label meets the template's
-9-point minimum. Subject UM_50428, PSNR values and the zoom box are those of the original
-figure (selection: median PSNR over the nine outputs in `isbi2027_qualitative.py`'s ORDER).
+the NYU-target and blur-control panels come from `isbi2027_qualitative_extra_panels.py`. Text
+sizes reproduce the original figure as printed (6 pt titles). Subject UM_50428, PSNR values and
+the zoom box are those of the original figure (selection: median PSNR over the nine outputs in
+`isbi2027_qualitative.py`'s ORDER); the blur PSNR is from the blur-control run (amendment 12).
 """
 
 from __future__ import annotations
@@ -19,16 +20,17 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.colors import LinearSegmentedColormap, Normalize  # noqa: E402
 
-COLUMNS = [("input", "Input"), ("histogram_matching", "Hist. match."), ("cyclegan", "CycleGAN"),
-           ("diffusion_draw1", "Diff. draw 1"), ("diffusion_draw2", "Diff. draw 2"),
-           ("adapted_hcld", "Adapted HCLD")]
+COLUMNS = [("input", "Input"), ("nyu_target", "NYU subject"), ("histogram_matching", "Hist. match."),
+           ("cyclegan", "CycleGAN"), ("diffusion_draw1", "Diff. draw 1"), ("diffusion_draw2", "Diff. draw 2"),
+           ("blur", "Blur, $\\sigma{=}2$")]
+REFERENCES = {"input", "nyu_target"}  # shown without a difference map
 PSNR = {"histogram_matching": "20.9 dB", "cyclegan": "17.2 dB", "diffusion_draw1": "22.7 dB",
-        "diffusion_draw2": "22.9 dB", "adapted_hcld": "19.5 dB"}
+        "diffusion_draw2": "22.9 dB", "blur": "25.0 dB"}
 ZOOM_BOX = (.3724, .3687, .2503)  # x0, y0 (axes fraction, from bottom-left) and side of the input's zoom box
 DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#184f95", "#f0efec", "#a8322f"])
 LIMIT = .3
 INK, MUTED = "#0b0b0b", "#52514e"
-SIZE = 9
+SIZE, LABEL = 6, 5.4  # the original figure's text as printed
 
 
 def bare(ax):
@@ -45,7 +47,7 @@ def main():
     panels = Path(args.panels)
     plt.rcParams.update({"font.size": SIZE, "font.family": "DejaVu Sans", "pdf.fonttype": 42})
 
-    width, side, gap, left, top_band, row_gap, bottom = 7.0, .93, .07, .1, .22, .05, .03
+    width, side, gap, left, top_band, row_gap, bottom = 7.0, .83, .05, .02, .14, .04, .02
     height = top_band + side + row_gap + side + bottom
     fig = plt.figure(figsize=(width, height))
     box = lambda x, y, w, h: [x / width, 1 - (y + h) / height, w / width, h / height]  # inches from top-left
@@ -65,18 +67,19 @@ def main():
         if key == "input":
             x0, y0, s = ZOOM_BOX
             ax.add_patch(plt.Rectangle((x0, y0), s, s, transform=ax.transAxes, fill=False, edgecolor="white", lw=.6))
+        if key in REFERENCES:
             continue
         diff = fig.add_axes(box(col_x[j], y_bottom, side, side))
         diff.imshow(plt.imread(panels / f"diff_{key}.png"), interpolation="nearest", aspect="auto")
-        diff.text(.03, .04, PSNR[key], fontsize=SIZE, color=INK, transform=diff.transAxes)
+        diff.text(.03, .04, PSNR[key], fontsize=LABEL, color=INK, transform=diff.transAxes)
         bare(diff)
-    fig.text((col_x[0] + side / 2) / width, 1 - (y_bottom + side / 2) / height, "output\n− input", fontsize=SIZE,
-             color=MUTED, ha="center", va="center")
-    cax = fig.add_axes(box(col_x[-1] + side + .08, y_bottom, .07, side))
+    fig.text((col_x[0] + side + gap / 2) / width, 1 - (y_bottom + side / 2) / height, "output\n− input",
+             fontsize=SIZE, color=MUTED, ha="center", va="center")
+    cax = fig.add_axes(box(col_x[-1] + side + .06, y_bottom, .06, side))
     bar = fig.colorbar(plt.cm.ScalarMappable(norm=Normalize(-LIMIT, LIMIT), cmap=DIVERGING), cax=cax,
                        ticks=[-.2, 0, .2])
-    bar.ax.tick_params(labelsize=SIZE, length=2)
-    bar.set_label("output − input", size=SIZE, color=MUTED)
+    bar.ax.tick_params(labelsize=SIZE, length=2, pad=1)
+    bar.set_label("output − input", size=LABEL, color=MUTED, labelpad=2)
     out = Path(args.out)
     fig.savefig(out, dpi=600)
     fig.savefig(out.with_suffix(".png"), dpi=300)

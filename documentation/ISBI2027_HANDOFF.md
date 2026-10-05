@@ -90,6 +90,17 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   40 GB GPU, and that its autoencoder alone loses anatomy, so the output does not represent HCLD
   (harmonit-dev results/ae_fidelity_val_20261001: our HCLD autoencoder keeps segmentation Dice 0.54
   with the input, against 0.89 for pretrained VAEs and 0.85 for the resize alone).
+- 2026-10-05 (P. Coupé's full review; he chose "try the blur, else keep HCLD with the
+  disclaimer"): amendment 12's blur control met its pre-set rule (sigma 8 BA 0.068 < 0.21), so
+  the paper drops adapted HCLD and shows the blur (sigma 2 in Table 1; sigma 4 and 8 in the text).
+  Table 1 now has W, KL_NYU, the frozen probe's NYU share, both diffusion draws and the blur row
+  (`scripts/isbi2027_tables.py`); Fig. 2 has an NCC-matched NYU subject and the blur column
+  (`scripts/isbi2027_qualitative_extra_panels.py` then `isbi2027_qualitative_relabel.py`, original
+  small fonts). Also: amendment 11 demographics (0.22, 0.31 with brain volume), 53 probes (44
+  ResNets), histogram matching's pooled reference, NYU reference = all 147 NYU training subjects,
+  1/16 constant-class value, small-site limitation, P. Coupé's LaBRI affiliation (3). Kendall tau
+  without HCLD: benchmark 0.39-0.83, converged 0.78-0.94, frozen vs converged 0.56-0.67. Still
+  four pages (last column 724).
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.
@@ -131,13 +142,13 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 
 1. Verdicts depend on probe training: five benchmark-recipe probes (raw BA 0.81-0.98, unstable
    validation BA) gave CycleGAN 0.13-0.59, diffusion 0.24-0.63, histogram matching 0.27-0.59,
-   aggressive StarGAN 0.18-0.54 (tau 0.51-0.87). Five converged probes (amendment 6; raw BA
-   1.00) agreed (tau 0.82-0.96, ranges <= 0.16) but rated eight of ten outputs above the frozen
-   probe's interval (aggressive StarGAN 0.65-0.81 vs 0.21; CycleGAN 0.44-0.54 vs 0.31) and
-   reordered methods (tau with frozen 0.64-0.73).
-2. The lowest site accuracy came from destruction: the adapted HCLD output scored BA 0.07
-   (within the shuffled-label null) under every probe, PSNR 13.9 dB, XCorr 0.71,
-   moves away from NYU (dW +0.108).
+   aggressive StarGAN 0.18-0.54 (tau 0.39-0.83 over the nine outputs). Five converged probes
+   (amendment 6; raw BA 1.00) agreed (tau 0.78-0.94, ranges <= 0.16) but rated eight of nine
+   outputs above the frozen probe's interval (aggressive StarGAN 0.65-0.81 vs 0.21; CycleGAN
+   0.44-0.54 vs 0.31) and reordered methods (tau with frozen 0.56-0.67).
+2. A blur scores lower than every harmonizer (amendment 12): sigma 2 keeps PSNR 24.7 dB but
+   frozen-probe BA is 0.07 [0.06, 0.10] (87 of 90 labelled Yale, none NYU); sigma 4 and 8 give
+   0.06 and 0.07. Adapted HCLD (0.07, also mostly Yale) is no longer in the paper.
 3. Change is not alignment: diffusion changes intensities least (W 0.008) but dW_NYU
    -0.0013 [-0.0023, -0.0004] (1% of raw distance); KL to NYU 0.30 -> 0.83. A second diffusion
    sampling draw differs from the first more than from the input.

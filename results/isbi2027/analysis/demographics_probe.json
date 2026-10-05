@@ -1,0 +1,31 @@
+{
+  "n_train": 890,
+  "n_source_test": 90,
+  "results": {
+    "age_sex_diagnosis": {
+      "features": [
+        "age",
+        "sex",
+        "dx"
+      ],
+      "source_ba": 0.2155,
+      "ci95": [
+        0.1521,
+        0.2858
+      ]
+    },
+    "age_sex_diagnosis_brain_volume": {
+      "features": [
+        "age",
+        "sex",
+        "dx",
+        "vol_brain"
+      ],
+      "source_ba": 0.3052,
+      "ci95": [
+        0.2177,
+        0.3958
+      ]
+    }
+  }
+}

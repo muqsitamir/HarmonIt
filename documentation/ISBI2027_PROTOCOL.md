@@ -268,6 +268,30 @@ from the canonical run. Outcome: adapted HCLD 84 errors of 90, none named NYU, 8
 CycleGAN 80% of errors named NYU, aggressive StarGAN 75%, diffusion 65-67%, DLEST 22-32%,
 histogram matching 18% (pooled reference, not NYU), NeuroCombat 3%.
 
+Amendment 11, 2026-10-05 (post hoc; requested by P. Coupé's review). How much site is decodable
+from demographics and brain size alone: multinomial logistic regression (standardized inputs,
+balanced class weights) trained on the 890 training subjects, scored on the 90 source test
+subjects with the evaluator's bootstrap. Inputs: age, sex, diagnosis; then also FastSurfer total
+brain volume. `scripts/isbi2027_demographics_probe.py`, `results/isbi2027/analysis/demographics_probe.json`.
+Outcome: source BA 0.22 [0.15, 0.29] from age, sex and diagnosis; 0.31 [0.22, 0.40] with brain
+volume; raw-image probes reach 0.81-1.00.
+
+Amendment 12, 2026-10-05 (written before running; requested by P. Coupé). The adapted HCLD output
+is our retraining with reduced capacity, so a synthetic destroyed control is tried in its place.
+Control: every raw test slice blurred with a 2D Gaussian (sigma 2, 4 and 8 pixels on the 256x256
+slice, zero padding), scored by the frozen probe with `eval_isbi2027.py` (fresh reference, frozen
+slice map, same bootstrap). Decision rule fixed now: if at sigma 8 the frozen-probe source BA is
+below that of every real harmonizer (lowest: aggressive StarGAN, 0.21), the blur control replaces
+the adapted HCLD output in the paper; otherwise HCLD is kept with its disclaimer. No other blur
+settings are tried after the results are seen.
+Outcome (`scripts/isbi2027_blur_control.py`, run `results/isbi2027/runs/frozen_probe_blur_control_20261005`,
+alignment `results/isbi2027/analysis/target_alignment_blur`): source BA 0.075 [0.0625, 0.10] at
+sigma 2 (PSNR 24.7 dB, XCorr 0.974; 87 of 90 labelled Yale, none NYU), 0.0625 at sigma 4 (the
+constant-prediction value 1/16) and 0.068 at sigma 8, all below aggressive StarGAN. By the rule
+the blur control replaces adapted HCLD in the paper. Table 1 shows sigma 2, the mildest setting;
+sigma 4 and 8 are reported in the text. Blur moved intensities away from NYU (Delta W_NYU +0.016,
++0.031, +0.044; KL to NYU 0.57, 0.75, 0.92 against 0.30 raw).
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.

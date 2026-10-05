@@ -1,0 +1,191 @@
+{
+  "eval_run": "runs/frozen_probe_blur_control_20261005",
+  "reference_npz": "exports/histogram_matching/train/histogram_matching_slices.npz",
+  "reference_sha256": "9a06f8ad6ca9367aa0e28cdb9d75d4410e540d4cd825d8d57c9eb19cc7179a0b",
+  "reference_subjects": 147,
+  "foreground": "raw slice > 0.02",
+  "kl_direction": "KL(image || NYU reference)",
+  "cohort": "source (non-NYU) test subjects",
+  "methods": {
+    "gaussian_blur_s2": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.11905005292402214,
+          "ci95": [
+            0.11376317066042646,
+            0.12444362586778612
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.016144738916948544,
+          "ci95": [
+            0.014986951890294645,
+            0.01736127245244114
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.5727647025356406,
+          "ci95": [
+            0.5443478910684159,
+            0.6012903020067997
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.2686143104330312,
+          "ci95": [
+            0.2555590361951287,
+            0.2822980981866153
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "gaussian_blur_s4": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.13341702080908374,
+          "ci95": [
+            0.12828977089975543,
+            0.13891760937267655
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.030511706802010184,
+          "ci95": [
+            0.028328374029571075,
+            0.032741994909024526
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.7470146093781848,
+          "ci95": [
+            0.7100363113942835,
+            0.7842127882777148
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.4428642172755755,
+          "ci95": [
+            0.4216736180079247,
+            0.4646554425922937
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "gaussian_blur_s8": {
+      "wasserstein": {
+        "raw": {
+          "estimate": 0.10290531400707358,
+          "ci95": [
+            0.0972313790476132,
+            0.10845147668333388
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.1467381655203537,
+          "ci95": [
+            0.14129410762559946,
+            0.15262981795059974
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.043832851513280126,
+          "ci95": [
+            0.04068878512821242,
+            0.046877781763834725
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      },
+      "kl": {
+        "raw": {
+          "estimate": 0.30415039210260925,
+          "ci95": [
+            0.2826368484283799,
+            0.3255719695861352
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized": {
+          "estimate": 0.9169931188614944,
+          "ci95": [
+            0.8677908635724678,
+            0.9647098545965856
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_minus_raw": {
+          "estimate": 0.6128427267588852,
+          "ci95": [
+            0.580098398398002,
+            0.6471871527663589
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    }
+  }
+}

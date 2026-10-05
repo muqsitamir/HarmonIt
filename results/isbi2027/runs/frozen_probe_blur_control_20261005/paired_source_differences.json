@@ -1,0 +1,290 @@
+[
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "psnr",
+    "estimate": 3.9754433962545113,
+    "ci95": [
+      3.9119512174912017,
+      4.041342203698384
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "mse",
+    "estimate": -0.005071006182437382,
+    "ci95": [
+      -0.005195866340829609,
+      -0.004937029899660082
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "mae",
+    "estimate": -0.021502942110572604,
+    "ci95": [
+      -0.0218899352133664,
+      -0.021089785280971652
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.021278782431050844,
+    "ci95": [
+      0.020295715890148152,
+      0.02231719896043118
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "cross_correlation",
+    "estimate": 0.04072774587771837,
+    "ci95": [
+      0.03908131332617479,
+      0.042486813299199074
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.014839528149949278,
+    "ci95": [
+      -0.015355722956339591,
+      -0.014339059103479514
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.20031467829306673,
+    "ci95": [
+      -0.21636643679431128,
+      -0.18423378093101112
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s4",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.012499999999999997,
+    "ci95": [
+      0.0,
+      0.037500000000000006
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "psnr",
+    "estimate": 6.4606057171052615,
+    "ci95": [
+      6.350251553646092,
+      6.575902078931976
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "mse",
+    "estimate": -0.011749322498665659,
+    "ci95": [
+      -0.012056249395951247,
+      -0.011422337535403249
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "mae",
+    "estimate": -0.044284294242246676,
+    "ci95": [
+      -0.045192861484525046,
+      -0.04336810979609823
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.05015912904793838,
+    "ci95": [
+      0.04780813229420179,
+      0.052720658683588925
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "cross_correlation",
+    "estimate": 0.09906649900983705,
+    "ci95": [
+      0.09468149234234374,
+      0.10386372799446678
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.02911256782441723,
+    "ci95": [
+      -0.030301233824203997,
+      -0.02792234157087736
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.6926384049364124,
+    "ci95": [
+      -0.7321591671110732,
+      -0.655549798501074
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s2",
+    "method_b": "gaussian_blur_s8",
+    "metric": "harmonized_site_ba",
+    "estimate": 0.0068181818181818205,
+    "ci95": [
+      -0.011477272727272725,
+      0.037500000000000006
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "psnr",
+    "estimate": 2.48516232085075,
+    "ci95": [
+      2.4260210230523542,
+      2.5461419114421524
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "mse",
+    "estimate": -0.006678316316228274,
+    "ci95": [
+      -0.006908378940406727,
+      -0.006452766448698664
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "mae",
+    "estimate": -0.022781352131674076,
+    "ci95": [
+      -0.02334706046468174,
+      -0.02221063156282661
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "pixel_cosine_similarity",
+    "estimate": 0.028880346616887535,
+    "ci95": [
+      0.02733761675448455,
+      0.03059021768637537
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "cross_correlation",
+    "estimate": 0.0583387531321187,
+    "ci95": [
+      0.05534826352878946,
+      0.06165859344342825
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": -0.014273039674467958,
+    "ci95": [
+      -0.015069110332780819,
+      -0.013470395742123815
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "subject_kl_raw_harm",
+    "estimate": -0.49232372664334567,
+    "ci95": [
+      -0.5248377538051994,
+      -0.46154175065949254
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "gaussian_blur_s4",
+    "method_b": "gaussian_blur_s8",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.005681818181818177,
+    "ci95": [
+      -0.017045454545454544,
+      0.0
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  }
+]

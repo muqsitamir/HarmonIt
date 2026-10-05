@@ -1,0 +1,504 @@
+{
+  "artifact": "/mnt/rhome/mmi/projects/isbi2027/inputs/blur/gaussian_blur_s4.npz",
+  "artifact_sha256": "4a9d7f4bf82809b9195f150951fd282aebb6863490ed9f8f86e834a34e7d0551",
+  "probe_device": "cuda (NVIDIA RTX A5000)",
+  "groups": {
+    "all": {
+      "n": 109,
+      "sites": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "site_counts": {
+        "5": 19,
+        "14": 15,
+        "13": 11,
+        "15": 10,
+        "3": 7,
+        "16": 5,
+        "8": 5,
+        "4": 5,
+        "2": 5,
+        "12": 5,
+        "1": 4,
+        "11": 4,
+        "7": 3,
+        "9": 3,
+        "6": 3,
+        "10": 3,
+        "0": 2
+      },
+      "exact_identities": 0,
+      "near_identities_atol_1e_minus6": 0,
+      "metrics": {
+        "psnr": {
+          "estimate": 20.602890014873754,
+          "ci95": [
+            20.494319493621326,
+            20.713964165648
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 20.602890014873754,
+          "status": "complete"
+        },
+        "mse": {
+          "estimate": 0.008862597400769685,
+          "ci95": [
+            0.008650141061994672,
+            0.009070001490996949
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.008862597400769685,
+          "status": "complete"
+        },
+        "mae": {
+          "estimate": 0.055895387343622496,
+          "ci95": [
+            0.05504628698775903,
+            0.0567418519570118
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.055895387343622496,
+          "status": "complete"
+        },
+        "pixel_cosine_similarity": {
+          "estimate": 0.9661066526583253,
+          "ci95": [
+            0.9648107809642604,
+            0.9675055322970668
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.9661066526583253,
+          "status": "complete"
+        },
+        "cross_correlation": {
+          "estimate": 0.9357030720437535,
+          "ci95": [
+            0.9335548153048675,
+            0.9379592596091672
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.9357030720437535,
+          "status": "complete"
+        },
+        "subject_wasserstein_raw_harm": {
+          "estimate": 0.03269371719493297,
+          "ci95": [
+            0.031906448435634324,
+            0.033425564108364426
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.03269371719493297,
+          "status": "complete"
+        },
+        "subject_kl_raw_harm": {
+          "estimate": 0.30777963219537974,
+          "ci95": [
+            0.2880974290038403,
+            0.3271195327756633
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 109,
+          "n_finite": 109,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.30777963219537974,
+          "status": "complete"
+        },
+        "raw_site_ba": {
+          "estimate": 0.9509803921568626,
+          "ci95": [
+            0.9019607843137254,
+            1.0
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_site_ba": {
+          "estimate": 0.058823529411764705,
+          "ci95": [
+            0.058823529411764705,
+            0.058823529411764705
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "site_ba_drop": {
+          "estimate": 0.8921568627450979,
+          "ci95": [
+            0.8431372549019607,
+            0.9411764705882353
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "source_non_nyu": {
+      "n": 90,
+      "sites": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "site_counts": {
+        "14": 15,
+        "13": 11,
+        "15": 10,
+        "3": 7,
+        "12": 5,
+        "2": 5,
+        "8": 5,
+        "4": 5,
+        "16": 5,
+        "11": 4,
+        "1": 4,
+        "6": 3,
+        "9": 3,
+        "7": 3,
+        "10": 3,
+        "0": 2
+      },
+      "exact_identities": 0,
+      "near_identities_atol_1e_minus6": 0,
+      "metrics": {
+        "psnr": {
+          "estimate": 20.766835637502204,
+          "ci95": [
+            20.6578688943751,
+            20.88495784361183
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 20.766835637502204,
+          "status": "complete"
+        },
+        "mse": {
+          "estimate": 0.008517269784162894,
+          "ci95": [
+            0.00829264755758579,
+            0.008720718899629963
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.008517269784162894,
+          "status": "complete"
+        },
+        "mae": {
+          "estimate": 0.054082074665164244,
+          "ci95": [
+            0.053203402004732565,
+            0.05491800645491447
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.054082074665164244,
+          "status": "complete"
+        },
+        "pixel_cosine_similarity": {
+          "estimate": 0.9646741031469818,
+          "ci95": [
+            0.9630550313880892,
+            0.9662022666576487
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.9646741031469818,
+          "status": "complete"
+        },
+        "cross_correlation": {
+          "estimate": 0.9333014506541474,
+          "ci95": [
+            0.9306729287683203,
+            0.9357553845882585
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.9333014506541474,
+          "status": "complete"
+        },
+        "subject_wasserstein_raw_harm": {
+          "estimate": 0.032373071718408045,
+          "ci95": [
+            0.03161552744197143,
+            0.033152691809040194
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.032373071718408045,
+          "status": "complete"
+        },
+        "subject_kl_raw_harm": {
+          "estimate": 0.3014554090692456,
+          "ci95": [
+            0.280007509892548,
+            0.32302706620244165
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 90,
+          "n_finite": 90,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.3014554090692456,
+          "status": "complete"
+        },
+        "raw_site_ba": {
+          "estimate": 0.9479166666666666,
+          "ci95": [
+            0.8958333333333333,
+            1.0
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_site_ba": {
+          "estimate": 0.0625,
+          "ci95": [
+            0.0625,
+            0.0625
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "site_ba_drop": {
+          "estimate": 0.8854166666666666,
+          "ci95": [
+            0.8333333333333333,
+            0.9375
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    },
+    "target_nyu": {
+      "n": 19,
+      "sites": [
+        5
+      ],
+      "site_counts": {
+        "5": 19
+      },
+      "exact_identities": 0,
+      "near_identities_atol_1e_minus6": 0,
+      "metrics": {
+        "psnr": {
+          "estimate": 19.826305486633686,
+          "ci95": [
+            19.58343172866641,
+            20.13598521185187
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 19.826305486633686,
+          "status": "complete"
+        },
+        "mse": {
+          "estimate": 0.01049835979522291,
+          "ci95": [
+            0.009860777876707019,
+            0.0110564961223558
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.01049835979522291,
+          "status": "complete"
+        },
+        "mae": {
+          "estimate": 0.06448476318895101,
+          "ci95": [
+            0.06162588869867539,
+            0.06688317450064613
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.06448476318895101,
+          "status": "complete"
+        },
+        "pixel_cosine_similarity": {
+          "estimate": 0.9728924135015306,
+          "ci95": [
+            0.9710579947677579,
+            0.9746347217471154
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.9728924135015306,
+          "status": "complete"
+        },
+        "cross_correlation": {
+          "estimate": 0.9470791733629407,
+          "ci95": [
+            0.9439953478546923,
+            0.9499257413873491
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.9470791733629407,
+          "status": "complete"
+        },
+        "subject_wasserstein_raw_harm": {
+          "estimate": 0.03421256418899841,
+          "ci95": [
+            0.03155317901614683,
+            0.03668804325563456
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.03421256418899841,
+          "status": "complete"
+        },
+        "subject_kl_raw_harm": {
+          "estimate": 0.3377364785823306,
+          "ci95": [
+            0.2783215420489703,
+            0.39581057089041766
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000,
+          "n": 19,
+          "n_finite": 19,
+          "n_posinf": 0,
+          "n_undefined": 0,
+          "finite_only_mean": 0.3377364785823306,
+          "status": "complete"
+        },
+        "raw_site_ba": {
+          "estimate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "harmonized_site_ba": {
+          "estimate": 0.0,
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        },
+        "site_ba_drop": {
+          "estimate": 1.0,
+          "ci95": [
+            1.0,
+            1.0
+          ],
+          "bootstrap_valid": 2000,
+          "bootstrap_total": 2000
+        }
+      }
+    }
+  }
+}

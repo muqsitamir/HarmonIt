@@ -1,0 +1,65 @@
+"""Extra Fig. 2 panels: a matched NYU test subject and the Gaussian-blur control (amendment 12).
+
+Rendered like the original panels in `paper/isbi2027/figures/qualitative_panels/`: the input's
+foreground 99.5th-percentile display window, a 64-pixel zoom box at the foreground centroid,
+difference maps on the blue-grey-red scale at +-0.3, nearest-neighbour upsampling to the
+original panel size. The NYU subject is the NYU test slice with the highest normalized
+cross-correlation with the input.
+"""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import matplotlib
+import numpy as np
+from matplotlib.colors import LinearSegmentedColormap
+from PIL import Image
+from scipy.ndimage import gaussian_filter
+
+DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#184f95", "#f0efec", "#a8322f"])
+TARGET_SITE, LIMIT, ZOOM = 5, .3, 64
+
+
+def render(values, cmap, vmin, vmax, size):
+    rgb = (matplotlib.colormaps.get_cmap(cmap) if isinstance(cmap, str) else cmap)(
+        np.clip((values - vmin) / (vmax - vmin), 0, 1))[..., :3]
+    return Image.fromarray((rgb * 255).astype(np.uint8)).resize(size, Image.NEAREST)
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--artifact", required=True, help="Any test artifact with raw_images")
+    p.add_argument("--subject", default="UM_50428", help="Subject shown in Fig. 2")
+    p.add_argument("--sigma", type=float, default=2)
+    p.add_argument("--panels", required=True)
+    args = p.parse_args()
+    with np.load(args.artifact, allow_pickle=False) as data:
+        ids, raw, sites = data["subject_ids"].astype(str), data["raw_images"][:, 0], data["site_ids"]
+    row = int(np.flatnonzero(ids == args.subject)[0])
+    inp = raw[row].astype(np.float64)
+    fg = inp > .02
+    vmax = float(np.percentile(inp[fg], 99.5))
+    rows, cols = np.nonzero(fg)
+    r0 = int(np.clip(rows.mean() - ZOOM // 2, 0, inp.shape[0] - ZOOM))
+    c0 = int(np.clip(cols.mean() - ZOOM // 2, 0, inp.shape[1] - ZOOM))
+    crop = lambda img: img[r0:r0 + ZOOM, c0:c0 + ZOOM]
+
+    centred = lambda img: (img - img.mean()) / np.linalg.norm(img - img.mean())
+    nyu = [i for i in np.flatnonzero(sites == TARGET_SITE)]
+    match = nyu[int(np.argmax([(centred(inp) * centred(raw[i].astype(np.float64))).sum() for i in nyu]))]
+    blurred = gaussian_filter(raw[row], sigma=args.sigma, mode="constant", cval=0.0).astype(np.float64)
+    psnr = 10 * np.log10(1 / np.mean((blurred - inp) ** 2))
+
+    out = Path(args.panels)
+    render(raw[match], "gray", 0, vmax, (459, 460)).save(out / "image_nyu_target.png")
+    render(crop(raw[match]), "gray", 0, vmax, (230, 230)).save(out / "inset_nyu_target.png")
+    render(blurred, "gray", 0, vmax, (459, 460)).save(out / "image_blur.png")
+    render(crop(blurred), "gray", 0, vmax, (230, 230)).save(out / "inset_blur.png")
+    render(blurred - inp, DIVERGING, -LIMIT, LIMIT, (460, 460)).save(out / "diff_blur.png")
+    print(f"NYU match {ids[match]}; blur sigma {args.sigma}: PSNR {psnr:.1f} dB on {args.subject}")
+
+
+if __name__ == "__main__":
+    main()
