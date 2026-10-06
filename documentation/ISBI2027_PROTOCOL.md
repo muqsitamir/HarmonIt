@@ -292,6 +292,33 @@ the blur control replaces adapted HCLD in the paper. Table 1 shows sigma 2, the 
 sigma 4 and 8 are reported in the text. Blur moved intensities away from NYU (Delta W_NYU +0.016,
 +0.031, +0.044; KL to NYU 0.57, 0.75, 0.92 against 0.30 raw).
 
+Amendment 13, 2026-10-06 (written and committed before any HACA3 output was scored by any
+probe; requested by P. Coupé and an external review: does the audit hold for a faithful,
+published harmonizer?). Method: HACA3 (Zuo et al., NeuroImage 2023) as published, with the
+authors' code (github.com/lianruizuo/haca3, commit a1e0bd8) and public pretrained weights
+(`harmonization_public.pt` SHA-256 a002391f..., `fusion.pt` 0cff9362...), no retraining or tuning.
+Preprocessing HACA3 requires: N4 bias correction and registration to MNI152NLin2009cAsym 1 mm
+(TemplateFlow, cropped to HACA3's 192x224x192 grid). Registration is rigid, with Mattes mutual
+information over the dilated template brain and a multi-start search; a feasibility check on five
+subjects (images and PSNR only, no probe) showed that affine registration stretched UM's
+partial-coverage slabs by 40% along one axis and that a brain-masked similarity transform shrank
+heads. Each output is resampled back onto the native grid with the inverse transform, normalized
+like the raw volumes and cut at the frozen slices with the raw head mask and crop
+(`scripts/methods/haca3_abide.py`; driver `scripts/vpulab_isbi2027_haca3.sh`). Target: the NYU
+training volume whose mean HACA3 contrast code (theta) is the medoid of the 147 NYU training
+volumes' codes. All 1,112 subjects are processed, NYU included; train/val slices are those of the
+histogram-matching exports.
+Analyses, all with the existing evaluator and bootstrap: (a) change, target alignment, frozen-probe
+source BA and share labelled NYU; (b) the benchmark-recipe (seeds 42, 1-4) and converged (seeds
+5-9) raw probes, whose checkpoints were deleted on 2026-10-01, retrained with the original recipes
+and seeds (`scripts/vpulab_isbi2027_haca3_probes.sh`) and evaluated on the eight surviving test
+artifacts as a reproduction check and on HACA3; (c) whole-head slice probes (amendment 2 recipe,
+seeds 1-3) trained on raw slices and on HACA3 outputs, with the paired difference of amendment 9.
+Brain-only and histogram probes are not run for HACA3 (brain masks were deleted). Kendall tau and
+seed-spread statistics stay over the original nine outputs. Reporting is fixed now: HACA3 replaces
+the DLEST-style 1500 row in Table 1 whatever its results (that row stays in the results files),
+and HACA3's results are reported in the paper whatever they show.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
