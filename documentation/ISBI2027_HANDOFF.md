@@ -110,6 +110,13 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   (checkpoints lost on 2026-10-01): converged ones reproduce the originals, benchmark-recipe ones
   do not. Table 1 now drops DLEST-style 1500 (for HACA3) and conservative StarGAN (space); both stay
   in all statistics. Pierrick is affiliation 3 (LaBRI). Still four pages.
+- 2026-10-07 (external review round): amendments 14-17. Intensity-only probe on HACA3 (0.71);
+  preprocessing-only control (frozen 0.61 vs HACA3 0.25, paired -0.35; HACA3 sends errors to NYU);
+  five-fold CV on all 928 source subjects (raw-trained 0.25, HACA3-trained 0.77); brain-only probes
+  with regenerated HD-BET masks (`isbi2027/brain_masks/hdbet`; HACA3-trained 0.49, +0.35). Fig. 1
+  has HACA3 in both panels; Fig. 2 shows HACA3 instead of diffusion draw 2; Psy-ShareD (medRxiv
+  2026) cited; PRISM described with its target-site check. Rotation of Fig. 2 rows was checked
+  numerically and is not present. Still four pages, zero slack.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.

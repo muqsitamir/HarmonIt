@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.colors import LinearSegmentedColormap, Normalize  # noqa: E402
 
 COLUMNS = [("input", "Input"), ("nyu_target", "NYU subject"), ("histogram_matching", "Hist. match."),
-           ("cyclegan", "CycleGAN"), ("diffusion_draw1", "Diffusion"), ("haca3", "HACA3"),
+           ("cyclegan", "CycleGAN"), ("diffusion_draw1", "Diff. (draw 1)"), ("haca3", "HACA3"),
            ("blur", "Blur, $\\sigma{=}2$")]
 REFERENCES = {"input", "nyu_target"}  # shown without a difference map
 PSNR = {"histogram_matching": "20.9 dB", "cyclegan": "17.2 dB", "diffusion_draw1": "22.7 dB",

@@ -1,0 +1,54 @@
+{
+  "foreground": "brain mask",
+  "raw_trained": {
+    "validation": {
+      "ba": 0.7007427213309566,
+      "C": 1
+    },
+    "raw": {
+      "estimate": 0.5609307359307358,
+      "ci95": [
+        0.47292884199134205,
+        0.6463487554112554
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "haca3": {
+      "estimate": 0.09583333333333333,
+      "ci95": [
+        0.05,
+        0.14166666666666666
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    }
+  },
+  "own_trained": {
+    "haca3": {
+      "validation": {
+        "ba": 0.477056277056277,
+        "C": 0.1
+      },
+      "test_artifact": "haca3",
+      "source_ba": {
+        "estimate": 0.4823728354978355,
+        "ci95": [
+          0.3861766098484848,
+          0.5814634063852814
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      },
+      "own_minus_raw_trained": {
+        "estimate": 0.38653950216450217,
+        "ci95": [
+          0.28859544101731605,
+          0.485500202922078
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      }
+    }
+  }
+}

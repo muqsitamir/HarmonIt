@@ -47,7 +47,8 @@ leaderboard, on the 90 source-site test subjects:
   harmonized outputs still decoded the source site from whole heads, skull-stripped
   brains and brain intensity histograms. This holds for HACA3 too: it kept every
   raw-trained probe near 0.28 balanced accuracy, yet probes trained on its outputs
-  reached 0.75, and 0.71 from intensity histograms alone.
+  reached 0.75, 0.71 from intensity histograms alone and 0.49 within the brain. Five-fold
+  cross-validation over all 928 source subjects and a preprocessing-only control agree.
 
 | Resource | Contents |
 | --- | --- |

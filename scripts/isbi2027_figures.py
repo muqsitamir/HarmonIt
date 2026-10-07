@@ -4,7 +4,8 @@ Is site still decodable after harmonization? Slice probes trained on raw slices 
 method's outputs, all tested on that method's outputs: (a) whole head, (b) brain only
 (amendment 7). Image probes show the mean and range over seeds, intensity-histogram probes their
 95% interval, and each image-probe pair is annotated with the paired difference in three-seed
-mean BA (amendment 9). Per-output site BA of the raw-trained probes is in Table 1.
+mean BA (amendment 9). Per-output site BA of the raw-trained probes is in Table 1. HACA3
+(amendments 13, 14 and 17) is a fourth group in both panels, from its own runs.
 Neutral grey and validated aqua from the dataviz reference palette, plus distinct marker shapes
 so the figure survives grayscale print.
 """
@@ -45,7 +46,37 @@ def value(df, **query):
     return sel
 
 
-def panel_adversary(ax, df, hist, family, control, title, differences):
+def draw_pair(ax, x, pts, raw_test, marker):
+    ax.plot([x, x], [pts[0][0], pts[1][0]], color=MUTED, lw=.7, zorder=1)
+    ax.plot([x - .08, x + .08], [raw_test] * 2, color=INK, lw=.9, zorder=1.5)
+    for (est, lo, hi), color in zip(pts, (RAW_TRAINED, AQUA)):
+        ax.errorbar(x, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=3.8, color=color, mec="white",
+                    mew=.4, ecolor=color, elinewidth=.7, zorder=3)
+
+
+def draw_haca3(ax, haca3, ctrl):
+    """Fourth group: raw-trained vs HACA3-trained image and histogram probes, tested on HACA3."""
+    x = len(ADVERSARY) - .17
+    if haca3 is None:
+        ax.text(len(ADVERSARY), .5, "not run", fontsize=5.5, color=MUTED, ha="center", va="center")
+        return
+    src = haca3["csv"][(haca3["csv"].group == "source_non_nyu") & (haca3["csv"].ckpt == "best")
+                       & (haca3["csv"].family == haca3["family"])]
+    if len(ctrl):
+        ax.fill_between([x - .12, x + .12], ctrl.min(), ctrl.max(), color=GRID, lw=0, zorder=.5)
+    pts = []
+    for train_src in ("raw", "haca3"):
+        v = value(src, source=train_src, method="haca3", metric="harmonized_site_ba").estimate
+        pts.append((v.mean(), v.min(), v.max()))
+    raw_test = value(src, source="raw", method="haca3", metric="raw_site_ba").estimate.mean()
+    draw_pair(ax, x, pts, raw_test, "o")
+    ax.text(x, 1.1, f"{haca3['difference']:+.2f}", fontsize=6, color=INK, ha="center", va="center")
+    h = haca3["histogram"]
+    pts = [(e["estimate"], *e["ci95"]) for e in (h["raw_trained"]["haca3"], h["own_trained"]["haca3"]["source_ba"])]
+    draw_pair(ax, len(ADVERSARY) + .17, pts, h["raw_trained"]["raw"]["estimate"], "s")
+
+
+def panel_adversary(ax, df, hist, family, control, title, differences, haca3=None):
     """One input restriction (whole head or brain only): raw-trained -> output-trained probes.
 
     Grey = probe trained on raw images, aqua = probe trained on that method's outputs; circles are
@@ -71,16 +102,13 @@ def panel_adversary(ax, df, hist, family, control, title, differences):
                 own = next(e["source_ba"] for e in h["own_trained"].values() if e["test_artifact"] == artifact)
                 raw_test = h["raw_trained"]["raw"]["estimate"]
                 pts = [(e["estimate"], *e["ci95"]) for e in (h["raw_trained"][artifact], own)]
-            ax.plot([x, x], [pts[0][0], pts[1][0]], color=MUTED, lw=.7, zorder=1)
-            ax.plot([x - .08, x + .08], [raw_test] * 2, color=INK, lw=.9, zorder=1.5)
-            for (est, lo, hi), color in zip(pts, (RAW_TRAINED, AQUA)):
-                ax.errorbar(x, est, yerr=[[est - lo], [hi - est]], fmt=marker, ms=3.8, color=color, mec="white",
-                            mew=.4, ecolor=color, elinewidth=.7, zorder=3)
+            draw_pair(ax, x, pts, raw_test, marker)
+    draw_haca3(ax, haca3, value(src, source=control, method=control, metric="harmonized_site_ba").estimate)
     ax.axhline(CHANCE_SOURCE, color=MUTED, lw=.6, ls=":", zorder=0)
     ax.text(-.47, .07, "chance", fontsize=5.5, color=MUTED, va="bottom")
     ax.set_title(title, loc="left", fontsize=7, fontweight="bold", pad=3)
-    ax.set_xticks(range(len(ADVERSARY)), ["Hist. match", "CycleGAN", "Diffusion (draw 2)"])
-    ax.set_xlim(-.5, len(ADVERSARY) - .5)
+    ax.set_xticks(range(len(ADVERSARY) + 1), ["Hist. match", "CycleGAN", "Diff. (draw 2)", "HACA3"])
+    ax.set_xlim(-.5, len(ADVERSARY) + .5)
     ax.set_ylim(0, 1.17)
     ax.set_yticks([0, .25, .5, .75, 1])
     ax.set_ylabel("Source site BA on outputs", fontsize=6.5)
@@ -93,6 +121,12 @@ def main():
     p.add_argument("--histogram-probe", required=True)
     p.add_argument("--histogram-probe-brain", required=True)
     p.add_argument("--differences", required=True, help="analysis/probe_difference.json (amendment 9)")
+    p.add_argument("--haca3-csv", required=True, help="analysis/haca3_runs_long.csv (amendment 13)")
+    p.add_argument("--haca3-differences", required=True, help="analysis/probe_difference_haca3_best.json")
+    p.add_argument("--haca3-histogram", required=True, help="analysis/histogram_probe_haca3.json (amendment 14)")
+    p.add_argument("--haca3-brain-csv", required=True, help="analysis/haca3_brain_runs_long.csv (amendment 17)")
+    p.add_argument("--haca3-brain-differences", required=True, help="analysis/probe_difference_haca3_brain_best.json")
+    p.add_argument("--haca3-brain-histogram", required=True, help="analysis/histogram_probe_haca3_brain.json")
     p.add_argument("--out-dir", required=True)
     args = p.parse_args()
     style()
@@ -105,10 +139,15 @@ def main():
     fig = plt.figure(figsize=(3.39, 3.2))
     ax_a = fig.add_axes([.15, .615, .83, .33])
     ax_b = fig.add_axes([.15, .165, .83, .32])
+    haca3 = {"csv": pd.read_csv(args.haca3_csv), "histogram": load(args.haca3_histogram), "family": "slice_probe",
+             "difference": load(args.haca3_differences)["results"]["whole_head/haca3"]["difference"]}
+    haca3_brain = {"csv": pd.read_csv(args.haca3_brain_csv), "histogram": load(args.haca3_brain_histogram),
+                   "family": "brain_slice_probe",
+                   "difference": load(args.haca3_brain_differences)["results"]["brain_only/haca3"]["difference"]}
     panel_adversary(ax_a, df, load(args.histogram_probe), "slice_probe", "silhouette", "(a) whole head",
-                    by_family("whole_head"))
+                    by_family("whole_head"), haca3)
     panel_adversary(ax_b, df, load(args.histogram_probe_brain), "brain_slice_probe", "brain_shape", "(b) brain only",
-                    by_family("brain_only"))
+                    by_family("brain_only"), haca3_brain)
     handles = [
         plt.Line2D([], [], ls="", marker="o", ms=3.8, color=RAW_TRAINED, label="trained on raw"),
         plt.Line2D([], [], ls="", marker="o", ms=3.8, color=AQUA, label="trained on outputs"),

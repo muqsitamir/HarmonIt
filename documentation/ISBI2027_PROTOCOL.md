@@ -389,6 +389,12 @@ exact raw-slice reproduction), whole-brain slice probes (amendment 2 recipe, see
 masked raw slices and on masked HACA3 outputs and evaluated on HACA3 test outputs with brain-only
 probe inputs, the paired difference of amendment 9, and the brain-foreground intensity-only probe.
 Driver `scripts/vpulab_isbi2027_haca3_brain.sh`. Reported whatever the result.
+Outcome (`results/isbi2027/haca3/runs_brain`, `analysis/haca3_brain_runs_long.csv`,
+`analysis/probe_difference_haca3_brain_{best,last}.json`, `analysis/histogram_probe_haca3_brain.json`):
+the exports reproduced every raw slice exactly; raw-trained brain probes reached 0.83 on raw brains
+(original amendment 7 probes 0.85) and 0.14 on HACA3 brains, HACA3-trained 0.49, paired difference
++0.35 [0.30, 0.40] (final epoch +0.22 [0.18, 0.26]). Brain intensity histograms: raw-trained 0.56 on
+raw brains (as amendment 7) and 0.10 on HACA3, HACA3-trained 0.48 [0.39, 0.58], +0.39 [0.29, 0.49].
 
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
