@@ -2,7 +2,8 @@
 
 Removes head geometry and texture from the probe's view: features are foreground
 intensity histograms, with foreground defined on the raw slice. Compares a probe trained
-on raw training slices with probes trained on each method's training outputs.
+on raw training slices with probes trained on each method's training outputs. `--methods haca3
+--export haca3=<dir>` runs amendment 14 (HACA3 outputs, export dir holding <split>/haca3_slices.npz).
 """
 
 from __future__ import annotations
@@ -19,9 +20,9 @@ from sklearn.preprocessing import StandardScaler
 from harmonit.metrics.subject_evaluation import balanced_accuracy_draws, interval, probability_histogram
 
 NPZ = {"histogram_matching": "histogram_matching_slices.npz", "cyclegan_tuned": "cyclegan_nyu_slices.npz",
-       "diffusion_20k": "diffusion_img2img_nyu_slices.npz"}
+       "diffusion_20k": "diffusion_img2img_nyu_slices.npz", "haca3": "haca3_slices.npz"}
 OWN_TEST = {"histogram_matching": "histogram_matching", "cyclegan_tuned": "cyclegan_tuned",
-            "diffusion_20k": "diffusion_20k_redraw"}
+            "diffusion_20k": "diffusion_20k_redraw", "haca3": "haca3"}
 
 
 def features(images, raw, masks=None, threshold=0.02):
@@ -66,7 +67,10 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--target-site-id", type=int, default=5)
     p.add_argument("--brain-masks", help="Directory with <split>/brain_masks.npz; foreground = brain mask")
+    p.add_argument("--methods", nargs="+", default=["histogram_matching", "cyclegan_tuned", "diffusion_20k"])
+    p.add_argument("--export", action="append", default=[], help="method=dir with <split>/<npz> (default exports/method)")
     args = p.parse_args()
+    export_dirs = dict(spec.split("=", 1) for spec in args.export)
     exports, run = Path(args.exports), Path(args.eval_run)
     protocol = json.loads((run / "protocol.json").read_text())
     artifacts = dict(spec.split("=", 1) for spec in protocol["args"]["artifact"])
@@ -101,9 +105,10 @@ def main():
         raw_draws[name] = (estimate, draws)
         report["raw_trained"][name] = interval(estimate, draws)
 
-    for method, test_name in OWN_TEST.items():
-        x_tr, y_tr, _ = load(exports / method / "train" / NPZ[method], "images", "train", args.brain_masks)
-        x_va, y_va, _ = load(exports / method / "val" / NPZ[method], "images", "val", args.brain_masks)
+    for method in args.methods:
+        test_name, base = OWN_TEST[method], Path(export_dirs.get(method, exports / method))
+        x_tr, y_tr, _ = load(base / "train" / NPZ[method], "images", "train", args.brain_masks)
+        x_va, y_va, _ = load(base / "val" / NPZ[method], "images", "val", args.brain_masks)
         val_ba, c, model = fit(x_tr, y_tr, x_va, y_va)
         estimate, draws = evaluate(model, test_images[test_name])
         base_estimate, base_draws = raw_draws[test_name]

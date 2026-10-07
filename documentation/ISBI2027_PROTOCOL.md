@@ -333,6 +333,15 @@ raw-trained 0.28, HACA3-trained 0.75, paired difference +0.47 [0.43, 0.52]; fina
 [0.57, 0.66]. Raw-trained slice probes reached 0.91-0.98 on raw test slices
 (`analysis/probe_difference_haca3_{best,last}.json`).
 
+Amendment 14, 2026-10-07 (post hoc, written before running; prompted by an internal review of
+amendment 13). HACA3-trained image probes (0.75) fall inside the range of probes that see only
+head silhouettes (0.73-0.86), so their accuracy may come from head geometry, not intensity. Test:
+the amendment 5 intensity-only probe (logistic regression on foreground intensity histograms,
+foreground = raw slice > 0.02, C chosen on validation) trained on HACA3 training outputs and on
+raw training slices, tested on HACA3 test outputs with the evaluator's bootstrap
+(`scripts/isbi2027_histogram_probe.py --methods haca3`). Brain-only probes stay out of scope
+(masks deleted). Reported whatever the result.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.
