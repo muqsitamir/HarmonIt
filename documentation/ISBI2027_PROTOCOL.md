@@ -291,6 +291,11 @@ constant-prediction value 1/16) and 0.068 at sigma 8, all below aggressive StarG
 the blur control replaces adapted HCLD in the paper. Table 1 shows sigma 2, the mildest setting;
 sigma 4 and 8 are reported in the text. Blur moved intensities away from NYU (Delta W_NYU +0.016,
 +0.031, +0.044; KL to NYU 0.57, 0.75, 0.92 against 0.30 raw).
+Ranking statistics in the paper are recomputed over the nine remaining outputs scored by the
+original probes (`scripts/isbi2027_tau_nine_outputs.py`, `analysis/kendall_tau_nine_outputs.json`):
+Kendall tau 0.39-0.83 (benchmark recipe), 0.78-0.94 (converged), 0.56-0.67 (frozen vs converged);
+largest seed range 0.46 and 0.16; every converged probe above the frozen interval on all outputs
+but NeuroCombat. The amendment 6 values above include adapted HCLD.
 
 Amendment 13, 2026-10-06 (written and committed before any HACA3 output was scored by any
 probe; requested by P. Coupé and an external review: does the audit hold for a faithful,

@@ -1,0 +1,41 @@
+{
+  "outputs": [
+    "cyclegan_tuned",
+    "diffusion_20k",
+    "diffusion_20k_redraw",
+    "dlest_1000",
+    "dlest_1500",
+    "histogram_matching",
+    "neurocombat",
+    "stargan_aggressive",
+    "stargan_conservative"
+  ],
+  "excluded": [
+    "adapted_hcld"
+  ],
+  "kendall_tau_benchmark_recipe": [
+    0.389,
+    0.833
+  ],
+  "kendall_tau_converged": [
+    0.778,
+    0.944
+  ],
+  "kendall_tau_frozen_vs_converged": [
+    0.556,
+    0.667
+  ],
+  "max_seed_range_benchmark_recipe": 0.459,
+  "max_seed_range_converged": 0.161,
+  "converged_all_above_frozen_interval": {
+    "cyclegan_tuned": true,
+    "diffusion_20k": true,
+    "diffusion_20k_redraw": true,
+    "dlest_1000": true,
+    "dlest_1500": true,
+    "histogram_matching": true,
+    "neurocombat": false,
+    "stargan_aggressive": true,
+    "stargan_conservative": true
+  }
+}

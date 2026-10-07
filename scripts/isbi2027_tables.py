@@ -5,7 +5,7 @@ PSNR, XCorr and the Wasserstein-1 distance W between input and output intensitie
 alignment: change in Wasserstein-1 distance to the NYU reference and KL divergence to it. Frozen
 probe: source BA with its paired bootstrap 95% interval and the share of outputs it labels NYU.
 Probes retrained on raw images (benchmark recipe, best-validation checkpoints; converged recipe
-of amendment 6, final-epoch checkpoints) are summarized over seeds as mean [min, max]. HACA3
+of amendment 6, final-epoch checkpoints) are summarized over seeds as mean (min--max). HACA3
 (amendment 13) comes from its own runs: the frozen probe and the benchmark-recipe and converged
 probes retrained with the original recipes and seeds after their checkpoints were deleted; it
 replaces the DLEST-style 1500 row. The Gaussian-blur control (amendment 12) was scored by the
@@ -38,7 +38,7 @@ def seeds(values, digits=2):
         return "--"
     if len(values) == 1:
         return f"{values.iloc[0]:.{digits}f}"
-    return f"{values.mean():.{digits}f} [{values.min():.{digits}f}, {values.max():.{digits}f}]"
+    return f"{values.mean():.{digits}f} ({values.min():.{digits}f}--{values.max():.{digits}f})"
 
 
 def nyu_share(run, method, column="harmonized_prediction"):

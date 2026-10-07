@@ -18,6 +18,7 @@ artifacts (image NPZs, checkpoints) stay on vpulab under
 | `analysis/all_runs_long.csv` | All runs collected by `scripts/isbi2027_collect.py` (one run per probe identity). |
 | `analysis/target_alignment_frozen10/` | NYU target alignment for the ten outputs (`scripts/target_alignment_isbi2027.py`). |
 | `analysis/histogram_probe.json` | Intensity-only probe results (`scripts/isbi2027_histogram_probe.py`). |
+| `analysis/kendall_tau_nine_outputs.json` | Ranking statistics reported in the paper, over the nine outputs left after amendment 12 (`scripts/isbi2027_tau_nine_outputs.py`); `probe_agreement/` and `converged_probes.json` still include adapted HCLD. |
 | `analysis/probe_agreement/` | Seed spread and Kendall tau (`scripts/isbi2027_probe_agreement.py`). |
 | `analysis/converged_probes.json` | Amendment 6 outcomes: spread, tau, convergence, decision rule (`scripts/isbi2027_converged.py`). |
 | `analysis/histogram_probe_brain.json` | Amendment 7 intensity-only probe with brain-mask foreground. |
