@@ -355,6 +355,15 @@ HACA3 on the same test subjects: the frozen probe, the ten retrained raw probes 
 its three raw-trained slice probes; the intensity-only probe of amendment 14, raw-trained and
 trained on the control's own outputs. Question: how much of HACA3's low raw-trained-probe accuracy
 the preprocessing alone produces. Reported whatever the result.
+Outcome (`results/isbi2027/haca3/runs_ctrl`, `analysis/haca3_ctrl_runs_long.csv`,
+`analysis/histogram_probe_haca3ctrl.json`): the control kept PSNR 23.8 dB and XCorr 0.985; frozen
+source BA 0.61 [0.53, 0.68] (HACA3 0.25; paired HACA3 minus control -0.35 [-0.44, -0.26]), 9% of
+source outputs and 8 of 34 errors labelled NYU (HACA3 40%, 36 of 67); benchmark-recipe probes 0.67
+[0.64, 0.68], converged 0.80 [0.65, 0.87], raw-trained slice probes 0.70 [0.44, 0.87] (HACA3 0.29,
+0.28, 0.28). Intensity-only: raw-trained 0.24 on the control (0.19 on HACA3), control-trained 0.67
+[0.59, 0.74]. Preprocessing alone accounts for about a third of the frozen-probe drop and for most
+of the raw-trained histogram probe's failure; HACA3 accounts for the rest of the image-probe drop
+and for the shift of errors toward NYU.
 
 Amendment 16, 2026-10-07 (written before running; prompted by the same review: 90 source test
 subjects). HACA3 never saw ABIDE, so its outputs for all 1,112 subjects are untouched. Five-fold
@@ -365,6 +374,12 @@ outputs and on the amendment 15 control, each tested on its held-out fold; raw-t
 also tested on HACA3 and control outputs. Source BA pools the held-out predictions of all non-NYU
 subjects, with 2,000 within-site bootstrap replicates (seed 20260913), paired across probes. The
 frozen probe is not evaluated (it was trained on these subjects). `scripts/isbi2027_haca3_cv.py`.
+Outcome (`analysis/haca3_cv.json`, 1,112 subjects, 928 source): raw-trained image probes 0.95
+[0.93, 0.97] on raw slices, 0.25 [0.23, 0.28] on HACA3 and 0.57 [0.54, 0.60] on the control;
+probes trained on HACA3 0.77 [0.74, 0.80] (+0.52 [0.48, 0.56] over raw-trained) and on the control
+0.92 [0.90, 0.94]. Intensity-only: raw-trained 0.71 on raw, 0.18 on HACA3, 0.20 on the control;
+HACA3-trained 0.66 [0.63, 0.69] (+0.48 [0.45, 0.52]), control-trained 0.74 [0.71, 0.77]. The
+held-out test-set results are reproduced on all subjects.
 
 Amendment 17, 2026-10-07 (written before running; requested by the author). Brain-only probes for
 HACA3, as amendment 7 for the other methods: HD-BET masks regenerated for all 1,112 raw volumes

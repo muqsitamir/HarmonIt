@@ -1,0 +1,98 @@
+[
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "psnr",
+    "estimate": -4.830613985412566,
+    "ci95": [
+      -5.385077761937391,
+      -4.2662865246652455
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "mse",
+    "estimate": 0.011116282373697689,
+    "ci95": [
+      0.008885636809395683,
+      0.013507931844068323
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "mae",
+    "estimate": 0.030924240915545496,
+    "ci95": [
+      0.02589439277533215,
+      0.03573738934714838
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "pixel_cosine_similarity",
+    "estimate": -0.016362644930269572,
+    "ci95": [
+      -0.019472206793641072,
+      -0.013720816240832203
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "cross_correlation",
+    "estimate": -0.031722036547225864,
+    "ci95": [
+      -0.03788436883203234,
+      -0.026316700627523986
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "subject_wasserstein_raw_harm",
+    "estimate": 0.019255895337998003,
+    "ci95": [
+      0.014044350340863676,
+      0.024144884522890448
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "subject_kl_raw_harm",
+    "estimate": 0.2026978744060359,
+    "ci95": [
+      0.1838355198733004,
+      0.22307028455040415
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  },
+  {
+    "method_a": "haca3",
+    "method_b": "haca3_preproc",
+    "metric": "harmonized_site_ba",
+    "estimate": -0.37886904761904766,
+    "ci95": [
+      -0.46399553571428576,
+      -0.29226190476190494
+    ],
+    "bootstrap_valid": 2000,
+    "bootstrap_total": 2000
+  }
+]
