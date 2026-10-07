@@ -101,6 +101,15 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   1/16 constant-class value, small-site limitation, P. Coupé's LaBRI affiliation (3). Kendall tau
   without HCLD: benchmark 0.39-0.83, converged 0.78-0.94, frozen vs converged 0.56-0.67. Still
   four pages (last column 724).
+- 2026-10-06/07 (P. Coupé approved arXiv, HAL and ISBI submission; suggested HACA3): amendment 13
+  ran HACA3 as released (authors' weights; N4 + rigid MNI registration, inverse-mapped to the frozen
+  slices; target NYU_51127) on all 1,112 subjects on vpulab (`/mnt/rhome/mmi/projects/isbi2027/haca3`,
+  env `/home/mmi/envs/haca3`; drivers `scripts/vpulab_isbi2027_haca3.sh` and `_haca3_probes.sh`).
+  Frozen 0.25, retrained benchmark 0.29 [0.18, 0.37], converged 0.28 [0.23, 0.33], HACA3-trained
+  slice probes 0.75 vs raw-trained 0.28 (+0.47 [0.43, 0.52]). The 10 raw probes were retrained
+  (checkpoints lost on 2026-10-01): converged ones reproduce the originals, benchmark-recipe ones
+  do not. Table 1 now drops DLEST-style 1500 (for HACA3) and conservative StarGAN (space); both stay
+  in all statistics. Pierrick is affiliation 3 (LaBRI). Still four pages.
 - Registration for ISBI 2027 (Lausanne, EPFL, 25-28 May 2027) will be covered by P. Coupé if the
   paper is accepted; travel is self-funded. ISBI's no-show policy (per ISBI 2026) removes a paper
   from IEEE Xplore unless the presenting author is registered and presents in person.

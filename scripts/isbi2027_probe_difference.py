@@ -4,7 +4,8 @@ Both are tested on the same outputs of that method (diffusion: second draw), on 
 Balanced accuracy is averaged over the probe seeds; the interval resamples subjects within site with
 the evaluator's indices (2,000 replicates, seed 20260913), the same draws for every probe, so it is
 paired and conditional on the trained checkpoints. Protocol amendment 9 (post hoc summary of
-existing predictions; no probe was retrained).
+existing predictions; no probe was retrained). `--haca3` runs the same analysis on amendment 13's
+whole-head slice probes (raw-trained and HACA3-trained, tested on HACA3).
 """
 
 from __future__ import annotations
@@ -38,11 +39,15 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3])
     p.add_argument("--ckpt", choices=("best", "last"), default="best")
+    p.add_argument("--haca3", action="store_true", help="Amendment 13 runs (results/isbi2027/haca3/runs)")
     args = p.parse_args()
     runs = Path(args.runs)
+    families, tests = FAMILIES, TESTS
+    if args.haca3:
+        families, tests = {"whole_head": "sliceprobe_{source}_seed{seed}_model_{ckpt}_haca3"}, {"haca3": "haca3"}
     report = {"ckpt": args.ckpt, "seeds": args.seeds, "replicates": 2000, "bootstrap_seed": 20260913, "results": {}}
-    for family, pattern in FAMILIES.items():
-        for source, artifact in TESTS.items():
+    for family, pattern in families.items():
+        for source, artifact in tests.items():
             frames = {(kind, s): predictions(runs, pattern, kind_src, s, args.ckpt, artifact)
                       for kind, kind_src in (("raw", "raw"), ("output", source)) for s in args.seeds}
             ref = frames[("raw", args.seeds[0])]

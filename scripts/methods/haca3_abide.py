@@ -1,6 +1,6 @@
 """HACA3 harmonization of ABIDE T1 volumes to NYU, exported on the frozen ISBI 2027 slices.
 
-HACA3 (Zuo et al., NeuroImage 2023) is run as published: the authors' code
+HACA3 (Zuo et al., Comput. Med. Imaging Graph. 2023) is run as published: the authors' code
 (github.com/lianruizuo/haca3) and public pretrained weights, no retraining.
 1. prepare: N4 bias-field correction and rigid registration (SimpleITK, Mattes mutual
    information over the dilated template brain) of each raw volume to the MNI152NLin2009cAsym

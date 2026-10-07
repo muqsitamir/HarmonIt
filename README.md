@@ -30,13 +30,14 @@ producing consistent volumes that remain useful for downstream analysis.
 Evaluation Practice for Multi-Site MRI.** Manuscript for ISBI 2027:
 [PDF](paper/isbi2027/main.pdf) | [LaTeX source](paper/isbi2027/main.tex)
 
-The audit uses nine outputs from six harmonization families, plus a blur control, as test
-cases for the evaluation, not as a leaderboard, on the 90 source-site test subjects:
+The audit uses ten outputs from seven harmonization families, one of them HACA3 with its
+published pretrained weights, plus a blur control, as test cases for the evaluation, not as a
+leaderboard, on the 90 source-site test subjects:
 
 - **Probe verdicts depend on how the probe is trained.** Five probes trained with the
   benchmark's recipe gave the same CycleGAN outputs site balanced accuracies of
   0.13-0.59; five converged probes agreed (0.44-0.54) but found more site information
-  in eight of nine outputs.
+  in eight of ten outputs.
 - **A blur scores lower than every harmonizer.** Gaussian blur of the inputs, which
   moves intensities away from NYU and keeps PSNR at 24.7 dB, scored frozen-probe balanced accuracy
   0.07, within the shuffled-label null; the probe labelled the blurred slices Yale.
@@ -44,7 +45,9 @@ cases for the evaluation, not as a leaderboard, on the 90 source-site test subje
   least but barely moved them toward the target site.
 - **Low frozen-probe accuracy does not establish removal.** Probes trained on
   harmonized outputs still decoded the source site from whole heads, skull-stripped
-  brains and brain intensity histograms.
+  brains and brain intensity histograms. This holds for HACA3 too: it kept every
+  raw-trained probe near 0.28 balanced accuracy, yet probes trained on its outputs
+  reached 0.75.
 
 | Resource | Contents |
 | --- | --- |
@@ -111,6 +114,7 @@ first-phase rankings are superseded.
 | DLEST-style model | Disentangled content/style baseline; 1,000- and 1,500-step variants |
 | Diffusion img2img | Site-conditioned 2D diffusion; completed 20,000-step experiment |
 | Adapted HCLD | Volumetric latent diffusion adapted to available 40 GB A100 memory (not in the ISBI paper) |
+| HACA3 | Authors' pretrained model, used as released (`scripts/methods/haca3_abide.py`, protocol amendment 13) |
 
 **Where is the code?** `main` contains the core pipeline, evaluators, all baseline
 implementations (`scripts/methods/`), HCLD configurations, figure scripts and Slurm

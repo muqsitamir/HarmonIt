@@ -1,0 +1,59 @@
+2026-10-06_18:02:07 benchmark-recipe probes
+2026-10-06_18:02:07 training seeds 42 1
+seed 42 done
+seed 1 done
+evaluated seed 42 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed42_model_best_9methods_20261006_232628
+evaluated seed 42 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed42_model_last_9methods_20261006_232904
+evaluated seed 1 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed1_model_best_9methods_20261006_233129
+evaluated seed 1 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed1_model_last_9methods_20261006_233353
+2026-10-06_23:36:13 training seeds 2 3
+seed 2 done
+seed 3 done
+evaluated seed 2 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed2_model_best_9methods_20261007_025607
+evaluated seed 2 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed2_model_last_9methods_20261007_025737
+evaluated seed 3 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed3_model_best_9methods_20261007_025907
+evaluated seed 3 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed3_model_last_9methods_20261007_030039
+2026-10-07_03:02:11 training seeds 4 
+seed 4 done
+evaluated seed 4 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed4_model_best_9methods_20261007_052657
+evaluated seed 4 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/retrained_raw_seed4_model_last_9methods_20261007_052832
+2026-10-07_05:30:10 all seeds finished
+2026-10-07_05:30:10 converged probes
+2026-10-07_05:30:10 training seeds 5 6
+seed 5 done
+seed 6 done
+evaluated seed 5 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed5_model_best_9methods_20261007_062505
+evaluated seed 5 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed5_model_last_9methods_20261007_062641
+evaluated seed 6 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed6_model_best_9methods_20261007_062813
+evaluated seed 6 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed6_model_last_9methods_20261007_062944
+2026-10-07_06:31:11 training seeds 7 8
+seed 7 done
+seed 8 done
+evaluated seed 7 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed7_model_best_9methods_20261007_072554
+evaluated seed 7 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed7_model_last_9methods_20261007_072726
+evaluated seed 8 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed8_model_best_9methods_20261007_072855
+evaluated seed 8 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed8_model_last_9methods_20261007_073024
+2026-10-07_07:31:59 training seeds 9 
+seed 9 done
+evaluated seed 9 model_best: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed9_model_best_9methods_20261007_082311
+evaluated seed 9 model_last: /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/converged_raw_seed9_model_last_9methods_20261007_082446
+2026-10-07_08:26:21 all seeds finished
+2026-10-07_08:26:21 slice probe raw seed 1
+2026-10-07_08:29:02 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_raw_seed1_model_best_haca3
+2026-10-07_08:30:29 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_raw_seed1_model_last_haca3
+2026-10-07_08:30:29 slice probe haca3 seed 1
+2026-10-07_08:32:57 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_haca3_seed1_model_best_haca3
+2026-10-07_08:34:27 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_haca3_seed1_model_last_haca3
+2026-10-07_08:34:27 slice probe raw seed 2
+2026-10-07_08:36:57 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_raw_seed2_model_best_haca3
+2026-10-07_08:38:22 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_raw_seed2_model_last_haca3
+2026-10-07_08:38:22 slice probe haca3 seed 2
+2026-10-07_08:40:56 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_haca3_seed2_model_best_haca3
+2026-10-07_08:42:22 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_haca3_seed2_model_last_haca3
+2026-10-07_08:42:23 slice probe raw seed 3
+2026-10-07_08:44:53 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_raw_seed3_model_best_haca3
+2026-10-07_08:46:28 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_raw_seed3_model_last_haca3
+2026-10-07_08:46:28 slice probe haca3 seed 3
+2026-10-07_08:48:58 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_haca3_seed3_model_best_haca3
+2026-10-07_08:50:34 evaluated /mnt/rhome/mmi/projects/isbi2027/haca3/probes/runs/sliceprobe_haca3_seed3_model_last_haca3
+2026-10-07_08:50:34 haca3 probes finished

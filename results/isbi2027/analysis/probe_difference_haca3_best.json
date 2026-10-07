@@ -1,0 +1,23 @@
+{
+  "ckpt": "best",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "replicates": 2000,
+  "bootstrap_seed": 20260913,
+  "results": {
+    "whole_head/haca3": {
+      "test_artifact": "haca3",
+      "n_subjects": 90,
+      "raw_trained_ba": 0.2769,
+      "output_trained_ba": 0.7514,
+      "difference": 0.4745,
+      "difference_ci95": [
+        0.4282,
+        0.519
+      ]
+    }
+  }
+}

@@ -294,7 +294,7 @@ sigma 4 and 8 are reported in the text. Blur moved intensities away from NYU (De
 
 Amendment 13, 2026-10-06 (written and committed before any HACA3 output was scored by any
 probe; requested by P. Coupé and an external review: does the audit hold for a faithful,
-published harmonizer?). Method: HACA3 (Zuo et al., NeuroImage 2023) as published, with the
+published harmonizer?). Method: HACA3 (Zuo et al., Comput. Med. Imaging Graph. 2023) as published, with the
 authors' code (github.com/lianruizuo/haca3, commit a1e0bd8) and public pretrained weights
 (`harmonization_public.pt` SHA-256 a002391f..., `fusion.pt` 0cff9362...), no retraining or tuning.
 Preprocessing HACA3 requires: N4 bias correction and registration to MNI152NLin2009cAsym 1 mm
@@ -318,6 +318,20 @@ Brain-only and histogram probes are not run for HACA3 (brain masks were deleted)
 seed-spread statistics stay over the original nine outputs. Reporting is fixed now: HACA3 replaces
 the DLEST-style 1500 row in Table 1 whatever its results (that row stays in the results files),
 and HACA3's results are reported in the paper whatever they show.
+Outcome (2026-10-07; runs in `results/isbi2027/haca3/runs`, collected in
+`analysis/haca3_runs_long.csv`; target NYU_51127): (a) PSNR 18.9 dB, XCorr 0.954, W 0.062,
+Delta W_NYU -0.016 [-0.022, -0.011] (16% of the raw distance), KL to NYU 2.29 against 0.30 raw
+(HACA3 renders CSF and the scalp-brain gap near zero: a median 14% of raw head pixels fall below
+0.02); frozen-probe source BA 0.25 [0.18, 0.32], 40% of source outputs labelled NYU, 36 of 67
+errors named NYU. (b) Retrained raw probes on HACA3: benchmark recipe 0.29 [0.18, 0.37], converged
+0.28 [0.23, 0.33] (mean [min, max]). Reproduction on the eight common outputs: converged probes
+matched the originals closely (raw BA 1.00; per-output differences median 0.02, max 0.085; Kendall
+tau with the original orderings 0.86-1.00); benchmark-recipe probes did not (raw BA 0.91-0.97
+against 0.81-0.98; per-output differences median 0.09, max 0.32), the training instability the
+paper reports. (c) Whole-head slice probes on HACA3 test outputs (three-seed mean, best checkpoints):
+raw-trained 0.28, HACA3-trained 0.75, paired difference +0.47 [0.43, 0.52]; final epoch +0.61
+[0.57, 0.66]. Raw-trained slice probes reached 0.91-0.98 on raw test slices
+(`analysis/probe_difference_haca3_{best,last}.json`).
 
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both

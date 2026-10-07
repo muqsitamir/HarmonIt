@@ -1,0 +1,371 @@
+code_commit=47f04bc81e1c93ddf1ed23a561c39fa86d5fd064
+88ad1cbc7154fb2aeee7122fdc210986ec91549abaef23ce155723ec945e0b1e  /mnt/rhome/mmi/projects/isbi2027/code/scripts/train_site_probe.py
+5e90010bbc0d89e6497f43cb75606207aea3b0fe659888b430f923a934b9c3ad  /mnt/rhome/mmi/projects/isbi2027/code/src/harmonit/data/abide_slices_dataset.py
+46da7a7e43c047b80976307eb4223d1e687d78389016b6fe6852c0bae5307d82  /mnt/rhome/mmi/projects/isbi2027/code/src/harmonit/data/label_controls.py
+Device: cuda
+Run hparams: batch_size=64 epochs=40 lr=0.0003 steps_per_epoch=50 val_batches=0 lr_schedule=cosine warmup_steps=50 worker_reseed=True
+MLflow tracking URI: sqlite:////home/mmi/mlflow_local/isbi2027.db
+Num classes (sites): 17
+Class names: ['CMU', 'Caltech', 'KKI', 'Leuven', 'MaxMun', 'NYU', 'OHSU', 'Olin', 'Pitt', 'SBL', 'SDSU', 'Stanford', 'Trinity', 'UCLA', 'UM', 'USM', 'Yale']
+
+=== Epoch 1/40 ===
+Epoch 1 | step 1/50 | loss 2.8405 | elapsed 14.8s
+Epoch 1 | step 10/50 | loss 2.7115 | elapsed 38.5s
+Epoch 1 | step 20/50 | loss 2.4255 | elapsed 55.6s
+Epoch 1 | step 30/50 | loss 2.2314 | elapsed 77.6s
+Epoch 1 | step 40/50 | loss 2.0640 | elapsed 90.4s
+Epoch 1 | step 50/50 | loss 1.8729 | elapsed 109.0s
+[VAL] Epoch 1 | acc=0.4690 | bal_acc=0.3708 | epoch_time=119.4s
+
+=== Epoch 2/40 ===
+Epoch 2 | step 1/50 | loss 0.9702 | elapsed 6.9s
+Epoch 2 | step 10/50 | loss 0.8382 | elapsed 20.7s
+Epoch 2 | step 20/50 | loss 0.7569 | elapsed 33.5s
+Epoch 2 | step 30/50 | loss 0.6796 | elapsed 53.5s
+Epoch 2 | step 40/50 | loss 0.6280 | elapsed 65.8s
+Epoch 2 | step 50/50 | loss 0.5724 | elapsed 83.5s
+[VAL] Epoch 2 | acc=0.5575 | bal_acc=0.5799 | epoch_time=88.6s
+
+=== Epoch 3/40 ===
+Epoch 3 | step 1/50 | loss 0.3120 | elapsed 6.1s
+Epoch 3 | step 10/50 | loss 0.3147 | elapsed 19.3s
+Epoch 3 | step 20/50 | loss 0.2955 | elapsed 31.8s
+Epoch 3 | step 30/50 | loss 0.2722 | elapsed 49.2s
+Epoch 3 | step 40/50 | loss 0.2570 | elapsed 60.6s
+Epoch 3 | step 50/50 | loss 0.2381 | elapsed 77.9s
+[VAL] Epoch 3 | acc=0.5310 | bal_acc=0.3636 | epoch_time=82.9s
+
+=== Epoch 4/40 ===
+Epoch 4 | step 1/50 | loss 0.2012 | elapsed 5.8s
+Epoch 4 | step 10/50 | loss 0.2013 | elapsed 17.3s
+Epoch 4 | step 20/50 | loss 0.1836 | elapsed 31.1s
+Epoch 4 | step 30/50 | loss 0.1865 | elapsed 48.1s
+Epoch 4 | step 40/50 | loss 0.1718 | elapsed 59.1s
+Epoch 4 | step 50/50 | loss 0.1705 | elapsed 75.7s
+[VAL] Epoch 4 | acc=0.8850 | bal_acc=0.8766 | epoch_time=80.7s
+
+=== Epoch 5/40 ===
+Epoch 5 | step 1/50 | loss 0.2098 | elapsed 5.7s
+Epoch 5 | step 10/50 | loss 0.1639 | elapsed 17.2s
+Epoch 5 | step 20/50 | loss 0.1449 | elapsed 28.5s
+Epoch 5 | step 30/50 | loss 0.1257 | elapsed 44.7s
+Epoch 5 | step 40/50 | loss 0.1128 | elapsed 56.2s
+Epoch 5 | step 50/50 | loss 0.1028 | elapsed 72.5s
+[VAL] Epoch 5 | acc=0.8584 | bal_acc=0.8393 | epoch_time=77.4s
+
+=== Epoch 6/40 ===
+Epoch 6 | step 1/50 | loss 0.1081 | elapsed 5.4s
+Epoch 6 | step 10/50 | loss 0.0928 | elapsed 19.0s
+Epoch 6 | step 20/50 | loss 0.0903 | elapsed 32.1s
+Epoch 6 | step 30/50 | loss 0.0856 | elapsed 50.7s
+Epoch 6 | step 40/50 | loss 0.0868 | elapsed 61.3s
+Epoch 6 | step 50/50 | loss 0.0827 | elapsed 78.2s
+[VAL] Epoch 6 | acc=0.9292 | bal_acc=0.9133 | epoch_time=83.1s
+
+=== Epoch 7/40 ===
+Epoch 7 | step 1/50 | loss 0.0382 | elapsed 5.8s
+Epoch 7 | step 10/50 | loss 0.0593 | elapsed 17.8s
+Epoch 7 | step 20/50 | loss 0.0593 | elapsed 28.8s
+Epoch 7 | step 30/50 | loss 0.0560 | elapsed 45.5s
+Epoch 7 | step 40/50 | loss 0.0508 | elapsed 56.6s
+Epoch 7 | step 50/50 | loss 0.0471 | elapsed 74.6s
+[VAL] Epoch 7 | acc=0.9823 | bal_acc=0.9657 | epoch_time=79.6s
+
+=== Epoch 8/40 ===
+Epoch 8 | step 1/50 | loss 0.0568 | elapsed 5.9s
+Epoch 8 | step 10/50 | loss 0.0486 | elapsed 18.9s
+Epoch 8 | step 20/50 | loss 0.0484 | elapsed 31.8s
+Epoch 8 | step 30/50 | loss 0.0549 | elapsed 48.7s
+Epoch 8 | step 40/50 | loss 0.0519 | elapsed 59.8s
+Epoch 8 | step 50/50 | loss 0.0524 | elapsed 77.0s
+[VAL] Epoch 8 | acc=0.7611 | bal_acc=0.7647 | epoch_time=82.0s
+
+=== Epoch 9/40 ===
+Epoch 9 | step 1/50 | loss 0.0508 | elapsed 6.4s
+Epoch 9 | step 10/50 | loss 0.0664 | elapsed 18.0s
+Epoch 9 | step 20/50 | loss 0.0547 | elapsed 34.3s
+Epoch 9 | step 30/50 | loss 0.0495 | elapsed 46.1s
+Epoch 9 | step 40/50 | loss 0.0453 | elapsed 64.2s
+Epoch 9 | step 50/50 | loss 0.0432 | elapsed 77.2s
+[VAL] Epoch 9 | acc=0.6637 | bal_acc=0.7334 | epoch_time=82.2s
+
+=== Epoch 10/40 ===
+Epoch 10 | step 1/50 | loss 0.0334 | elapsed 6.0s
+Epoch 10 | step 10/50 | loss 0.0322 | elapsed 17.9s
+Epoch 10 | step 20/50 | loss 0.0284 | elapsed 31.5s
+Epoch 10 | step 30/50 | loss 0.0325 | elapsed 47.8s
+Epoch 10 | step 40/50 | loss 0.0400 | elapsed 61.4s
+Epoch 10 | step 50/50 | loss 0.0406 | elapsed 77.2s
+[VAL] Epoch 10 | acc=0.9027 | bal_acc=0.8554 | epoch_time=82.3s
+
+=== Epoch 11/40 ===
+Epoch 11 | step 1/50 | loss 0.0221 | elapsed 5.9s
+Epoch 11 | step 10/50 | loss 0.0274 | elapsed 18.3s
+Epoch 11 | step 20/50 | loss 0.0297 | elapsed 32.3s
+Epoch 11 | step 30/50 | loss 0.0280 | elapsed 47.4s
+Epoch 11 | step 40/50 | loss 0.0269 | elapsed 62.3s
+Epoch 11 | step 50/50 | loss 0.0270 | elapsed 77.4s
+[VAL] Epoch 11 | acc=0.9469 | bal_acc=0.9373 | epoch_time=82.4s
+
+=== Epoch 12/40 ===
+Epoch 12 | step 1/50 | loss 0.0114 | elapsed 6.4s
+Epoch 12 | step 10/50 | loss 0.0563 | elapsed 19.2s
+Epoch 12 | step 20/50 | loss 0.0559 | elapsed 32.8s
+Epoch 12 | step 30/50 | loss 0.0476 | elapsed 47.8s
+Epoch 12 | step 40/50 | loss 0.0428 | elapsed 62.9s
+Epoch 12 | step 50/50 | loss 0.0397 | elapsed 76.8s
+[VAL] Epoch 12 | acc=0.9646 | bal_acc=0.9692 | epoch_time=81.8s
+
+=== Epoch 13/40 ===
+Epoch 13 | step 1/50 | loss 0.0395 | elapsed 5.9s
+Epoch 13 | step 10/50 | loss 0.0273 | elapsed 18.4s
+Epoch 13 | step 20/50 | loss 0.0211 | elapsed 31.3s
+Epoch 13 | step 30/50 | loss 0.0214 | elapsed 48.8s
+Epoch 13 | step 40/50 | loss 0.0219 | elapsed 61.4s
+Epoch 13 | step 50/50 | loss 0.0204 | elapsed 78.6s
+[VAL] Epoch 13 | acc=0.8761 | bal_acc=0.8719 | epoch_time=83.5s
+
+=== Epoch 14/40 ===
+Epoch 14 | step 1/50 | loss 0.0109 | elapsed 6.2s
+Epoch 14 | step 10/50 | loss 0.0244 | elapsed 18.8s
+Epoch 14 | step 20/50 | loss 0.0193 | elapsed 31.2s
+Epoch 14 | step 30/50 | loss 0.0195 | elapsed 47.6s
+Epoch 14 | step 40/50 | loss 0.0189 | elapsed 59.4s
+Epoch 14 | step 50/50 | loss 0.0182 | elapsed 75.0s
+[VAL] Epoch 14 | acc=0.9381 | bal_acc=0.9255 | epoch_time=79.9s
+
+=== Epoch 15/40 ===
+Epoch 15 | step 1/50 | loss 0.0057 | elapsed 5.3s
+Epoch 15 | step 10/50 | loss 0.0155 | elapsed 17.5s
+Epoch 15 | step 20/50 | loss 0.0149 | elapsed 29.3s
+Epoch 15 | step 30/50 | loss 0.0159 | elapsed 46.1s
+Epoch 15 | step 40/50 | loss 0.0158 | elapsed 57.6s
+Epoch 15 | step 50/50 | loss 0.0154 | elapsed 74.3s
+[VAL] Epoch 15 | acc=0.9646 | bal_acc=0.9451 | epoch_time=79.2s
+
+=== Epoch 16/40 ===
+Epoch 16 | step 1/50 | loss 0.0180 | elapsed 5.6s
+Epoch 16 | step 10/50 | loss 0.0120 | elapsed 17.1s
+Epoch 16 | step 20/50 | loss 0.0146 | elapsed 28.7s
+Epoch 16 | step 30/50 | loss 0.0143 | elapsed 45.5s
+Epoch 16 | step 40/50 | loss 0.0133 | elapsed 56.5s
+Epoch 16 | step 50/50 | loss 0.0123 | elapsed 72.8s
+[VAL] Epoch 16 | acc=0.9646 | bal_acc=0.9549 | epoch_time=77.8s
+
+=== Epoch 17/40 ===
+Epoch 17 | step 1/50 | loss 0.0035 | elapsed 5.4s
+Epoch 17 | step 10/50 | loss 0.0118 | elapsed 17.9s
+Epoch 17 | step 20/50 | loss 0.0108 | elapsed 29.7s
+Epoch 17 | step 30/50 | loss 0.0133 | elapsed 45.5s
+Epoch 17 | step 40/50 | loss 0.0142 | elapsed 57.0s
+Epoch 17 | step 50/50 | loss 0.0132 | elapsed 73.2s
+[VAL] Epoch 17 | acc=0.9646 | bal_acc=0.9690 | epoch_time=78.1s
+
+=== Epoch 18/40 ===
+Epoch 18 | step 1/50 | loss 0.0133 | elapsed 5.7s
+Epoch 18 | step 10/50 | loss 0.0115 | elapsed 17.6s
+Epoch 18 | step 20/50 | loss 0.0114 | elapsed 29.5s
+Epoch 18 | step 30/50 | loss 0.0112 | elapsed 46.0s
+Epoch 18 | step 40/50 | loss 0.0104 | elapsed 57.5s
+Epoch 18 | step 50/50 | loss 0.0100 | elapsed 74.0s
+[VAL] Epoch 18 | acc=1.0000 | bal_acc=1.0000 | epoch_time=79.0s
+
+=== Epoch 19/40 ===
+Epoch 19 | step 1/50 | loss 0.0125 | elapsed 5.7s
+Epoch 19 | step 10/50 | loss 0.0050 | elapsed 17.6s
+Epoch 19 | step 20/50 | loss 0.0048 | elapsed 29.4s
+Epoch 19 | step 30/50 | loss 0.0053 | elapsed 44.9s
+Epoch 19 | step 40/50 | loss 0.0061 | elapsed 56.8s
+Epoch 19 | step 50/50 | loss 0.0060 | elapsed 73.5s
+[VAL] Epoch 19 | acc=0.9912 | bal_acc=0.9941 | epoch_time=78.6s
+
+=== Epoch 20/40 ===
+Epoch 20 | step 1/50 | loss 0.0055 | elapsed 5.9s
+Epoch 20 | step 10/50 | loss 0.0040 | elapsed 16.9s
+Epoch 20 | step 20/50 | loss 0.0073 | elapsed 28.8s
+Epoch 20 | step 30/50 | loss 0.0067 | elapsed 44.4s
+Epoch 20 | step 40/50 | loss 0.0073 | elapsed 56.9s
+Epoch 20 | step 50/50 | loss 0.0070 | elapsed 72.3s
+[VAL] Epoch 20 | acc=0.9027 | bal_acc=0.9388 | epoch_time=77.3s
+
+=== Epoch 21/40 ===
+Epoch 21 | step 1/50 | loss 0.0033 | elapsed 5.6s
+Epoch 21 | step 10/50 | loss 0.0063 | elapsed 16.4s
+Epoch 21 | step 20/50 | loss 0.0048 | elapsed 29.0s
+Epoch 21 | step 30/50 | loss 0.0046 | elapsed 44.3s
+Epoch 21 | step 40/50 | loss 0.0044 | elapsed 57.2s
+Epoch 21 | step 50/50 | loss 0.0047 | elapsed 72.2s
+[VAL] Epoch 21 | acc=1.0000 | bal_acc=1.0000 | epoch_time=77.2s
+
+=== Epoch 22/40 ===
+Epoch 22 | step 1/50 | loss 0.0017 | elapsed 6.0s
+Epoch 22 | step 10/50 | loss 0.0075 | elapsed 17.6s
+Epoch 22 | step 20/50 | loss 0.0102 | elapsed 29.4s
+Epoch 22 | step 30/50 | loss 0.0087 | elapsed 44.8s
+Epoch 22 | step 40/50 | loss 0.0072 | elapsed 58.2s
+Epoch 22 | step 50/50 | loss 0.0065 | elapsed 72.5s
+[VAL] Epoch 22 | acc=0.9823 | bal_acc=0.9888 | epoch_time=77.5s
+
+=== Epoch 23/40 ===
+Epoch 23 | step 1/50 | loss 0.0024 | elapsed 5.9s
+Epoch 23 | step 10/50 | loss 0.0029 | elapsed 18.4s
+Epoch 23 | step 20/50 | loss 0.0029 | elapsed 29.5s
+Epoch 23 | step 30/50 | loss 0.0028 | elapsed 46.0s
+Epoch 23 | step 40/50 | loss 0.0026 | elapsed 57.1s
+Epoch 23 | step 50/50 | loss 0.0024 | elapsed 73.5s
+[VAL] Epoch 23 | acc=0.9912 | bal_acc=0.9853 | epoch_time=78.7s
+
+=== Epoch 24/40 ===
+Epoch 24 | step 1/50 | loss 0.0008 | elapsed 5.2s
+Epoch 24 | step 10/50 | loss 0.0027 | elapsed 18.4s
+Epoch 24 | step 20/50 | loss 0.0020 | elapsed 29.8s
+Epoch 24 | step 30/50 | loss 0.0018 | elapsed 46.4s
+Epoch 24 | step 40/50 | loss 0.0017 | elapsed 57.9s
+Epoch 24 | step 50/50 | loss 0.0017 | elapsed 73.8s
+[VAL] Epoch 24 | acc=0.9912 | bal_acc=0.9853 | epoch_time=78.9s
+
+=== Epoch 25/40 ===
+Epoch 25 | step 1/50 | loss 0.0007 | elapsed 5.9s
+Epoch 25 | step 10/50 | loss 0.0012 | elapsed 17.6s
+Epoch 25 | step 20/50 | loss 0.0033 | elapsed 29.0s
+Epoch 25 | step 30/50 | loss 0.0035 | elapsed 46.2s
+Epoch 25 | step 40/50 | loss 0.0031 | elapsed 57.7s
+Epoch 25 | step 50/50 | loss 0.0031 | elapsed 73.9s
+[VAL] Epoch 25 | acc=0.9912 | bal_acc=0.9804 | epoch_time=78.9s
+
+=== Epoch 26/40 ===
+Epoch 26 | step 1/50 | loss 0.0553 | elapsed 6.1s
+Epoch 26 | step 10/50 | loss 0.0232 | elapsed 17.4s
+Epoch 26 | step 20/50 | loss 0.0155 | elapsed 29.0s
+Epoch 26 | step 30/50 | loss 0.0141 | elapsed 45.0s
+Epoch 26 | step 40/50 | loss 0.0132 | elapsed 57.4s
+Epoch 26 | step 50/50 | loss 0.0112 | elapsed 73.2s
+[VAL] Epoch 26 | acc=1.0000 | bal_acc=1.0000 | epoch_time=78.1s
+
+=== Epoch 27/40 ===
+Epoch 27 | step 1/50 | loss 0.0013 | elapsed 6.2s
+Epoch 27 | step 10/50 | loss 0.0034 | elapsed 17.7s
+Epoch 27 | step 20/50 | loss 0.0028 | elapsed 28.5s
+Epoch 27 | step 30/50 | loss 0.0031 | elapsed 45.7s
+Epoch 27 | step 40/50 | loss 0.0028 | elapsed 58.0s
+Epoch 27 | step 50/50 | loss 0.0030 | elapsed 73.7s
+[VAL] Epoch 27 | acc=0.9912 | bal_acc=0.9853 | epoch_time=78.8s
+
+=== Epoch 28/40 ===
+Epoch 28 | step 1/50 | loss 0.0015 | elapsed 5.9s
+Epoch 28 | step 10/50 | loss 0.0023 | elapsed 17.3s
+Epoch 28 | step 20/50 | loss 0.0021 | elapsed 29.1s
+Epoch 28 | step 30/50 | loss 0.0022 | elapsed 45.4s
+Epoch 28 | step 40/50 | loss 0.0021 | elapsed 57.7s
+Epoch 28 | step 50/50 | loss 0.0021 | elapsed 73.2s
+[VAL] Epoch 28 | acc=0.9823 | bal_acc=0.9794 | epoch_time=78.8s
+
+=== Epoch 29/40 ===
+Epoch 29 | step 1/50 | loss 0.0017 | elapsed 5.6s
+Epoch 29 | step 10/50 | loss 0.0020 | elapsed 18.0s
+Epoch 29 | step 20/50 | loss 0.0021 | elapsed 29.0s
+Epoch 29 | step 30/50 | loss 0.0019 | elapsed 46.1s
+Epoch 29 | step 40/50 | loss 0.0020 | elapsed 57.3s
+Epoch 29 | step 50/50 | loss 0.0019 | elapsed 73.8s
+[VAL] Epoch 29 | acc=1.0000 | bal_acc=1.0000 | epoch_time=78.9s
+
+=== Epoch 30/40 ===
+Epoch 30 | step 1/50 | loss 0.0006 | elapsed 5.8s
+Epoch 30 | step 10/50 | loss 0.0033 | elapsed 17.2s
+Epoch 30 | step 20/50 | loss 0.0023 | elapsed 29.2s
+Epoch 30 | step 30/50 | loss 0.0020 | elapsed 45.6s
+Epoch 30 | step 40/50 | loss 0.0028 | elapsed 58.9s
+Epoch 30 | step 50/50 | loss 0.0025 | elapsed 74.0s
+[VAL] Epoch 30 | acc=0.9735 | bal_acc=0.9696 | epoch_time=78.9s
+
+=== Epoch 31/40 ===
+Epoch 31 | step 1/50 | loss 0.0010 | elapsed 5.8s
+Epoch 31 | step 10/50 | loss 0.0019 | elapsed 17.5s
+Epoch 31 | step 20/50 | loss 0.0023 | elapsed 29.0s
+Epoch 31 | step 30/50 | loss 0.0022 | elapsed 45.4s
+Epoch 31 | step 40/50 | loss 0.0021 | elapsed 57.6s
+Epoch 31 | step 50/50 | loss 0.0019 | elapsed 74.3s
+[VAL] Epoch 31 | acc=0.9823 | bal_acc=0.9794 | epoch_time=79.3s
+
+=== Epoch 32/40 ===
+Epoch 32 | step 1/50 | loss 0.0005 | elapsed 5.8s
+Epoch 32 | step 10/50 | loss 0.0021 | elapsed 17.5s
+Epoch 32 | step 20/50 | loss 0.0018 | elapsed 28.9s
+Epoch 32 | step 30/50 | loss 0.0016 | elapsed 46.8s
+Epoch 32 | step 40/50 | loss 0.0018 | elapsed 58.5s
+Epoch 32 | step 50/50 | loss 0.0017 | elapsed 74.4s
+[VAL] Epoch 32 | acc=0.9823 | bal_acc=0.9706 | epoch_time=79.4s
+
+=== Epoch 33/40 ===
+Epoch 33 | step 1/50 | loss 0.0012 | elapsed 5.8s
+Epoch 33 | step 10/50 | loss 0.0017 | elapsed 16.8s
+Epoch 33 | step 20/50 | loss 0.0014 | elapsed 28.9s
+Epoch 33 | step 30/50 | loss 0.0014 | elapsed 44.8s
+Epoch 33 | step 40/50 | loss 0.0013 | elapsed 57.1s
+Epoch 33 | step 50/50 | loss 0.0012 | elapsed 73.6s
+[VAL] Epoch 33 | acc=0.9912 | bal_acc=0.9853 | epoch_time=78.7s
+
+=== Epoch 34/40 ===
+Epoch 34 | step 1/50 | loss 0.0011 | elapsed 6.0s
+Epoch 34 | step 10/50 | loss 0.0016 | elapsed 17.4s
+Epoch 34 | step 20/50 | loss 0.0015 | elapsed 28.8s
+Epoch 34 | step 30/50 | loss 0.0015 | elapsed 45.2s
+Epoch 34 | step 40/50 | loss 0.0014 | elapsed 57.6s
+Epoch 34 | step 50/50 | loss 0.0015 | elapsed 73.9s
+[VAL] Epoch 34 | acc=0.9912 | bal_acc=0.9853 | epoch_time=78.9s
+
+=== Epoch 35/40 ===
+Epoch 35 | step 1/50 | loss 0.0011 | elapsed 5.7s
+Epoch 35 | step 10/50 | loss 0.0010 | elapsed 16.5s
+Epoch 35 | step 20/50 | loss 0.0009 | elapsed 28.5s
+Epoch 35 | step 30/50 | loss 0.0010 | elapsed 44.7s
+Epoch 35 | step 40/50 | loss 0.0010 | elapsed 56.9s
+Epoch 35 | step 50/50 | loss 0.0011 | elapsed 72.2s
+[VAL] Epoch 35 | acc=0.9912 | bal_acc=0.9853 | epoch_time=77.1s
+
+=== Epoch 36/40 ===
+Epoch 36 | step 1/50 | loss 0.0007 | elapsed 5.9s
+Epoch 36 | step 10/50 | loss 0.0008 | elapsed 17.1s
+Epoch 36 | step 20/50 | loss 0.0016 | elapsed 28.8s
+Epoch 36 | step 30/50 | loss 0.0014 | elapsed 45.3s
+Epoch 36 | step 40/50 | loss 0.0013 | elapsed 58.2s
+Epoch 36 | step 50/50 | loss 0.0012 | elapsed 74.9s
+[VAL] Epoch 36 | acc=0.9912 | bal_acc=0.9853 | epoch_time=79.9s
+
+=== Epoch 37/40 ===
+Epoch 37 | step 1/50 | loss 0.0010 | elapsed 5.8s
+Epoch 37 | step 10/50 | loss 0.0012 | elapsed 16.7s
+Epoch 37 | step 20/50 | loss 0.0012 | elapsed 30.0s
+Epoch 37 | step 30/50 | loss 0.0013 | elapsed 47.5s
+Epoch 37 | step 40/50 | loss 0.0013 | elapsed 59.9s
+Epoch 37 | step 50/50 | loss 0.0013 | elapsed 77.5s
+[VAL] Epoch 37 | acc=0.9912 | bal_acc=0.9853 | epoch_time=82.5s
+
+=== Epoch 38/40 ===
+Epoch 38 | step 1/50 | loss 0.0003 | elapsed 5.8s
+Epoch 38 | step 10/50 | loss 0.0012 | elapsed 17.6s
+Epoch 38 | step 20/50 | loss 0.0011 | elapsed 29.7s
+Epoch 38 | step 30/50 | loss 0.0010 | elapsed 46.9s
+Epoch 38 | step 40/50 | loss 0.0011 | elapsed 58.8s
+Epoch 38 | step 50/50 | loss 0.0011 | elapsed 75.2s
+[VAL] Epoch 38 | acc=1.0000 | bal_acc=1.0000 | epoch_time=80.2s
+
+=== Epoch 39/40 ===
+Epoch 39 | step 1/50 | loss 0.0004 | elapsed 6.8s
+Epoch 39 | step 10/50 | loss 0.0007 | elapsed 17.9s
+Epoch 39 | step 20/50 | loss 0.0007 | elapsed 30.0s
+Epoch 39 | step 30/50 | loss 0.0011 | elapsed 49.0s
+Epoch 39 | step 40/50 | loss 0.0010 | elapsed 60.7s
+Epoch 39 | step 50/50 | loss 0.0010 | elapsed 78.3s
+[VAL] Epoch 39 | acc=0.9912 | bal_acc=0.9853 | epoch_time=83.2s
+
+=== Epoch 40/40 ===
+Epoch 40 | step 1/50 | loss 0.0006 | elapsed 5.8s
+Epoch 40 | step 10/50 | loss 0.0012 | elapsed 16.9s
+Epoch 40 | step 20/50 | loss 0.0011 | elapsed 28.7s
+Epoch 40 | step 30/50 | loss 0.0009 | elapsed 46.3s
+Epoch 40 | step 40/50 | loss 0.0009 | elapsed 58.6s
+Epoch 40 | step 50/50 | loss 0.0010 | elapsed 75.8s
+[VAL] Epoch 40 | acc=0.9912 | bal_acc=0.9853 | epoch_time=80.7s
+Done. Best val balanced accuracy: 1.0
+Run dir: runs/site_probe/isbi2027__converged_raw_seed5/20261007_053015

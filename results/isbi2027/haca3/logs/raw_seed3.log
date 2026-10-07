@@ -1,0 +1,101 @@
+code_commit=47f04bc81e1c93ddf1ed23a561c39fa86d5fd064
+88ad1cbc7154fb2aeee7122fdc210986ec91549abaef23ce155723ec945e0b1e  /mnt/rhome/mmi/projects/isbi2027/code/scripts/train_site_probe.py
+5e90010bbc0d89e6497f43cb75606207aea3b0fe659888b430f923a934b9c3ad  /mnt/rhome/mmi/projects/isbi2027/code/src/harmonit/data/abide_slices_dataset.py
+46da7a7e43c047b80976307eb4223d1e687d78389016b6fe6852c0bae5307d82  /mnt/rhome/mmi/projects/isbi2027/code/src/harmonit/data/label_controls.py
+Device: cuda
+Run hparams: batch_size=64 epochs=10 lr=0.0003 steps_per_epoch=50 val_batches=0 lr_schedule=constant warmup_steps=0 worker_reseed=False
+MLflow tracking URI: sqlite:////home/mmi/mlflow_local/isbi2027.db
+Num classes (sites): 17
+Class names: ['CMU', 'Caltech', 'KKI', 'Leuven', 'MaxMun', 'NYU', 'OHSU', 'Olin', 'Pitt', 'SBL', 'SDSU', 'Stanford', 'Trinity', 'UCLA', 'UM', 'USM', 'Yale']
+
+=== Epoch 1/10 ===
+Epoch 1 | step 1/50 | loss 2.9356 | elapsed 161.4s
+Epoch 1 | step 10/50 | loss 2.2000 | elapsed 437.5s
+Epoch 1 | step 20/50 | loss 1.8367 | elapsed 743.1s
+Epoch 1 | step 30/50 | loss 1.5672 | elapsed 1189.4s
+Epoch 1 | step 40/50 | loss 1.3847 | elapsed 1467.7s
+Epoch 1 | step 50/50 | loss 1.2282 | elapsed 1798.2s
+[VAL] Epoch 1 | acc=0.2035 | bal_acc=0.1478 | epoch_time=1923.2s
+
+=== Epoch 2/10 ===
+Epoch 2 | step 1/50 | loss 0.3190 | elapsed 153.2s
+Epoch 2 | step 10/50 | loss 0.4607 | elapsed 336.2s
+Epoch 2 | step 20/50 | loss 0.4359 | elapsed 479.8s
+Epoch 2 | step 30/50 | loss 0.3876 | elapsed 744.8s
+Epoch 2 | step 40/50 | loss 0.3506 | elapsed 888.1s
+Epoch 2 | step 50/50 | loss 0.3269 | elapsed 1096.0s
+[VAL] Epoch 2 | acc=0.8761 | bal_acc=0.8569 | epoch_time=1157.4s
+
+=== Epoch 3/10 ===
+Epoch 3 | step 1/50 | loss 0.1973 | elapsed 70.1s
+Epoch 3 | step 10/50 | loss 0.1996 | elapsed 233.6s
+Epoch 3 | step 20/50 | loss 0.2064 | elapsed 440.2s
+Epoch 3 | step 30/50 | loss 0.1964 | elapsed 675.7s
+Epoch 3 | step 40/50 | loss 0.1887 | elapsed 838.7s
+Epoch 3 | step 50/50 | loss 0.1833 | elapsed 1020.7s
+[VAL] Epoch 3 | acc=0.8407 | bal_acc=0.7948 | epoch_time=1082.3s
+
+=== Epoch 4/10 ===
+Epoch 4 | step 1/50 | loss 0.1324 | elapsed 88.2s
+Epoch 4 | step 10/50 | loss 0.1346 | elapsed 272.5s
+Epoch 4 | step 20/50 | loss 0.1242 | elapsed 442.8s
+Epoch 4 | step 30/50 | loss 0.1252 | elapsed 697.2s
+Epoch 4 | step 40/50 | loss 0.1143 | elapsed 876.7s
+Epoch 4 | step 50/50 | loss 0.1131 | elapsed 1077.8s
+[VAL] Epoch 4 | acc=0.9823 | bal_acc=0.9735 | epoch_time=1142.4s
+
+=== Epoch 5/10 ===
+Epoch 5 | step 1/50 | loss 0.0773 | elapsed 89.4s
+Epoch 5 | step 10/50 | loss 0.1171 | elapsed 252.9s
+Epoch 5 | step 20/50 | loss 0.1009 | elapsed 419.8s
+Epoch 5 | step 30/50 | loss 0.0970 | elapsed 672.9s
+Epoch 5 | step 40/50 | loss 0.0915 | elapsed 828.2s
+Epoch 5 | step 50/50 | loss 0.0881 | elapsed 1015.0s
+[VAL] Epoch 5 | acc=0.9646 | bal_acc=0.9599 | epoch_time=1078.2s
+
+=== Epoch 6/10 ===
+Epoch 6 | step 1/50 | loss 0.0291 | elapsed 76.3s
+Epoch 6 | step 10/50 | loss 0.0626 | elapsed 270.2s
+Epoch 6 | step 20/50 | loss 0.0701 | elapsed 427.0s
+Epoch 6 | step 30/50 | loss 0.0693 | elapsed 821.0s
+Epoch 6 | step 40/50 | loss 0.0727 | elapsed 1124.0s
+Epoch 6 | step 50/50 | loss 0.0734 | elapsed 1422.6s
+[VAL] Epoch 6 | acc=0.8142 | bal_acc=0.7078 | epoch_time=1477.9s
+
+=== Epoch 7/10 ===
+Epoch 7 | step 1/50 | loss 0.1488 | elapsed 83.2s
+Epoch 7 | step 10/50 | loss 0.0822 | elapsed 232.5s
+Epoch 7 | step 20/50 | loss 0.0674 | elapsed 389.6s
+Epoch 7 | step 30/50 | loss 0.0639 | elapsed 587.5s
+Epoch 7 | step 40/50 | loss 0.0616 | elapsed 732.4s
+Epoch 7 | step 50/50 | loss 0.0573 | elapsed 944.6s
+[VAL] Epoch 7 | acc=0.9469 | bal_acc=0.9403 | epoch_time=1009.0s
+
+=== Epoch 8/10 ===
+Epoch 8 | step 1/50 | loss 0.0175 | elapsed 79.9s
+Epoch 8 | step 10/50 | loss 0.0427 | elapsed 226.0s
+Epoch 8 | step 20/50 | loss 0.0409 | elapsed 428.6s
+Epoch 8 | step 30/50 | loss 0.0389 | elapsed 572.5s
+Epoch 8 | step 40/50 | loss 0.0394 | elapsed 785.0s
+Epoch 8 | step 50/50 | loss 0.0432 | elapsed 910.2s
+[VAL] Epoch 8 | acc=0.7788 | bal_acc=0.7601 | epoch_time=964.9s
+
+=== Epoch 9/10 ===
+Epoch 9 | step 1/50 | loss 0.0633 | elapsed 66.5s
+Epoch 9 | step 10/50 | loss 0.0727 | elapsed 232.9s
+Epoch 9 | step 20/50 | loss 0.0734 | elapsed 364.3s
+Epoch 9 | step 30/50 | loss 0.0841 | elapsed 564.3s
+Epoch 9 | step 40/50 | loss 0.0755 | elapsed 725.5s
+Epoch 9 | step 50/50 | loss 0.0686 | elapsed 916.1s
+[VAL] Epoch 9 | acc=0.8673 | bal_acc=0.8235 | epoch_time=980.1s
+
+=== Epoch 10/10 ===
+Epoch 10 | step 1/50 | loss 0.0369 | elapsed 90.0s
+Epoch 10 | step 10/50 | loss 0.0511 | elapsed 256.7s
+Epoch 10 | step 20/50 | loss 0.0461 | elapsed 420.5s
+Epoch 10 | step 30/50 | loss 0.0403 | elapsed 650.8s
+Epoch 10 | step 40/50 | loss 0.0371 | elapsed 804.7s
+Epoch 10 | step 50/50 | loss 0.0367 | elapsed 1009.3s
+[VAL] Epoch 10 | acc=0.9204 | bal_acc=0.8910 | epoch_time=1063.9s
+Done. Best val balanced accuracy: 0.973529411764706
+Run dir: runs/site_probe/isbi2027__raw_seed3/20261006_233753

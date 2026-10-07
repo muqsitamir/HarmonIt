@@ -1,0 +1,11 @@
+epoch 1 loss 1.7486 val_acc 0.1327 val_bal_acc 0.1071
+epoch 2 loss 0.8345 val_acc 0.3097 val_bal_acc 0.3017
+epoch 3 loss 0.4641 val_acc 0.6106 val_bal_acc 0.5405
+epoch 4 loss 0.3216 val_acc 0.5398 val_bal_acc 0.5461
+epoch 5 loss 0.2356 val_acc 0.7611 val_bal_acc 0.7488
+epoch 6 loss 0.1461 val_acc 0.7876 val_bal_acc 0.8020
+epoch 7 loss 0.1179 val_acc 0.5841 val_bal_acc 0.4578
+epoch 8 loss 0.1324 val_acc 0.7345 val_bal_acc 0.6574
+epoch 9 loss 0.0913 val_acc 0.5310 val_bal_acc 0.5030
+epoch 10 loss 0.0974 val_acc 0.8584 val_bal_acc 0.8339
+Done. best val BA 0.8339
