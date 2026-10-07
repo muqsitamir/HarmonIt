@@ -28,7 +28,7 @@ ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggress
 NAMES = {"neurocombat": "NeuroCombat$^\\dagger$", "histogram_matching": "Histogram matching$^\\ddagger$",
          "cyclegan_tuned": "CycleGAN", "stargan_aggressive": "StarGAN (aggr.)", "stargan_conservative": "StarGAN (cons.)",
          "dlest_1500": "DLEST-style 1500", "dlest_1000": "DLEST-style 1000", "diffusion_20k": "Diffusion, draw 1",
-         "diffusion_20k_redraw": "Diffusion, draw 2", "haca3": "HACA3 (pretrained)"}
+         "diffusion_20k_redraw": "Diffusion, draw 2", "haca3": "HACA3 (pretrained)$^\\S$"}
 BLUR = ("gaussian_blur_s2", "Blur control, $\\sigma{=}2$")
 TARGET_SITE = 5
 

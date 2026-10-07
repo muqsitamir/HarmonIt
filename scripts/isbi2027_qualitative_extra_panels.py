@@ -1,4 +1,5 @@
-"""Extra Fig. 2 panels: a matched NYU test subject and the Gaussian-blur control (amendment 12).
+"""Extra Fig. 2 panels: a matched NYU test subject, the Gaussian-blur control (amendment 12) and
+HACA3 (amendment 13, from its test artifact).
 
 Rendered like the original panels in `paper/isbi2027/figures/qualitative_panels/`: the input's
 foreground 99.5th-percentile display window, a 64-pixel zoom box at the foreground centroid,
@@ -34,6 +35,7 @@ def main():
     p.add_argument("--artifact", required=True, help="Any test artifact with raw_images")
     p.add_argument("--subject", default="UM_50428", help="Subject shown in Fig. 2")
     p.add_argument("--sigma", type=float, default=2)
+    p.add_argument("--haca3", help="HACA3 test artifact (amendment 13)")
     p.add_argument("--panels", required=True)
     args = p.parse_args()
     with np.load(args.artifact, allow_pickle=False) as data:
@@ -62,6 +64,14 @@ def main():
     render(blurred, "gray", 0, vmax, (459, 460)).save(out / "image_blur.png")
     render(crop(blurred), "gray", 0, vmax, (230, 230)).save(out / "inset_blur.png")
     render(blurred - inp, DIVERGING, -LIMIT, LIMIT, (460, 460)).save(out / "diff_blur.png")
+    if args.haca3:
+        with np.load(args.haca3, allow_pickle=False) as data:
+            assert str(data["subject_ids"][row]) == args.subject
+            haca3 = data["images"][row, 0].astype(np.float64)
+        render(haca3, "gray", 0, vmax, (459, 460)).save(out / "image_haca3.png")
+        render(crop(haca3), "gray", 0, vmax, (230, 230)).save(out / "inset_haca3.png")
+        render(haca3 - inp, DIVERGING, -LIMIT, LIMIT, (460, 460)).save(out / "diff_haca3.png")
+        print(f"HACA3 PSNR {10 * np.log10(1 / np.mean((haca3 - inp) ** 2)):.1f} dB")
     print(f"NYU match {ids[match]}; blur sigma {args.sigma}: PSNR {psnr:.1f} dB on {args.subject}")
 
 

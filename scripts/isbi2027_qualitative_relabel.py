@@ -6,7 +6,8 @@ pixel for pixel from the published figure into `paper/isbi2027/figures/qualitati
 the NYU-target and blur-control panels come from `isbi2027_qualitative_extra_panels.py`. Text
 sizes reproduce the original figure as printed (6 pt titles). Subject UM_50428, PSNR values and
 the zoom box are those of the original figure (selection: median PSNR over the nine outputs in
-`isbi2027_qualitative.py`'s ORDER); the blur PSNR is from the blur-control run (amendment 12).
+`isbi2027_qualitative.py`'s ORDER); the blur and HACA3 PSNRs are from their runs (amendments 12, 13).
+HACA3 replaced the second diffusion draw, which Table 1 still reports.
 """
 
 from __future__ import annotations
@@ -21,11 +22,11 @@ import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.colors import LinearSegmentedColormap, Normalize  # noqa: E402
 
 COLUMNS = [("input", "Input"), ("nyu_target", "NYU subject"), ("histogram_matching", "Hist. match."),
-           ("cyclegan", "CycleGAN"), ("diffusion_draw1", "Diff. draw 1"), ("diffusion_draw2", "Diff. draw 2"),
+           ("cyclegan", "CycleGAN"), ("diffusion_draw1", "Diffusion"), ("haca3", "HACA3"),
            ("blur", "Blur, $\\sigma{=}2$")]
 REFERENCES = {"input", "nyu_target"}  # shown without a difference map
 PSNR = {"histogram_matching": "20.9 dB", "cyclegan": "17.2 dB", "diffusion_draw1": "22.7 dB",
-        "diffusion_draw2": "22.9 dB", "blur": "25.0 dB"}
+        "diffusion_draw2": "22.9 dB", "haca3": "15.4 dB", "blur": "25.0 dB"}
 ZOOM_BOX = (.3724, .3687, .2503)  # x0, y0 (axes fraction, from bottom-left) and side of the input's zoom box
 DIVERGING = LinearSegmentedColormap.from_list("blue_gray_red", ["#184f95", "#f0efec", "#a8322f"])
 LIMIT = .3

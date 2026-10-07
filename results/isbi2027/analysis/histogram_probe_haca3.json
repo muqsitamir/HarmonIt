@@ -1,0 +1,126 @@
+{
+  "foreground": "raw slice > 0.02",
+  "raw_trained": {
+    "validation": {
+      "ba": 0.7905398523045581,
+      "C": 1
+    },
+    "raw": {
+      "estimate": 0.7422348484848484,
+      "ci95": [
+        0.6495265151515152,
+        0.8354308712121211
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "neurocombat": {
+      "estimate": 0.10672348484848485,
+      "ci95": [
+        0.06666666666666667,
+        0.1510535037878787
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "histogram_matching": {
+      "estimate": 0.08333333333333333,
+      "ci95": [
+        0.0625,
+        0.125
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "cyclegan_tuned": {
+      "estimate": 0.2053841991341991,
+      "ci95": [
+        0.1345014880952381,
+        0.28095305735930737
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "stargan_aggressive": {
+      "estimate": 0.20892857142857144,
+      "ci95": [
+        0.1625,
+        0.2517857142857143
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "stargan_conservative": {
+      "estimate": 0.3386363636363636,
+      "ci95": [
+        0.2662878787878788,
+        0.4083333333333333
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "dlest_1500": {
+      "estimate": 0.4193452380952381,
+      "ci95": [
+        0.3464285714285715,
+        0.4866071428571428
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "dlest_1000": {
+      "estimate": 0.47232142857142856,
+      "ci95": [
+        0.40714285714285714,
+        0.5410714285714285
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "diffusion_20k": {
+      "estimate": 0.3582792207792208,
+      "ci95": [
+        0.2802323457792208,
+        0.43330627705627706
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    },
+    "haca3": {
+      "estimate": 0.18988095238095237,
+      "ci95": [
+        0.1300595238095238,
+        0.24464285714285713
+      ],
+      "bootstrap_valid": 2000,
+      "bootstrap_total": 2000
+    }
+  },
+  "own_trained": {
+    "haca3": {
+      "validation": {
+        "ba": 0.7623885918003566,
+        "C": 10
+      },
+      "test_artifact": "haca3",
+      "source_ba": {
+        "estimate": 0.7142451298701299,
+        "ci95": [
+          0.631004126082251,
+          0.7985315205627707
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      },
+      "own_minus_raw_trained": {
+        "estimate": 0.5243641774891775,
+        "ci95": [
+          0.4254974972943723,
+          0.6218611336580085
+        ],
+        "bootstrap_valid": 2000,
+        "bootstrap_total": 2000
+      }
+    }
+  }
+}

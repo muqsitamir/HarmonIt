@@ -341,6 +341,10 @@ foreground = raw slice > 0.02, C chosen on validation) trained on HACA3 training
 raw training slices, tested on HACA3 test outputs with the evaluator's bootstrap
 (`scripts/isbi2027_histogram_probe.py --methods haca3`). Brain-only probes stay out of scope
 (masks deleted). Reported whatever the result.
+Outcome (`results/isbi2027/analysis/histogram_probe_haca3.json`): the raw-trained histogram probe
+reproduced amendment 5 on raw heads (0.742 [0.650, 0.835]) and gave 0.19 [0.13, 0.25] on HACA3; the
+HACA3-trained histogram probe gave 0.71 [0.63, 0.80] (validation 0.76), +0.52 [0.43, 0.62] over the
+raw-trained one. HACA3 outputs keep site information in intensities alone, not only in head shape.
 
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
