@@ -13,6 +13,8 @@ HACA3 (Zuo et al., Comput. Med. Imaging Graph. 2023) is run as published: the au
 3. export: each output is resampled back onto the subject's native grid with the inverse
    transform, normalized like the raw volume (`robust_normalize`) and cut at the frozen slice with
    the raw slice's head mask and crop (`fixed_slice_from_volume`), so outputs pair with raw slices.
+   `--source preproc` exports the preprocessing-only control (amendment 15): HACA3's input volume
+   (N4, registered) mapped back the same way, without HACA3.
 Native geometry is taken from nibabel's canonical arrays and affines, the arrays the slice
 pipeline reads, so the round trip lands on the raw voxel grid by construction.
 """
@@ -276,8 +278,9 @@ def _export_one(job):
     sample, out_dir = dataset.samples[row], Path(args.out_dir)
     sid = str(sample.subject_id)
     raw = fixed_slice_from_volume(dataset, row, dataset._load_volume(sample), index)
-    volume = back_to_native(out_dir / "haca3" / f"{sid}_harmonized_fusion.nii.gz", out_dir / "xfm" / f"{sid}.tfm",
-                            _EXPORT["paths"][sid])
+    volume_path = (out_dir / "mni" / f"{sid}.nii.gz" if args.source == "preproc"
+                   else out_dir / "haca3" / f"{sid}_harmonized_fusion.nii.gz")
+    volume = back_to_native(volume_path, out_dir / "xfm" / f"{sid}.tfm", _EXPORT["paths"][sid])
     harmonized = np.clip(fixed_slice_from_volume(dataset, row, volume, index), 0, 1)
     return harmonized[None], raw[None], sid, int(sample.site_id), index
 
@@ -301,13 +304,14 @@ def cmd_export(args):
     rows = dict(zip(("images", "raw_images", "subject_ids", "site_ids", "slice_indices"), map(list, zip(*results))))
     target = out_dir / "export" / args.split
     target.mkdir(parents=True, exist_ok=True)
-    name = "haca3_slices.npz" if not args.subject else "haca3_slices_subset.npz"
+    method = METHOD if args.source == "haca3" else "haca3_preproc"
+    name = f"{method}_slices.npz" if not args.subject else f"{method}_slices_subset.npz"
     np.savez_compressed(target / name, images=np.stack(rows["images"]).astype(np.float32),
                         raw_images=np.stack(rows["raw_images"]).astype(np.float32),
                         subject_ids=np.asarray(rows["subject_ids"], dtype=str),
                         site_ids=np.asarray(rows["site_ids"], dtype=np.int64),
                         slice_indices=np.asarray(rows["slice_indices"], dtype=np.int64),
-                        split=np.asarray(args.split), method=np.asarray(METHOD))
+                        split=np.asarray(args.split), method=np.asarray(method))
     print(target / name)
 
 
@@ -327,6 +331,8 @@ def main():
     p.add_argument("--harmonization-model", help="harmonization_public.pt")
     p.add_argument("--fusion-model", help="fusion.pt")
     p.add_argument("--slice-index-map", help="Frozen slice map: JSON, or an export NPZ of the same split (export)")
+    p.add_argument("--source", choices=("haca3", "preproc"), default="haca3",
+                   help="Export HACA3 outputs or the preprocessing-only control (amendment 15)")
     args = p.parse_args()
     {"prepare": cmd_prepare, "target": cmd_target, "harmonize": cmd_harmonize, "export": cmd_export}[args.step](args)
 

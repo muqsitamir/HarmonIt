@@ -346,6 +346,26 @@ reproduced amendment 5 on raw heads (0.742 [0.650, 0.835]) and gave 0.19 [0.13, 
 HACA3-trained histogram probe gave 0.71 [0.63, 0.80] (validation 0.76), +0.52 [0.43, 0.62] over the
 raw-trained one. HACA3 outputs keep site information in intensities alone, not only in head shape.
 
+Amendment 15, 2026-10-07 (written before running; prompted by an external review). Preprocessing-only
+control for HACA3: the N4-corrected, MNI-registered volume that HACA3 receives is mapped back to the
+native grid and cut at the frozen slices exactly like HACA3's output, without HACA3
+(`haca3_abide.py export --source preproc`, output `haca3_preproc`). HACA3's own 95th-percentile
+scaling and background removal are part of the harmonizer and are not applied. Scored, paired with
+HACA3 on the same test subjects: the frozen probe, the ten retrained raw probes of amendment 13 and
+its three raw-trained slice probes; the intensity-only probe of amendment 14, raw-trained and
+trained on the control's own outputs. Question: how much of HACA3's low raw-trained-probe accuracy
+the preprocessing alone produces. Reported whatever the result.
+
+Amendment 16, 2026-10-07 (written before running; prompted by the same review: 90 source test
+subjects). HACA3 never saw ABIDE, so its outputs for all 1,112 subjects are untouched. Five-fold
+cross-validation over all subjects (folds stratified by site, seed 20261007; within the training
+folds a stratified 10% is the validation set): whole-head slice probes (amendment 2 recipe, best
+validation epoch, one seed per fold) and intensity-only probes trained on raw slices, on HACA3
+outputs and on the amendment 15 control, each tested on its held-out fold; raw-trained probes are
+also tested on HACA3 and control outputs. Source BA pools the held-out predictions of all non-NYU
+subjects, with 2,000 within-site bootstrap replicates (seed 20260913), paired across probes. The
+frozen probe is not evaluated (it was trained on these subjects). `scripts/isbi2027_haca3_cv.py`.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.

@@ -20,9 +20,10 @@ from sklearn.preprocessing import StandardScaler
 from harmonit.metrics.subject_evaluation import balanced_accuracy_draws, interval, probability_histogram
 
 NPZ = {"histogram_matching": "histogram_matching_slices.npz", "cyclegan_tuned": "cyclegan_nyu_slices.npz",
-       "diffusion_20k": "diffusion_img2img_nyu_slices.npz", "haca3": "haca3_slices.npz"}
+       "diffusion_20k": "diffusion_img2img_nyu_slices.npz", "haca3": "haca3_slices.npz",
+       "haca3_preproc": "haca3_preproc_slices.npz"}
 OWN_TEST = {"histogram_matching": "histogram_matching", "cyclegan_tuned": "cyclegan_tuned",
-            "diffusion_20k": "diffusion_20k_redraw", "haca3": "haca3"}
+            "diffusion_20k": "diffusion_20k_redraw", "haca3": "haca3", "haca3_preproc": "haca3_preproc"}
 
 
 def features(images, raw, masks=None, threshold=0.02):
