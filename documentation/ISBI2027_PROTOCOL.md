@@ -366,6 +366,15 @@ also tested on HACA3 and control outputs. Source BA pools the held-out predictio
 subjects, with 2,000 within-site bootstrap replicates (seed 20260913), paired across probes. The
 frozen probe is not evaluated (it was trained on these subjects). `scripts/isbi2027_haca3_cv.py`.
 
+Amendment 17, 2026-10-07 (written before running; requested by the author). Brain-only probes for
+HACA3, as amendment 7 for the other methods: HD-BET masks regenerated for all 1,112 raw volumes
+(`run_hdbet_masks.py`, hd-bet 2.0.1; the amendment 7 masks were deleted on 2026-10-01), brain-only
+exports built from the HACA3 export (`make_brain_npz.py --methods haca3 --reference haca3`, gated on
+exact raw-slice reproduction), whole-brain slice probes (amendment 2 recipe, seeds 1-3) trained on
+masked raw slices and on masked HACA3 outputs and evaluated on HACA3 test outputs with brain-only
+probe inputs, the paired difference of amendment 9, and the brain-foreground intensity-only probe.
+Driver `scripts/vpulab_isbi2027_haca3_brain.sh`. Reported whatever the result.
+
 Method tracks. NeuroCombat was fit on the test cohort itself (transductive) and
 histogram matching uses a pooled 17-site training reference, not NYU; describe both
 accordingly and keep NeuroCombat in a separately labeled transductive row.

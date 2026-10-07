@@ -44,7 +44,11 @@ def main():
     runs = Path(args.runs)
     families, tests = FAMILIES, TESTS
     if args.haca3:
-        families, tests = {"whole_head": "sliceprobe_{source}_seed{seed}_model_{ckpt}_haca3"}, {"haca3": "haca3"}
+        families = {"whole_head": "sliceprobe_{source}_seed{seed}_model_{ckpt}_haca3",
+                    "brain_only": "brainprobe_{source}_seed{seed}_model_{ckpt}"}  # amendment 17
+        families = {k: v for k, v in families.items()
+                    if (runs / v.format(source="raw", seed=args.seeds[0], ckpt=args.ckpt)).is_dir()}
+        tests = {"haca3": "haca3"}
     report = {"ckpt": args.ckpt, "seeds": args.seeds, "replicates": 2000, "bootstrap_seed": 20260913, "results": {}}
     for family, pattern in families.items():
         for source, artifact in tests.items():

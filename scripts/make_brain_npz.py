@@ -7,6 +7,8 @@ export's raw slice. Writes per split:
   masks/<split>/brain_masks.npz                   masks [N,1,256,256], brain-to-head area ratio
   <method>/<split>/<npz>                          images and raw_images multiplied by the mask
   brain_shape/<split>/brain_shape_slices.npz      images = binary mask, raw_images unchanged
+`--methods haca3 --export haca3=<dir> --reference haca3` builds amendment 17's HACA3 exports, with
+the HACA3 export (<dir>/<split>/haca3_slices.npz) as the raw-slice reference.
 """
 
 from __future__ import annotations
@@ -26,7 +28,7 @@ from harmonit.data.abide_slices_dataset import (  # noqa: E402
     AbideSlicesDataset, bbox_from_mask, crop_with_bbox, make_head_mask, resize_mask_to_hw, resize_to_hw)
 
 NPZ = {"histogram_matching": "histogram_matching_slices.npz", "cyclegan_tuned": "cyclegan_nyu_slices.npz",
-       "diffusion_20k": "diffusion_img2img_nyu_slices.npz"}
+       "diffusion_20k": "diffusion_img2img_nyu_slices.npz", "haca3": "haca3_slices.npz"}
 ARGS = None
 
 
@@ -72,11 +74,16 @@ def main():
     p.add_argument("--out-dir", required=True)
     p.add_argument("--volume-cache", help="VOLUME_CACHE_DIR for train/val volumes")
     p.add_argument("--workers", type=int, default=6)
+    p.add_argument("--methods", nargs="+", default=["histogram_matching", "cyclegan_tuned", "diffusion_20k"])
+    p.add_argument("--export", action="append", default=[], help="method=dir with <split>/<npz> (default exports/method)")
+    p.add_argument("--reference", default="histogram_matching", help="Method whose export gives the raw slices")
     ARGS = p.parse_args()
     exports, out = Path(ARGS.exports), Path(ARGS.out_dir)
+    dirs = dict(spec.split("=", 1) for spec in ARGS.export)
+    where = lambda method, split: Path(dirs.get(method, exports / method)) / split / NPZ[method]
     report = {}
     for split in ("test", "val", "train"):
-        with np.load(exports / "histogram_matching" / split / NPZ["histogram_matching"], allow_pickle=False) as data:
+        with np.load(where(ARGS.reference, split), allow_pickle=False) as data:
             ref = {key: data[key] for key in data.files}
         subjects = ref["subject_ids"].astype(str)
         jobs = [(split, s, int(k), r) for s, k, r in zip(subjects, ref["slice_indices"], ref["raw_images"])]
@@ -97,8 +104,9 @@ def main():
         save(out / "brain_shape" / split / "brain_shape_slices.npz",
              dict(common, images=m, raw_images=ref["raw_images"], method=np.asarray("brain_shape")))
         if split != "test":
-            for method, name in NPZ.items():
-                with np.load(exports / method / split / name, allow_pickle=False) as data:
+            for method in ARGS.methods:
+                name = NPZ[method]
+                with np.load(where(method, split), allow_pickle=False) as data:
                     arrays = {key: data[key] for key in data.files}
                 if not np.array_equal(arrays["subject_ids"].astype(str), subjects):
                     raise ValueError(f"{method}/{split}: subject order differs")
