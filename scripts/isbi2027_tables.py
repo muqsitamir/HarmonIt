@@ -2,7 +2,7 @@
 
 All quantities are for the 90 source (non-NYU) test subjects, as means over subjects. Change:
 PSNR, XCorr and the Wasserstein-1 distance W between input and output intensities. Target
-alignment: change in Wasserstein-1 distance to the NYU reference and KL divergence to it. Frozen
+alignment: change in Wasserstein-1 distance and in KL divergence to the NYU reference (output minus input). Frozen
 probe: source BA with its paired bootstrap 95% interval and the share of outputs it labels NYU.
 Probes retrained on raw images (benchmark recipe, best-validation checkpoints; converged recipe
 of amendment 6, final-epoch checkpoints) are summarized over seeds as mean (min--max). HACA3
@@ -72,12 +72,11 @@ def main():
         "\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\\cmidrule(l){7-10}",
         # Arrows: the direction usually read as better (the paper questions this reading for site BA).
         "Method & PSNR$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
-        " & KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe$\\downarrow$ & $\\to$NYU$\\uparrow$"
+        " & $\\Delta$KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe$\\downarrow$ & $\\to$NYU$\\uparrow$"
         " & Same recipe$\\downarrow$ & Converged$\\downarrow$ \\\\",
         "\\midrule",
     ]
-    kl_raw = align["neurocombat"]["kl"]["raw"]["estimate"]
-    raw_row = ["Raw input", "--", "--", "0", "0", f"{kl_raw:.2f}",
+    raw_row = ["Raw input", "--", "--", "0", "0", "0",
                f"{frozen.loc[('neurocombat', 'raw_site_ba'), 'estimate']:.2f}",
                nyu_share(args.frozen_run, "neurocombat", "raw_prediction"),
                seeds(retrained[(retrained.method == 'neurocombat') & (retrained.metric == 'raw_site_ba')].estimate),
@@ -91,7 +90,7 @@ def main():
         return [
             NAMES[method], f"{f('psnr').estimate:.1f}", f"{f('cross_correlation').estimate:.3f}",
             f"{f('subject_wasserstein_raw_harm').estimate:.3f}",
-            f"{a['wasserstein']['harmonized_minus_raw']['estimate']:+.3f}", f"{a['kl']['harmonized']['estimate']:.2f}",
+            f"{a['wasserstein']['harmonized_minus_raw']['estimate']:+.3f}", f"{a['kl']['harmonized_minus_raw']['estimate']:+.2f}",
             f"{ba.estimate:.2f} [{ba.ci_low:.2f}, {ba.ci_high:.2f}]", nyu_share(frozen_run, method),
             seeds(retrained[(retrained.method == method) & (retrained.metric == "harmonized_site_ba")].estimate),
             seeds(converged[(converged.method == method) & (converged.metric == "harmonized_site_ba")].estimate),
@@ -111,7 +110,7 @@ def main():
     lines.append(" & ".join([
         BLUR[1], f"{blur['psnr']['estimate']:.1f}", f"{blur['cross_correlation']['estimate']:.3f}",
         f"{blur['subject_wasserstein_raw_harm']['estimate']:.3f}",
-        f"{b['wasserstein']['harmonized_minus_raw']['estimate']:+.3f}", f"{b['kl']['harmonized']['estimate']:.2f}",
+        f"{b['wasserstein']['harmonized_minus_raw']['estimate']:+.3f}", f"{b['kl']['harmonized_minus_raw']['estimate']:+.2f}",
         f"{ba['estimate']:.2f} [{ba['ci95'][0]:.2f}, {ba['ci95'][1]:.2f}]", nyu_share(args.blur_run, BLUR[0]), "--", "--",
     ]) + " \\\\")
     lines += ["\\bottomrule", "\\end{tabular}"]

@@ -61,7 +61,7 @@ Classifiers retrained after harmonization still predict site for ComBat~\cite{ma
 
 \begin{table*}[t]
 \centering
-\caption{Results on the 90 source test subjects (means). Arrows give the direction usually read as better. Change: similarity to the input (PSNR, XCorr) and distance between input and output intensities ($W$). Target alignment: change in Wasserstein distance ($\Delta W_{\mathrm{NYU}}$) and KL divergence (KL$_{\mathrm{NYU}}$) to NYU intensities. Site BA: balanced accuracy of probes trained on unharmonized images and tested on each row; frozen probe with 95\% interval and share of outputs it labels NYU; same recipe and converged: mean (min--max) of five probes; blur: frozen probe only. $^\dagger$Fit on the test subjects. $^\ddagger$Reference pooled over all sites. $^\S$CSF rendered near zero.}
+\caption{Results on the 90 source test subjects (means). Arrows give the direction usually read as better. Change: similarity to the input (PSNR, XCorr) and distance between input and output intensities ($W$). Target alignment: change in Wasserstein distance ($\Delta W_{\mathrm{NYU}}$) and KL divergence ($\Delta$KL$_{\mathrm{NYU}}$) to NYU intensities. Site BA: balanced accuracy of probes trained on unharmonized images and tested on each row; frozen probe with 95\% interval and share of outputs it labels NYU; same recipe and converged: mean (min--max) of five probes; blur: frozen probe only. $^\dagger$Fit on the test subjects. $^\ddagger$Reference pooled over all sites. $^\S$CSF rendered near zero.}
 \label{tab:main}
 \vspace{2pt}
 \scriptsize
@@ -84,7 +84,7 @@ Classifiers retrained after harmonization still predict site for ComBat~\cite{ma
 \label{fig:qualitative}
 \end{figure*}
 
-\textbf{Image change and target alignment.} We compare each output with its input using PSNR and normalized cross-correlation (XCorr), and measure how much its intensity distribution changed with the Wasserstein-1 distance $W$. To check whether outputs moved toward the target, we compare their intensity distribution with that of the 147 NYU training subjects (Wasserstein distance and KL divergence); $\Delta W_{\mathrm{NYU}}$ is the output's distance minus the input's, so negative values mean closer to NYU.
+\textbf{Image change and target alignment.} We compare each output with its input using PSNR and normalized cross-correlation (XCorr), and measure how much its intensity distribution changed with the Wasserstein-1 distance $W$. To check whether outputs moved toward the target, we compare their intensity distribution with that of the 147 NYU training subjects (Wasserstein distance and KL divergence); $\Delta W_{\mathrm{NYU}}$ and $\Delta$KL$_{\mathrm{NYU}}$ are the output's distances minus the input's, so negative values mean closer to NYU.
 
 \textbf{Site probes.} Image probes are ResNet-18 classifiers~\cite{he2016resnet} that predict the site of a slice; we report balanced accuracy (BA) over the 16 source sites. We compare five families of probes:
 \begin{list}{}{\setlength{\leftmargin}{1em}\setlength{\itemindent}{0pt}\setlength{\topsep}{2pt}\setlength{\itemsep}{1pt}\setlength{\parsep}{0pt}}
