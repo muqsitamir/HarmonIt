@@ -76,7 +76,7 @@ def main():
         # Arrows: the direction usually read as better (the paper questions this reading for site BA).
         "Method & PSNR$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
         " & KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe$\\downarrow$ & $\\to$NYU$\\uparrow$"
-        " & Benchmark recipe$\\downarrow$ & Converged$\\downarrow$ \\\\",
+        " & Same recipe$\\downarrow$ & Converged$\\downarrow$ \\\\",
         "\\midrule",
     ]
     kl_raw = align["neurocombat"]["kl"]["raw"]["estimate"]
