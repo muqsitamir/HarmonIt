@@ -69,13 +69,14 @@ def main():
 
     lines = [
         "\\begin{tabular}{@{}lccccccccc@{}}", "\\toprule",
-        " & \\multicolumn{3}{c}{Change} & \\multicolumn{2}{c}{Target alignment} & \\multicolumn{2}{c}{Frozen probe}"
-        " & \\multicolumn{2}{c}{Probes retrained on raw images} \\\\",
-        "\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\\cmidrule(lr){7-8}\\cmidrule(l){9-10}",
+        # Rows are the images tested; every site-BA column is a probe trained on unharmonized images.
+        " & \\multicolumn{3}{c}{Change} & \\multicolumn{2}{c}{Target alignment}"
+        " & \\multicolumn{4}{c}{Site BA: probes trained on unharmonized images, tested on each row} \\\\",
+        "\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\\cmidrule(l){7-10}",
         # Arrows: the direction usually read as better (the paper questions this reading for site BA).
         "Method & PSNR$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
-        " & KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Source BA$\\downarrow$ & NYU$\\uparrow$"
-        " & Benchmark recipe$\\downarrow$ & Converged recipe$\\downarrow$ \\\\",
+        " & KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe$\\downarrow$ & $\\to$NYU$\\uparrow$"
+        " & Benchmark recipe$\\downarrow$ & Converged$\\downarrow$ \\\\",
         "\\midrule",
     ]
     kl_raw = align["neurocombat"]["kl"]["raw"]["estimate"]
