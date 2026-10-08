@@ -7,6 +7,9 @@
 \urlstyle{same}
 % Only paragraphs that would otherwise overflow the column get extra stretch.
 \setlength{\emergencystretch}{1.5em}
+% No single first or last line of a paragraph stranded at a column break.
+\clubpenalty=10000
+\widowpenalty=10000
 
 % Red marker for numbers that await running experiments; must be empty before submission.
 \newcommand{\pending}[1]{\textcolor{red}{[#1]}}
