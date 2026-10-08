@@ -107,13 +107,13 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
   env `/home/mmi/envs/haca3`; drivers `scripts/vpulab_isbi2027_haca3.sh` and `_haca3_probes.sh`).
   Frozen 0.25, retrained benchmark 0.29 [0.18, 0.37], converged 0.28 [0.23, 0.33], HACA3-trained
   slice probes 0.75 vs raw-trained 0.28 (+0.47 [0.43, 0.52]). The 10 raw probes were retrained
-  (checkpoints lost on 2026-10-01): converged ones reproduce the originals, benchmark-recipe ones
+  with the original recipes and seeds: converged ones reproduce the originals, benchmark-recipe ones
   do not. Table 1 now drops DLEST-style 1500 (for HACA3) and conservative StarGAN (space); both stay
   in all statistics. Pierrick is affiliation 3 (LaBRI). Still four pages.
 - 2026-10-07 (external review round): amendments 14-17. Intensity-only probe on HACA3 (0.71);
   preprocessing-only control (frozen 0.61 vs HACA3 0.25, paired -0.35; HACA3 sends errors to NYU);
   five-fold CV on all 928 source subjects (raw-trained 0.25, HACA3-trained 0.77); brain-only probes
-  with regenerated HD-BET masks (`isbi2027/brain_masks/hdbet`; HACA3-trained 0.49, +0.35). Fig. 1
+  with HD-BET masks (`isbi2027/brain_masks/hdbet`; HACA3-trained 0.49, +0.35). Fig. 1
   has HACA3 in both panels; Fig. 2 shows HACA3 instead of diffusion draw 2; Psy-ShareD (medRxiv
   2026) cited; PRISM described with its target-site check. Rotation of Fig. 2 rows was checked
   numerically and is not present. Still four pages, zero slack.
@@ -180,14 +180,14 @@ amendment: [ISBI2027_PROTOCOL.md](ISBI2027_PROTOCOL.md). Result files:
 | What | Location |
 | --- | --- |
 | Code, paper, results | branch `main` of `github.com/muqsitamir/HarmonIt` (ISBI work merged 2026-09-15; commit IDs cited in older run logs map to current ones in `ISBI2027_COMMIT_MAP.tsv`) |
-| Experiment root (vpulab) | `/mnt/rhome/mmi/projects/isbi2027` was mostly deleted on 2026-10-01: `code/`, `exports/`, `slice_probes/`, `probe_work/`, `inputs/`, `analysis/`, brain masks and most `runs/` are gone; part of `brain_probes/` and a few run folders remain. Every reported number is versioned in `results/isbi2027`. Not bit-reproducible: the second diffusion draw (`diffusion_20k_redraw`). Deterministic exports and probes can be regenerated with the pipeline below if reviewers ask for new probe experiments. |
+| Experiment root (vpulab) | `/mnt/rhome/mmi/projects/isbi2027` (working files). Every reported number is versioned in `results/isbi2027`. Not bit-reproducible: the second diffusion draw (`diffusion_20k_redraw`). Deterministic exports and probes can be regenerated with the pipeline below if reviewers ask for new probe experiments. |
 | Test artifacts used by the paper | The eight test artifacts under `HarmonIt/outputs/harmonized/` (vpulab) and the canonical HCLD export on cl match the SHA-256 hashes in each run's `*_summary.json` (checked 2026-10-02). |
 | Data, historical artifacts, frozen probe (vpulab) | `/mnt/rhome/mmi/projects/HarmonIt` (`data/`, `outputs/harmonized/`, `checkpoints/`) |
 | Python env (vpulab) | `/home/mmi/envs/harmonit-isbi` (torch 2.5.1+cu121, numpy 1.26.4); installer `/mnt/rhome/mmi/envs/install_harmonit_isbi.sh` |
 | HCLD and diffusion training (cl) | `/home/muqsitamir/repos/HarmonIt`; HCLD canonical re-export in `outputs/harmonized/adapted_hcld_isbi2027_canonical` |
 | Normalized-volume cache (vpulab, local disk) | `/home/mmi/cache/isbi2027_volumes` (46 GB, train+val; `cache_report.json`) |
-| HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks were in `isbi2027/brain_masks/hdbet` (deleted 2026-10-01; `run_hdbet_masks.py` regenerates them) |
-| Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/` and `isbi2027/brain_run.log` were deleted on 2026-10-01; part of `isbi2027/brain_probes/` remains |
+| HD-BET env and masks (vpulab) | env `/home/mmi/envs/hdbet` (hd-bet 2.0.1, weights in `~/hd-bet_params`); masks in `isbi2027/brain_masks/hdbet` (`run_hdbet_masks.py`) |
+| Brain-only exports and probes (vpulab) | `isbi2027/exports/brain/`, `isbi2027/brain_probes/`; HACA3 under `isbi2027/haca3/brain` |
 | Figure raster quality | `isbi2027_qualitative.py` saves at dpi=600 with `interpolation="nearest"`: vector backends rasterize embedded images at the figure dpi, so the default 100 dpi stored each 256x256 slice as ~42x42 px and printed blurred. Check with `page.get_images()` after any change. |
 | Figure variants | The paper uses `figures/fig_qualitative_wide.pdf` (7.0 x 2.05 in, two rows: outputs and difference maps). `isbi2027_qualitative.py --rows 1` makes a single-row variant with larger brains but no difference maps; `fig_qualitative.pdf` is the column-width fallback |
 | LaTeX (Mac) | TinyTeX in `~/Library/TinyTeX` (not on PATH); `bash paper/isbi2027/build.sh` |

@@ -1,9 +1,8 @@
 """Rebuild Fig. 2 (fig_qualitative_wide.pdf) from its saved panels.
 
-The second diffusion draw shown in Fig. 2 was deleted from vpulab on 2026-10-01, so the figure
-can no longer be rendered from data with `isbi2027_qualitative.py`. Its panels were extracted
-pixel for pixel from the published figure into `paper/isbi2027/figures/qualitative_panels/`;
-the NYU-target and blur-control panels come from `isbi2027_qualitative_extra_panels.py`. Text
+Fig. 2 is laid out from panels in `paper/isbi2027/figures/qualitative_panels/`: the input,
+histogram-matching, CycleGAN and diffusion panels as first rendered by `isbi2027_qualitative.py`,
+and the NYU-target, blur-control and HACA3 panels from `isbi2027_qualitative_extra_panels.py`. Text
 sizes reproduce the original figure as printed (6 pt titles). Subject UM_50428, PSNR values and
 the zoom box are those of the original figure (selection: median PSNR over the nine outputs in
 `isbi2027_qualitative.py`'s ORDER); the blur and HACA3 PSNRs are from their runs (amendments 12, 13).

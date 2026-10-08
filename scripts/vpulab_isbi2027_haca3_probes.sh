@@ -1,7 +1,7 @@
 #!/bin/bash
 # Protocol amendment 13 probes. (b) Retrain the benchmark-recipe (seeds 42 1 2 3 4) and converged
-# (seeds 5-9) raw site probes, whose checkpoints were deleted on 2026-10-01, and evaluate each on
-# the eight surviving test artifacts plus HACA3. (c) Whole-head slice probes trained on raw slices
+# (seeds 5-9) raw site probes with the original recipes and seeds, and evaluate each on the eight
+# test artifacts plus HACA3. (c) Whole-head slice probes trained on raw slices
 # and on HACA3 outputs (seeds 1-3). Everything goes under haca3/probes, apart from the paper's runs.
 # Usage: ssh -n vpulab '(setsid nohup bash .../scripts/vpulab_isbi2027_haca3_probes.sh > .../haca3/probes.log 2>&1 &)'
 set -uo pipefail

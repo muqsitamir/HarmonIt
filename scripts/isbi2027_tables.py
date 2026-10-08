@@ -7,8 +7,7 @@ probe: source BA with its paired bootstrap 95% interval and the share of outputs
 Probes retrained on raw images (benchmark recipe, best-validation checkpoints; converged recipe
 of amendment 6, final-epoch checkpoints) are summarized over seeds as mean (min--max). HACA3
 (amendment 13) comes from its own runs: the frozen probe and the benchmark-recipe and converged
-probes retrained with the original recipes and seeds after their checkpoints were deleted; it
-replaces the DLEST-style 1500 row. The Gaussian-blur control (amendment 12) was scored by the
+probes trained with the original recipes and seeds; it replaces the DLEST-style 1500 row. The Gaussian-blur control (amendment 12) was scored by the
 frozen probe only.
 """
 

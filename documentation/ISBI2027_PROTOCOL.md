@@ -315,11 +315,11 @@ volumes' codes. All 1,112 subjects are processed, NYU included; train/val slices
 histogram-matching exports.
 Analyses, all with the existing evaluator and bootstrap: (a) change, target alignment, frozen-probe
 source BA and share labelled NYU; (b) the benchmark-recipe (seeds 42, 1-4) and converged (seeds
-5-9) raw probes, whose checkpoints were deleted on 2026-10-01, retrained with the original recipes
-and seeds (`scripts/vpulab_isbi2027_haca3_probes.sh`) and evaluated on the eight surviving test
-artifacts as a reproduction check and on HACA3; (c) whole-head slice probes (amendment 2 recipe,
+5-9) raw probes, retrained with the original recipes and seeds
+(`scripts/vpulab_isbi2027_haca3_probes.sh`) and evaluated on the eight test artifacts as a
+reproduction check and on HACA3; (c) whole-head slice probes (amendment 2 recipe,
 seeds 1-3) trained on raw slices and on HACA3 outputs, with the paired difference of amendment 9.
-Brain-only and histogram probes are not run for HACA3 (brain masks were deleted). Kendall tau and
+Brain-only and histogram probes are not part of this amendment. Kendall tau and
 seed-spread statistics stay over the original nine outputs. Reporting is fixed now: HACA3 replaces
 the DLEST-style 1500 row in Table 1 whatever its results (that row stays in the results files),
 and HACA3's results are reported in the paper whatever they show.
@@ -344,8 +344,8 @@ head silhouettes (0.73-0.86), so their accuracy may come from head geometry, not
 the amendment 5 intensity-only probe (logistic regression on foreground intensity histograms,
 foreground = raw slice > 0.02, C chosen on validation) trained on HACA3 training outputs and on
 raw training slices, tested on HACA3 test outputs with the evaluator's bootstrap
-(`scripts/isbi2027_histogram_probe.py --methods haca3`). Brain-only probes stay out of scope
-(masks deleted). Reported whatever the result.
+(`scripts/isbi2027_histogram_probe.py --methods haca3`). Brain-only probes are not part of this
+amendment. Reported whatever the result.
 Outcome (`results/isbi2027/analysis/histogram_probe_haca3.json`): the raw-trained histogram probe
 reproduced amendment 5 on raw heads (0.742 [0.650, 0.835]) and gave 0.19 [0.13, 0.25] on HACA3; the
 HACA3-trained histogram probe gave 0.71 [0.63, 0.80] (validation 0.76), +0.52 [0.43, 0.62] over the
@@ -387,8 +387,8 @@ HACA3-trained 0.66 [0.63, 0.69] (+0.48 [0.45, 0.52]), control-trained 0.74 [0.71
 held-out test-set results are reproduced on all subjects.
 
 Amendment 17, 2026-10-07 (written before running; requested by the author). Brain-only probes for
-HACA3, as amendment 7 for the other methods: HD-BET masks regenerated for all 1,112 raw volumes
-(`run_hdbet_masks.py`, hd-bet 2.0.1; the amendment 7 masks were deleted on 2026-10-01), brain-only
+HACA3, as amendment 7 for the other methods: HD-BET masks for all 1,112 raw volumes
+(`run_hdbet_masks.py`, hd-bet 2.0.1), brain-only
 exports built from the HACA3 export (`make_brain_npz.py --methods haca3 --reference haca3`, gated on
 exact raw-slice reproduction), whole-brain slice probes (amendment 2 recipe, seeds 1-3) trained on
 masked raw slices and on masked HACA3 outputs and evaluated on HACA3 test outputs with brain-only
