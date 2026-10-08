@@ -46,8 +46,9 @@ leaderboard, on the 90 source-site test subjects:
   HACA3, the frozen probe scored 0.25, a probe trained on its outputs 0.75 and an
   intensity-histogram probe 0.71; five-fold cross-validation over all 928 source subjects and a
   preprocessing-only control agree.
-- **High similarity does not imply alignment.** Diffusion changed intensities least but barely
-  moved them toward the target site.
+- **Similarity to the input is not alignment.** DLEST-style 1000 had the highest PSNR but moved
+  only a quarter as far toward NYU as CycleGAN; diffusion barely moved toward NYU, and its two
+  draws differed more from each other than from the input.
 
 | Resource | Contents |
 | --- | --- |
