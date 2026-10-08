@@ -94,7 +94,7 @@ Classifiers retrained after harmonization still predict site for ComBat~\cite{ma
 \item \emph{Shuffled labels}: probes trained on permuted labels, giving the chance level actually reached (0.03--0.08; uniform guessing gives 0.06).
 \item \emph{Slice probes}: trained on one fixed slice per training subject, using either the raw slices or a method's harmonized slices (three seeds each), and both tested on that method's harmonized test slices. If the probe trained on harmonized slices scores much higher, site information is still in the images. Control versions see only the head or brain outline, only intensity histograms, or only the brain (HD-BET masks~\cite{isensee2019hdbet}).
 \end{list}
-The other four families are trained on raw volumes, drawing a random axial slice of each training scan at every step, and tested on each method's fixed slices (Table~\ref{tab:main}); slice probes are shown in Fig.~\ref{fig:verdicts}. All intervals are 95\% bootstrap intervals over test subjects, resampled within each site; they reflect these subjects and trained probes, not uncertainty across retraining or new cohorts.
+The other four families are trained on raw volumes, drawing a random axial slice of each training scan at every step, and tested on each method's fixed slices (Table~\ref{tab:main}); slice probes are shown in Fig.~\ref{fig:verdicts}. All intervals are 95\% percentile bootstrap intervals from 2,000 resamples of the test subjects, stratified by site and shared across probes; they reflect these subjects and trained probes, not uncertainty across retraining or new cohorts.
 
 \section{Results}
 \label{sec:results}
