@@ -92,9 +92,9 @@ Classifiers retrained after harmonization still predict site for ComBat~\cite{ma
 \item \emph{Same recipe}: the frozen probe's training recipe rerun with five new random seeds.
 \item \emph{Converged}: five probes trained four times longer, until validation accuracy is stable.
 \item \emph{Shuffled labels}: probes trained on permuted labels, giving the chance level actually reached (0.03--0.08; uniform guessing gives 0.06).
-\item \emph{Slice probes}: trained on one slice per training subject, either raw or a method's outputs (three seeds). Control versions see only the head or brain outline, only intensity histograms, or only the brain (HD-BET masks~\cite{isensee2019hdbet}).
+\item \emph{Slice probes}: trained on one fixed slice per training subject, using either the raw slices or a method's harmonized slices (three seeds each), and both tested on that method's harmonized test slices. If the probe trained on harmonized slices scores much higher, site information is still in the images. Control versions see only the head or brain outline, only intensity histograms, or only the brain (HD-BET masks~\cite{isensee2019hdbet}).
 \end{list}
-The first four are trained on raw volumes, drawing a random axial slice of each training scan at every step, and tested on each method's fixed slices (Table~\ref{tab:main}); slice probes compare raw-trained and output-trained probes on the same outputs (Fig.~\ref{fig:verdicts}). Intervals are 95\% bootstrap intervals, resampling test subjects within each site; they reflect these subjects and trained probes, not uncertainty across retraining or new cohorts.
+The other four families are trained on raw volumes, drawing a random axial slice of each training scan at every step, and tested on each method's fixed slices (Table~\ref{tab:main}); slice probes are shown in Fig.~\ref{fig:verdicts}. All intervals are 95\% bootstrap intervals over test subjects, resampled within each site; they reflect these subjects and trained probes, not uncertainty across retraining or new cohorts.
 
 \section{Results}
 \label{sec:results}
