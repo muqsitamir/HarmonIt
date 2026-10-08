@@ -73,8 +73,10 @@ def main():
         " & \\multicolumn{3}{c}{Change} & \\multicolumn{2}{c}{Target alignment} & \\multicolumn{2}{c}{Frozen probe}"
         " & \\multicolumn{2}{c}{Probes retrained on raw images} \\\\",
         "\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\\cmidrule(lr){7-8}\\cmidrule(l){9-10}",
-        "Method & PSNR & XCorr & $W$ & $\\Delta W_{\\mathrm{NYU}}$ & KL$_{\\mathrm{NYU}}$ & Source BA & NYU"
-        " & Benchmark recipe & Converged recipe \\\\",
+        # Arrows: the direction usually read as better (the paper questions this reading for site BA).
+        "Method & PSNR$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
+        " & KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Source BA$\\downarrow$ & NYU$\\uparrow$"
+        " & Benchmark recipe$\\downarrow$ & Converged recipe$\\downarrow$ \\\\",
         "\\midrule",
     ]
     kl_raw = align["neurocombat"]["kl"]["raw"]["estimate"]
