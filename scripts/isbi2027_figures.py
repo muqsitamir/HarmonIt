@@ -25,6 +25,7 @@ import pandas as pd  # noqa: E402
 AQUA = "#1baf7a"
 RAW_TRAINED = "#52514e"
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#d9d8d4"
+OUTLINE = "#a9a79f"  # hatched band for outline-only probes, distinct from grey (raw-trained) markers
 CHANCE_SOURCE = 1 / 17  # uniform guess over the 17 predicted classes; BA averages the 16 source classes
 ADVERSARY = {"histogram_matching": "histogram_matching", "cyclegan_tuned": "cyclegan_tuned",
              "diffusion_20k": "diffusion_20k_redraw"}  # slice-probe source -> matched test artifact
@@ -35,7 +36,7 @@ def style():
         "font.size": 7, "axes.labelsize": 7, "xtick.labelsize": 6.5, "ytick.labelsize": 6.5,
         "legend.fontsize": 6.5, "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED,
         "ytick.color": MUTED, "axes.spines.top": False, "axes.spines.right": False, "axes.linewidth": .6,
-        "pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "DejaVu Sans",
+        "pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "DejaVu Sans", "hatch.linewidth": .6,
     })
 
 
@@ -63,7 +64,7 @@ def draw_haca3(ax, haca3, ctrl):
     src = haca3["csv"][(haca3["csv"].group == "source_non_nyu") & (haca3["csv"].ckpt == "best")
                        & (haca3["csv"].family == haca3["family"])]
     if len(ctrl):
-        ax.fill_between([x - .12, x + .12], ctrl.min(), ctrl.max(), color=GRID, lw=0, zorder=.5)
+        ax.fill_between([x - .12, x + .12], ctrl.min(), ctrl.max(), facecolor="#f4f3ef", edgecolor=OUTLINE, hatch="//////", lw=.4, zorder=.5)
     pts = []
     for train_src in ("raw", "haca3"):
         v = value(src, source=train_src, method="haca3", metric="harmonized_site_ba").estimate
@@ -90,7 +91,7 @@ def panel_adversary(ax, df, hist, family, control, title, differences, haca3=Non
             if h is None:  # image probes
                 ctrl = value(src, source=control, method=control, metric="harmonized_site_ba").estimate
                 if len(ctrl):
-                    ax.fill_between([x - .12, x + .12], ctrl.min(), ctrl.max(), color=GRID, lw=0, zorder=.5)
+                    ax.fill_between([x - .12, x + .12], ctrl.min(), ctrl.max(), facecolor="#f4f3ef", edgecolor=OUTLINE, hatch="//////", lw=.4, zorder=.5)
                 raw_test = value(src, source="raw", method="neurocombat", metric="raw_site_ba").estimate.mean()
                 pts = []
                 for train_src in ("raw", source):
@@ -154,7 +155,7 @@ def main():
         plt.Line2D([], [], ls="", marker="o", ms=3.8, color=MUTED, label="image probe"),
         plt.Line2D([], [], ls="", marker="s", ms=3.8, color=MUTED, label="intensity probe"),
         plt.Line2D([], [], ls="-", lw=.9, color=INK, label="raw test images"),
-        plt.Rectangle((0, 0), 1, 1, color=GRID, label="geometry only"),
+        plt.Rectangle((0, 0), 1, 1, facecolor="#f4f3ef", edgecolor=OUTLINE, hatch="//////", lw=.4, label="outline only"),
     ]
     fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(.55, 0), ncol=3, frameon=False,
                handletextpad=.2, columnspacing=.9, labelspacing=.2, fontsize=6)
