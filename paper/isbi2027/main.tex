@@ -61,7 +61,7 @@ Classifiers retrained after harmonization still predict site for ComBat~\cite{ma
 
 \begin{table*}[t]
 \centering
-\caption{Results on the 90 source test subjects (means). Arrows give the direction usually read as better. Change: similarity to the input (PSNR, XCorr) and distance between input and output intensities ($W$). Target alignment: change in Wasserstein distance ($\Delta W_{\mathrm{NYU}}$) and KL divergence ($\Delta$KL$_{\mathrm{NYU}}$) to NYU intensities. Site BA: balanced accuracy of probes trained on unharmonized images and tested on each row; frozen probe with 95\% confidence interval and share of outputs it labels NYU; same recipe and converged: mean (min--max) across five seeds; blur: frozen probe only. Probes trained on the outputs: Fig.~\ref{fig:verdicts}. $^\dagger$Fit on the test subjects. $^\ddagger$Reference pooled over all sites, not just NYU. $^\S$Renders CSF near zero, which inflates $\Delta$KL$_{\mathrm{NYU}}$.}
+\caption{Results on the 90 source test subjects (means). Arrows give the direction usually read as better. Change: similarity to the input (PSNR, XCorr) and distance between input and output intensities ($W$). Target alignment: change in Wasserstein distance ($\Delta W_{\mathrm{NYU}}$) and KL divergence ($\Delta$KL$_{\mathrm{NYU}}$) to NYU intensities. Site BA: balanced accuracy of probes trained on unharmonized images and tested on each row; frozen probe with 95\% confidence interval and share of outputs it labels NYU; reseeded and converged: mean (min--max) across five seeds; blur: frozen probe only. Probes trained on the outputs: Fig.~\ref{fig:verdicts}. $^\dagger$Fit on the test subjects. $^\ddagger$Reference pooled over all sites, not just NYU. $^\S$Renders CSF near zero, which inflates $\Delta$KL$_{\mathrm{NYU}}$.}
 \label{tab:main}
 \vspace{2pt}
 \scriptsize
@@ -89,7 +89,7 @@ Classifiers retrained after harmonization still predict site for ComBat~\cite{ma
 \textbf{Site probes.} Image probes are ResNet-18 classifiers~\cite{he2016resnet} that predict the site of a slice; we report balanced accuracy (BA) over the 16 source sites. We compare five families of probes. The first four draw one random axial slice per raw training volume at each step (Table~\ref{tab:main}); the fifth uses fixed raw or harmonized training slices (Fig.~\ref{fig:verdicts}). All are tested on fixed slices.
 \begin{list}{}{\setlength{\leftmargin}{1em}\setlength{\itemindent}{0pt}\setlength{\topsep}{2pt}\setlength{\itemsep}{1pt}\setlength{\parsep}{0pt}}
 \item \emph{Frozen}: one probe trained once on raw images with a short schedule (500 steps, best validation epoch; raw BA 0.95) and applied unchanged to every output.
-\item \emph{Same recipe}: the frozen probe's training recipe rerun with five new random seeds.
+\item \emph{Reseeded}: the frozen probe's training recipe rerun with five new random seeds.
 \item \emph{Converged}: five probes trained four times longer, until validation accuracy is stable.
 \item \emph{Shuffled labels}: probes trained on permuted labels, giving the chance level actually reached (0.03--0.08; uniform guessing gives 0.06).
 \item \emph{Slice probes}: trained on one fixed slice per training subject, using either the raw slices or a method's harmonized slices (three seeds each), and both tested on that method's harmonized test slices. If the probe trained on harmonized slices scores much higher, site information is still in the images. Control versions see only the head or brain outline, only intensity histograms, or only the brain (HD-BET masks~\cite{isensee2019hdbet}).

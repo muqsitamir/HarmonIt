@@ -73,7 +73,7 @@ def main():
         # Arrows: the direction usually read as better (the paper questions this reading for site BA).
         "Method & PSNR (dB)$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
         " & $\\Delta$KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe & Pred. NYU (\\%)$\\uparrow$"
-        " & Same recipe & Converged \\\\",
+        " & Reseeded & Converged \\\\",
         "\\midrule",
     ]
     raw_row = ["Raw input", "--", "--", "0", "0", "0",
