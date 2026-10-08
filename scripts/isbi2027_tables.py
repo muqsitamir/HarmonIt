@@ -7,7 +7,7 @@ probe: source BA with its paired bootstrap 95% interval and the share of outputs
 Probes retrained on raw images (benchmark recipe, best-validation checkpoints; converged recipe
 of amendment 6, final-epoch checkpoints) are summarized over seeds as mean (min--max). HACA3
 (amendment 13) comes from its own runs: the frozen probe and the benchmark-recipe and converged
-probes trained with the original recipes and seeds; it replaces the DLEST-style 1500 row. The Gaussian-blur control (amendment 12) was scored by the
+probes trained with the original recipes and seeds. The Gaussian-blur control (amendment 12) was scored by the
 frozen probe only.
 """
 
@@ -19,11 +19,8 @@ from pathlib import Path
 
 import pandas as pd
 
-# Table 1 shows eight of the nine original outputs: DLEST-style 1500 gave way to HACA3 (amendment 13) and
-# conservative StarGAN to space (like DLEST-style 1000, little change and high site accuracy); both
-# stay in every statistic and in the results files.
-ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggressive", "dlest_1000", "diffusion_20k",
-         "diffusion_20k_redraw"]
+ORDER = ["neurocombat", "histogram_matching", "cyclegan_tuned", "stargan_aggressive", "stargan_conservative",
+         "dlest_1000", "dlest_1500", "diffusion_20k", "diffusion_20k_redraw"]
 NAMES = {"neurocombat": "NeuroCombat$^\\dagger$", "histogram_matching": "Histogram matching$^\\ddagger$",
          "cyclegan_tuned": "CycleGAN", "stargan_aggressive": "StarGAN (aggr.)", "stargan_conservative": "StarGAN (cons.)",
          "dlest_1500": "DLEST-style 1500", "dlest_1000": "DLEST-style 1000", "diffusion_20k": "Diffusion, draw 1",
