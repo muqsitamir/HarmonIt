@@ -40,7 +40,7 @@ def seeds(values, digits=2):
 def nyu_share(run, method, column="harmonized_prediction"):
     frame = pd.read_csv(Path(run) / f"{method}_subjects.csv")
     source = frame[frame.site_id != TARGET_SITE]
-    return f"{100 * (source[column] == TARGET_SITE).mean():.0f}\\%"
+    return f"{100 * (source[column] == TARGET_SITE).mean():.0f}"
 
 
 def main():
@@ -71,9 +71,9 @@ def main():
         " & \\multicolumn{4}{c}{Site BA: probes trained on unharmonized images, tested on each row} \\\\",
         "\\cmidrule(lr){2-4}\\cmidrule(lr){5-6}\\cmidrule(l){7-10}",
         # Arrows: the direction usually read as better (the paper questions this reading for site BA).
-        "Method & PSNR$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
-        " & $\\Delta$KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe$\\downarrow$ & $\\to$NYU$\\uparrow$"
-        " & Same recipe$\\downarrow$ & Converged$\\downarrow$ \\\\",
+        "Method & PSNR (dB)$\\uparrow$ & XCorr$\\uparrow$ & $W$ & $\\Delta W_{\\mathrm{NYU}}\\!\\downarrow$"
+        " & $\\Delta$KL$_{\\mathrm{NYU}}\\!\\downarrow$ & Frozen probe & Pred. NYU (\\%)$\\uparrow$"
+        " & Same recipe & Converged \\\\",
         "\\midrule",
     ]
     raw_row = ["Raw input", "--", "--", "0", "0", "0",
