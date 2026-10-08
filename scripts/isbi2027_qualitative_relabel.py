@@ -80,6 +80,15 @@ def main():
                        ticks=[-.2, 0, .2])
     bar.ax.tick_params(labelsize=SIZE, length=2, pad=1)
     bar.set_label("output − input", size=LABEL, color=MUTED, labelpad=2)
+    # Centre the drawn content (panels, labels and colour bar) horizontally on the page width.
+    bbox = fig.get_tightbbox(fig.canvas.get_renderer())
+    shift = ((width - bbox.x1) - bbox.x0) / 2 / width
+    for ax in fig.axes:
+        x0, y0, w, h = ax.get_position().bounds
+        ax.set_position([x0 + shift, y0, w, h])
+    for text in fig.texts:
+        x, y = text.get_position()
+        text.set_position((x + shift, y))
     out = Path(args.out)
     fig.savefig(out, dpi=600)
     fig.savefig(out.with_suffix(".png"), dpi=300)
