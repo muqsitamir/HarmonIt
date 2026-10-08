@@ -51,7 +51,7 @@ leaderboard, on the 90 source-site test subjects:
 
 | Resource | Contents |
 | --- | --- |
-| [Protocol](documentation/ISBI2027_PROTOCOL.md) | Cohort, metrics, probe recipes, statistics and dated amendments |
+| [Protocol](documentation/ISBI2027_PROTOCOL.md) | Cohort, metrics, statistics and dated amendments, each written before its outcome was seen |
 | [Results](results/isbi2027/README.md) | Versioned per-subject metrics, probe predictions and bootstrap summaries behind every number in the paper |
 | [Evaluator](scripts/eval_isbi2027.py) | Subject-level evaluation with fixed-scale PSNR, target alignment and a paired site-stratified bootstrap |
 | [Project notes](documentation/ISBI2027_HANDOFF.md) | Pipeline, artifact locations and reproduction steps |
