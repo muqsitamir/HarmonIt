@@ -231,3 +231,9 @@ outputs/
 results/*
 !results/isbi2027/
 !results/isbi2027/**
+
+# Internal working notes (kept locally, not published)
+documentation/ISBI2027_HANDOFF.md
+documentation/SUBMISSION_GAP_REPORT.md
+documentation/2.5D_DIFFUSION_PLAN.md
+documentation/ISBI2027_COMMIT_MAP.tsv
