@@ -4,8 +4,7 @@ Small, versioned outputs behind every number in `paper/isbi2027/main.tex`. Large
 artifacts (image NPZs, checkpoints) stay on vpulab under
 `/mnt/rhome/mmi/projects/isbi2027`; their SHA-256 hashes are in
 `analysis/artifact_sha256.txt`. The protocol and its amendments are in
-`documentation/ISBI2027_PROTOCOL.md`; the project state is in
-`documentation/ISBI2027_HANDOFF.md`.
+`documentation/ISBI2027_PROTOCOL.md`.
 
 ## Layout
 

@@ -54,7 +54,7 @@ leaderboard, on the 90 source-site test subjects:
 | [Protocol](documentation/ISBI2027_PROTOCOL.md) | Cohort, metrics, statistics and dated amendments, each written before its outcome was seen |
 | [Results](results/isbi2027/README.md) | Versioned per-subject metrics, probe predictions and bootstrap summaries behind every number in the paper |
 | [Evaluator](scripts/eval_isbi2027.py) | Subject-level evaluation with fixed-scale PSNR, target alignment and a paired site-stratified bootstrap |
-| [Project notes](documentation/ISBI2027_HANDOFF.md) | Pipeline, artifact locations and reproduction steps |
+| [Reproducibility](documentation/REPRODUCIBILITY.md) | Environment and reproduction commands |
 
 ### Details not in the paper
 
@@ -94,7 +94,7 @@ HarmonIt evaluates these questions together and makes the limitations explicit.
 
 An earlier plan for a 2.5D diffusion model, with adjacent slices as context, was not
 pursued: adjacent-slice harmonization already exists, and the audit pointed to a
-different gap. [The plan](documentation/2.5D_DIFFUSION_PLAN.md) is kept as a record.
+different gap.
 
 ## Benchmark Design
 
@@ -198,7 +198,7 @@ python scripts/eval_harmonized_npz.py --help
 | --- | --- |
 | [Research roadmap](#research-roadmap) | Completed benchmark and audit, and the next step |
 | [Metrics](documentation/METRICS.md) | Metric definitions, interpretation and limits |
-| [ISBI 2027 audit](#isbi-2027-evaluation-audit) | [Manuscript](paper/isbi2027/main.pdf), [protocol](documentation/ISBI2027_PROTOCOL.md), [results](results/isbi2027/README.md) and [project notes](documentation/ISBI2027_HANDOFF.md) |
+| [ISBI 2027 audit](#isbi-2027-evaluation-audit) | [Manuscript](paper/isbi2027/main.pdf), [protocol](documentation/ISBI2027_PROTOCOL.md), [results](results/isbi2027/README.md) |
 | [Baselines](documentation/BASELINES.md) and [reproducibility](documentation/REPRODUCIBILITY.md) | Method notes and reproduction commands |
 | [Preprocessing](documentation/PREPROCESSING.md) | ABIDE-to-slice pipeline |
 | [Installation](documentation/INSTALLATION.md) | Local and GPU setup |
