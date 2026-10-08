@@ -30,32 +30,46 @@ producing consistent volumes that remain useful for downstream analysis.
 Evaluation Practice for Multi-Site MRI.** Manuscript for ISBI 2027:
 [PDF](paper/isbi2027/main.pdf) | [LaTeX source](paper/isbi2027/main.tex)
 
-The audit uses ten outputs from seven harmonization families, one of them HACA3 with its
+The audit uses ten outputs from seven harmonization methods, one of them HACA3 with its
 published pretrained weights, plus a blur control, as test cases for the evaluation, not as a
 leaderboard, on the 90 source-site test subjects:
 
-- **Probe verdicts depend on how the probe is trained.** Five probes trained with the
-  benchmark's recipe gave the same CycleGAN outputs site balanced accuracies of
-  0.13-0.59; five converged probes agreed (0.44-0.54) but found more site information
-  in eight of ten outputs.
-- **A blur scores lower than every harmonizer.** Gaussian blur of the inputs, which
-  moves intensities away from NYU and keeps PSNR at 24.7 dB, scored frozen-probe balanced accuracy
-  0.07, within the shuffled-label null; the probe labelled the blurred slices Yale.
-- **Small change is not target alignment.** Diffusion translation changed intensities
-  least but barely moved them toward the target site.
-- **Low frozen-probe accuracy does not establish removal.** Probes trained on
-  harmonized outputs still decoded the source site from whole heads, skull-stripped
-  brains and brain intensity histograms. This holds for HACA3 too: it kept every
-  raw-trained probe near 0.28 balanced accuracy, yet probes trained on its outputs
-  reached 0.75, 0.71 from intensity histograms alone and 0.49 within the brain. Five-fold
-  cross-validation over all 928 source subjects and a preprocessing-only control agree.
+- **The verdict depends on how the probe is trained.** Rerunning the frozen probe's recipe
+  with new random seeds gave the same CycleGAN outputs balanced accuracies of 0.13-0.59;
+  probes trained to convergence agreed (0.44-0.54) but found more site information than the
+  frozen probe in eight of ten outputs.
+- **A blur fools the frozen probe.** A Gaussian blur of the inputs, which moves intensities
+  away from NYU and keeps PSNR at 24.7 dB, brought the frozen probe to 0.07, within the
+  shuffled-label range; the probe labelled the blurred slices Yale, none NYU.
+- **Site remains decodable after harmonization.** Probes trained on harmonized outputs still
+  decoded the source site from whole heads, brain-only slices and intensity histograms. For
+  HACA3, the frozen probe scored 0.25, a probe trained on its outputs 0.75 and an
+  intensity-histogram probe 0.71; five-fold cross-validation over all 928 source subjects and a
+  preprocessing-only control agree.
+- **High similarity does not imply alignment.** Diffusion changed intensities least but barely
+  moved them toward the target site.
 
 | Resource | Contents |
 | --- | --- |
-| [Protocol](documentation/ISBI2027_PROTOCOL.md) | Cohort, metrics, statistics and dated amendments, each written before its outcome was seen |
+| [Protocol](documentation/ISBI2027_PROTOCOL.md) | Cohort, metrics, probe recipes, statistics and dated amendments |
 | [Results](results/isbi2027/README.md) | Versioned per-subject metrics, probe predictions and bootstrap summaries behind every number in the paper |
 | [Evaluator](scripts/eval_isbi2027.py) | Subject-level evaluation with fixed-scale PSNR, target alignment and a paired site-stratified bootstrap |
 | [Project notes](documentation/ISBI2027_HANDOFF.md) | Pipeline, artifact locations and reproduction steps |
+
+### Details not in the paper
+
+The four-page paper keeps the main numbers; everything else is here.
+
+| Detail | Where |
+| --- | --- |
+| Probe training settings (optimizer, learning rate, batch size, steps, augmentation) and the converged recipe | [Protocol](documentation/ISBI2027_PROTOCOL.md): "Probe experiments" and amendment 6 |
+| Harmonization method settings | [Baselines](documentation/BASELINES.md); HACA3 preprocessing in protocol amendment 13 |
+| Kendall tau between probe rankings and per-output seed ranges | [`kendall_tau_nine_outputs.json`](results/isbi2027/analysis/kendall_tau_nine_outputs.json) |
+| 95% confidence intervals for every reported number | per-run `*_summary.json` in [`results/isbi2027/runs/`](results/isbi2027/runs) and the files in [`results/isbi2027/analysis/`](results/isbi2027/analysis) |
+| Per-subject predictions and metrics | per-run `*_subjects.csv` in [`results/isbi2027/runs/`](results/isbi2027/runs) |
+| Demographics probe (age, sex, diagnosis, brain volume) | protocol amendment 11; [`demographics_probe.json`](results/isbi2027/analysis/demographics_probe.json) |
+| Blur control at sigma 4 and 8 | protocol amendment 12; [`frozen_probe_blur_control_20261005`](results/isbi2027/runs/frozen_probe_blur_control_20261005) |
+| HACA3 preprocessing-only control, cross-validation, brain-only and intensity-only probes | protocol amendments 13-17; [`results/isbi2027/haca3/`](results/isbi2027/haca3) and `results/isbi2027/analysis/*haca3*` |
 
 ## Why This Matters
 
