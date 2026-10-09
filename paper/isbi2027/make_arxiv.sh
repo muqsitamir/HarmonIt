@@ -11,8 +11,12 @@ OUT=$(cd ../.. && pwd)/dist/isbi2027_arxiv
 rm -rf "$OUT" "$OUT.zip"
 mkdir -p "$OUT"
 rsync -R $SOURCES "$OUT/"
+# The IEEE submission has no PDF links or bookmarks (IEEE Xplore rule); the arXiv copy keeps them.
+perl -0pi -e 's/% Plain URLs: IEEE Xplore PDFs may not contain links or bookmarks\.\n\\usepackage\{url\}\n/% arXiv version: clickable citations, cross-references and URLs.\n\\usepackage{hyperref}\n\\hypersetup{hidelinks}\n/' "$OUT/main.tex"
+grep -q 'usepackage{hyperref}' "$OUT/main.tex" || { echo "make_arxiv.sh: could not enable hyperref in main.tex" >&2; exit 1; }
 WORK=$(mktemp -d)
-rsync -R $SOURCES refs.bib IEEEbib.bst "$WORK/"
+rsync -R refs.bib IEEEbib.bst "$WORK/"
+(cd "$OUT" && rsync -R $SOURCES "$WORK/")
 (cd "$WORK" && pdflatex -interaction=nonstopmode main.tex > /dev/null && bibtex main > /dev/null)
 cp "$WORK/main.bbl" "$OUT/"
 rm -rf "$WORK"
