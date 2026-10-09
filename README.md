@@ -35,7 +35,8 @@ published pretrained weights, plus a blur control, as test cases for the evaluat
 leaderboard, on the 90 source-site test subjects:
 
 - **The verdict depends on how the probe is trained.** Rerunning the frozen probe's recipe
-  with new random seeds gave the same CycleGAN outputs balanced accuracies of 0.13-0.59;
+  with five random seeds, one of them its own, gave the same CycleGAN outputs balanced
+  accuracies of 0.13-0.59;
   probes trained to convergence agreed (0.44-0.54) but found more site information than the
   frozen probe in eight of ten outputs.
 - **A blur fools the frozen probe.** A Gaussian blur of the inputs, which moves intensities
