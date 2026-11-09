@@ -15,7 +15,8 @@ producing consistent volumes that remain useful for downstream analysis.
 [Evaluation definitions](documentation/METRICS.md) |
 [Installation](documentation/INSTALLATION.md) |
 [Baseline implementations](scripts/methods) |
-[ISBI 2027 evaluation audit](#isbi-2027-evaluation-audit)
+[ISBI 2027 evaluation audit](#isbi-2027-evaluation-audit) |
+[Interactive results explorer](https://huggingface.co/spaces/muqsitamir/harmonization-audit)
 
 > **Research status:** the first-phase benchmark and its evaluation audit are
 > complete. The audit manuscript for ISBI 2027, its written protocol, code and
@@ -28,7 +29,12 @@ producing consistent volumes that remain useful for downstream analysis.
 
 **Frozen Site-Probe Accuracy Is Not a Standalone Harmonization Score: An Audit of
 Evaluation Practice for Multi-Site MRI.** Manuscript for ISBI 2027:
-[PDF](paper/isbi2027/main.pdf) | [LaTeX source](paper/isbi2027/main.tex)
+[arXiv:2610.14140](https://arxiv.org/abs/2610.14140) | [PDF](paper/isbi2027/main.pdf) |
+[LaTeX source](paper/isbi2027/main.tex)
+
+On Hugging Face: [interactive explorer](https://huggingface.co/spaces/muqsitamir/harmonization-audit) |
+[results dataset](https://huggingface.co/datasets/muqsitamir/abide-harmonization-audit) |
+[paper page](https://huggingface.co/papers/2610.14140)
 
 The audit uses ten outputs from seven harmonization methods, one of them HACA3 with its
 published pretrained weights, plus a blur control, as test cases for the evaluation, not as a
